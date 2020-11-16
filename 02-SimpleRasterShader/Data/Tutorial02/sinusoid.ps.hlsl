@@ -23,8 +23,7 @@ cbuffer PerFrameCB
 	float gMultValue;
 }
 
-// Our main pixel shader.  It writes a float4 to the output color buffer.
-// writes out to our framebuffer's color buffer 0 (SV_Target0)
+// Our main pixel shader.  It writes a float4 to the output color buffer. 
 float4 main(float2 texC : TEXCOORD, float4 pos : SV_Position) : SV_Target0
 {
 	// Compute a per-pixel sinusoidal value

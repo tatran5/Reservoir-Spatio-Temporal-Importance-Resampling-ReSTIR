@@ -21,27 +21,19 @@
 bool ConstantColorPass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
 {
 	// Stash a copy of our resource manager, allowing us to access shared rendering resources
+	//    We need an output buffer; tell our resource manager we expect the standard output channel
 	mpResManager = pResManager;
-	
-	// We need an output buffer; tell our resource manager we expect the standard output channel texture
-	// This texture is a required output from any pipeline, as it gets displayed onscreen after all 
-	// RenderPasses execute
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 
     return true;  // Successful initialization.
 }
 
-// Defines what widgets are avaiilable to interact with when we open the GUI window
 void ConstantColorPass::renderGui(Gui* pGui)
 {
 	// Add a widget to our GUI to allow us to dynamically change the constant color
 	pGui->addFloat3Var("  Color", mConstColor, 0.0f, 1.0f);
 }
 
-// The execute method is invoked when the pipeline wants us to perform our rendering tasks. 
-// For a simple pass like ConstantColorPass, we have exactly two goals:
-// Get a handle to the buffer that will be displayed on screen, and
-// Clear this buffer to the user-specified constant color.
 void ConstantColorPass::execute(RenderContext* pRenderContext)
 {
 	// Get a pointer to a Falcor texture resource of our output channel

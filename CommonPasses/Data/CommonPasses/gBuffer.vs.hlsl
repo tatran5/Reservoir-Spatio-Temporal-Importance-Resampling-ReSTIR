@@ -26,13 +26,10 @@
 __import ShaderCommon;
 
 // Invokes Slang to import the default vertex shader, it's inputs and outputs
-/// This default shader accesses standard scene attributes (see VertexAttrib.h), 
-/// applies appropriate viewing, animation, and camera matrices, and stores 
-/// the results into a VertexOut structure (which is also defined in DefaultVS.slang)
 __import DefaultVS;
 
 // Define our main() entry point for our vertex shader, then simply call the default Falcor vertex shader
 VertexOut main(VertexIn vIn)
 {
-	return defaultVS(vIn); // update vertex with their world coordinates and NDC
+	return defaultVS(vIn);
 }

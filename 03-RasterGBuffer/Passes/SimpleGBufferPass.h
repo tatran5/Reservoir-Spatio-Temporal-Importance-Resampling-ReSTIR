@@ -44,9 +44,9 @@ protected:
 	bool usesRasterization() override { return true; }
 
     // Internal pass state
-    GraphicsState::SharedPtr    mpGfxState;             ///< DirectX state -- Our graphics pipeline state (i.e., culling, raster, blend settings)
-	Scene::SharedPtr            mpScene;                ///< Falcon scene abstraction -- A pointer to the scene we're rendering
-	RasterLaunch::SharedPtr     mpRaster;               ///< Encapsulates rasterization pass -- A wrapper managing the shader for our g-buffer creation
+    GraphicsState::SharedPtr    mpGfxState;             ///< Our graphics pipeline state (i.e., culling, raster, blend settings)
+	Scene::SharedPtr            mpScene;                ///< A pointer to the scene we're rendering
+	RasterLaunch::SharedPtr     mpRaster;               ///< A wrapper managing the shader for our g-buffer creation
 
 	// What's our "background" color?
 	vec3                        mBgColor = vec3(0.5f, 0.5f, 1.0f);  ///<  Color stored into our diffuse G-buffer channel if we hit no geometry

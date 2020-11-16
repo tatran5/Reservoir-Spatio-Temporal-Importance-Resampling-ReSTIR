@@ -32,19 +32,10 @@ bool SimpleGBufferPass::initialize(RenderContext* pRenderContext, ResourceManage
 
 	// We need a bunch of textures to store our G-buffer.  Ask for a list of them.  They all get the same 
 	//     format (in this case, the default, RGBA32F) and size (in this case, the default, screen sized)
-	/// We no longer write to kOutputChannel. Thus, SimpleGBufferPass does not form a complete rendering pipeline. 
-	/// If no subsequent pass uses our intermediate results to write to kOutputChannel, nothing will appear on screen!
-	/// When requesting buffers, the names are unimportant. If a subsequent pass requests access to a buffer with the same name, it will be shared.
 	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", 
 		                                    "MaterialSpecRough", "MaterialExtraParams" });
 
 	// We also need a depth buffer to use when rendering our g-buffer.  Ask for one, with appropriate format and binding flags.
-	/// For the Z-Buffer, we use a more complex requestTextureResource() call. 
-	/// The second parameter specifies the resource format (using a 24 bit depth and 8 bit stencil). 
-	/// We also need to specify how it can be bound, since DirectX depth buffers have different limitations. 
-	/// The constant kDepthBufferFlags stores good defaults for a depth buffer.
-	/// When not using the more complex request, buffers default to RGBA textures using 32-bit floats for each channel.
-	/// The bind flags default to kDefaultFlags, which provide good defaults for all textures that are not used for depth or stencil.
 	mpResManager->requestTextureResource("Z-Buffer", ResourceFormat::D24UnormS8, ResourceManager::kDepthBufferFlags);
 
 	// Set the default scene to load
@@ -60,7 +51,6 @@ bool SimpleGBufferPass::initialize(RenderContext* pRenderContext, ResourceManage
     return true;
 }
 
-// Gets called whenever a scene is loaded
 void SimpleGBufferPass::initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene)
 {
 	// Stash a copy of the scene
@@ -74,8 +64,7 @@ void SimpleGBufferPass::initScene(RenderContext* pRenderContext, Scene::SharedPt
 
 void SimpleGBufferPass::execute(RenderContext* pRenderContext)
 {
-	// Create a framebuffer for rendering.  (Creating once per frame is for simplicity, not performance).(Should avoid doing each frame)
-	//  (Note that these buffers were all requested during initialization.)
+	// Create a framebuffer for rendering.  (Creating once per frame is for simplicity, not performance).
 	Fbo::SharedPtr outputFbo = mpResManager->createManagedFbo(
 		{ "WorldPosition", "WorldNormal", "MaterialDiffuse", "MaterialSpecRough", "MaterialExtraParams" }, // Names of color buffers
 		"Z-Buffer" );                                                                                      // Name of depth buffer

@@ -16,34 +16,36 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************************************************/
 
-// This is the C++ code contain the "main" function for our application.  However,
-//     these main() routines contain little more then setting up our RenderingPipeline,
-//     which defines the sequence of RenderPasses that are executed each frame.
-//
-// This first tutorial only uses a *single* render pass, which clears the screen to 
-//     a constant color
+// Falcor / Slang imports to include shared code and data structures
+__import Shading;           // Imports ShaderCommon and DefaultVS, plus material evaluation
+__import DefaultVS;         // VertexOut declaration
 
-#include "Falcor.h"
-#include "../SharedUtils/RenderingPipeline.h"
-#include "Passes/ConstantColorPass.h"
-
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
+// Define our output buffer
+struct GBuffer
 {
-	// Create our rendering pipeline
-	// Rendering pipeline contains a arbitrary long sequence of rendering passes
-	// In this case, there is only one pass
-	RenderingPipeline *pipeline = new RenderingPipeline();
+	float4 wsPos    : SV_Target0;  // Our world-space position goes in color buffer 0
+	float4 wsNorm   : SV_Target1;  // Our world-space normal goes in color buffer 1
+	float4 matDif   : SV_Target2;  // Our material's diffuse channel in color buffer 2
+	float4 matSpec  : SV_Target3;  // Our material specular data in color buffer 3
+	float4 matExtra : SV_Target4;  // Our extra material parameters in color buffer 4
+};
 
-	// Add passes into our pipeline
-	// A frame is rendered by executing each of the render passes in sequence
-	pipeline->setPass(0, ConstantColorPass::create());   // Displays a user-selectable color on the screen
+// Our main entry point for the g-buffer fragment shader.
+GBuffer main(VertexOut vsOut, uint primID : SV_PrimitiveID, float4 pos : SV_Position)
+{
+	// This is a Falcor built-in that extracts data suitable for shading routines
+	//     (see ShaderCommon.slang for the shading data structure and routines)
+	ShadingData hitPt = prepareShadingData(vsOut, gMaterial, gCamera.posW);
 
-	// Define a set of config / window parameters for our program
-	// This structure contains various parameters that control the window created by Falcor. 
-	 SampleConfig config;
-    config.windowDesc.title = "Tutorial 1:  Opening an window and setting up a simple rendering pipeline";
-    config.windowDesc.resizableWindow = true;
+	// Dump out our G buffer channels
+	GBuffer gBufOut;
+	gBufOut.wsPos    = float4(hitPt.posW, 1.f);
+	gBufOut.wsNorm   = float4(hitPt.N, length(hitPt.posW - gCamera.posW) );
+	gBufOut.matDif   = float4(hitPt.diffuse, hitPt.opacity);
+	gBufOut.matSpec  = float4(hitPt.specular, hitPt.linearRoughness);
+	gBufOut.matExtra = float4(hitPt.IoR, hitPt.doubleSidedMaterial ? 1.f : 0.f, 0.f, 0.f);
 
-	// Start our program!
-	RenderingPipeline::run(pipeline, config);
+	return gBufOut;
 }
+
+

@@ -27,9 +27,6 @@
 // This is the header including the base RenderPass class
 #include "../SharedUtils/RenderPass.h"
 
-// Falcor utility class inherit_shared_from_this ensures derived classes 
-// don't end up inheriting multiple copies of the internal pointers
-
 class ConstantColorPass : public ::RenderPass, inherit_shared_from_this<::RenderPass, ConstantColorPass>
 {
 public:
@@ -46,9 +43,7 @@ protected:
 	ConstantColorPass() : ::RenderPass("Constant Color Pass", "Constant Color Options") {}
 	
 	// The initialize() callback will be invoked when this class is instantiated and bound to a pipeline
-  // RenderContext: allows to create and access directX state and resources
-	// ResourceManager: utiity class that enables sharing of resources between RenderPasses
-	bool initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager) override;
+    bool initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager) override;
 
 	// The renderGui() callback allows you to attach GUI widget into this pass' options window
     void renderGui(Gui* pGui) override;

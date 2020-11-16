@@ -50,16 +50,8 @@ protected:
 	bool hasAnimation() override { return false; }      // Removes a GUI control that is confusing for this simple demo
 
     // Internal pass state
-  ///< Our accumulation shader state
-  /// Abstraction class in the SharedUtils/ diretory
-  /// This class allows to launch a simple full-screeen rasterization draw calls
-  /// Similar abstractions like RasterLaunch or Raylaunch exist for drawing more complex raster and ray calls using loaded scene geometry
-	FullscreenLaunch::SharedPtr   mpSinusoidPass;         
-   ///< Our graphics pipeline state of a DirectX rasterization pipeline. 
-   /// This includes things like culling, depth testing, blending, rasterization parameters, etc.
-   /// For our ray tracing tutorials, we only need a simple default graphics state. 
-   /// We need *some* graphics state to set up DirectX pipeline
-  GraphicsState::SharedPtr      mpGfxState;            
+	FullscreenLaunch::SharedPtr   mpSinusoidPass;         ///< Our accumulation shader state
+    GraphicsState::SharedPtr      mpGfxState;             ///< Our graphics pipeline state
     uint32_t                      mFrameCount = 0;        ///< A frame counter to let our sinusoid animate
 	float                         mScaleValue = 0.1f;     ///< A scale value for our sinusoid
 };

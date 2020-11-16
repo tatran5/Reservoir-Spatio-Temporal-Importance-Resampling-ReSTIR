@@ -39,7 +39,7 @@ void GBufferRayGen()
 	//     normalized device coordiates, then use built-in Falcor variables containing our camera matrix
 	//     to get our world-space ray direction for this pixel.
 	float2 pixelCenter = (DispatchRaysIndex().xy + float2(0.5f, 0.5f)) / DispatchRaysDimensions().xy; 
-	float2 ndc = float2(2, -2) * pixelCenter + float2(-1, 1);  
+	float2 ndc = float2(2, -2) * pixelCenter + float2(-1, 1);                    
 	float3 rayDir = ndc.x * gCamera.cameraU + ndc.y * gCamera.cameraV + gCamera.cameraW;  
 
 	// Initialize a ray structure for our ray tracer
@@ -56,9 +56,9 @@ void GBufferRayGen()
 	TraceRay(gRtScene,                        // A Falcor built-in containing the raytracing acceleration structure
 		RAY_FLAG_CULL_BACK_FACING_TRIANGLES,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
 		0xFF,                                 // Instance inclusion mask.  0xFF => no instances discarded from this mask
-		0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0) For most simple usage, this corresponds directly to the ID of your hit group, as determined in RayTracedGBufferPass::initialize. (In our case, there is only one hit group so this takes a value of 0).
+		0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0)
 		hitProgramCount,                      // Number of hit groups ('hitProgramCount' is built-in from Falcor with the right number)
-		0,                                    // Miss program index (i.e., when missing, call miss shader #0) This directly corresponds to the miss shader ID determined in RayTracedGBufferPass::initialize.
+		0,                                    // Miss program index (i.e., when missing, call miss shader #0)
 		ray,                                  // Data structure describing the ray to trace
 		rayData);                             // Our user-defined ray payload structure to store intermediate results
 }

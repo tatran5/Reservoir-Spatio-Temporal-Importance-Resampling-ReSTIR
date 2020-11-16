@@ -37,7 +37,6 @@ bool RayTracedGBufferPass::initialize(RenderContext* pRenderContext, ResourceMan
 
 	// We need a bunch of textures to store our G-buffer.  Ask for a list of them.  They all get the same 
 	//     format (in this case, the default, RGBA32F) and size (in this case, the default, screen sized)
-	// We don't request a Z-buffer, because ray tracing does not generate one by default. (Of course, if desired you can output a Z-buffer manually.)
 	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", 
 		                                    "MaterialSpecRough", "MaterialExtraParams", "Emissive" });
 
@@ -45,19 +44,9 @@ bool RayTracedGBufferPass::initialize(RenderContext* pRenderContext, ResourceMan
 	mpResManager->setDefaultSceneName("Data/pink_room/pink_room.fscene");
 
 	// Create our wrapper around a ray tracing pass.  Specify our ray generation shader and ray-specific shaders
-	// We then create our ray tracing wrapper mpRays by pointing it to our shader file rtGBuffer.hlsland 
-	// specifying the function where our ray generation shader starts, in this case the function GBufferRayGen() 
-	// in our HLSL file.
-	// When ray tracing, we can have multiple ray types. This means we can call addMissShader multiple times. 
-	// The first time it is called, we specify miss shader #0. The second time, we specify miss shader #1. 
-	// The next, miss shader #2. Et cetera. Similarly, when called multiple times, addHitShader specifies hit group #0,
-	// 1, 2, etc. This integer identifier is important, as calling TraceRay() in HLSL requires you specify 
-	// the correct IDs.
 	mpRays = RayLaunch::create(kFileRayTrace, kEntryPointRayGen);
 	mpRays->addMissShader(kFileRayTrace, kEntryPointMiss0);                             // Add miss shader #0 
 	mpRays->addHitShader(kFileRayTrace, kEntryPrimaryClosestHit, kEntryPrimaryAnyHit);  // Add hit group #0
-
-
 
 	// Now that we've passed all our shaders in, compile.  If we already have our scene, let it know what scene to use.
 	mpRays->compileRayProgram();
@@ -83,7 +72,6 @@ void RayTracedGBufferPass::execute(RenderContext* pRenderContext)
 	// Check that we're ready to render
 	if (!mpRays || !mpRays->readyToRender()) return;
 
-	// Create our ray traced G-buffer.
 	// Load our textures, but ask the resource manager to clear them to black before returning them
 	Texture::SharedPtr wsPos    = mpResManager->getClearedTexture("WorldPosition",       vec4(0, 0, 0, 0));
 	Texture::SharedPtr wsNorm   = mpResManager->getClearedTexture("WorldNormal",         vec4(0, 0, 0, 0));
@@ -95,20 +83,14 @@ void RayTracedGBufferPass::execute(RenderContext* pRenderContext)
 	// Now we'll send our parameters down to our ray tracing shaders
 
 	// Pass our background color down to miss shader #0
-  auto missVars = mpRays->getMissVars(0);
-	// These variables are scoped so they are only usable while executing this specific miss shader
-	// In this case, if our rays miss we'll store the specified background color in the "MaterialDiffuse" texture.
+	auto missVars = mpRays->getMissVars(0);
 	missVars["MissShaderCB"]["gBgColor"] = mBgColor;  // What color to use as a background?
 	missVars["gMatDif"] = matDif;                     // Where do we store the bg color? (in the diffuse texture)
 
-	// We are setting the HLSL variables for hit group #0 (i.e, the closest-hit and any-hit shaders)
 	// Cycle through all geometry instances, bind our g-buffer textures to the hit shaders for each instance.
-	// In this case, the variables specifed are scoped so they are only visibile by the closest-hit and any-hit shaders 
-	// executed while intersecting the specified geometry instance.
 	// Note:  There is a different binding point for each pair {instance, hit group}, so variables used inside
 	//        the hit group need to be bound per-instance.  If these variables do not change, as in this case,
 	//        they could also be bound as a global variable (visibile in *all* shaders) for better performance
-	// We will store our G=Buffer output in our closest-hit shader, which can thought of as similar to a pixel shader.
 	for (auto pVars : mpRays->getHitVars(0))   // Cycle through geom instances for hit group #0
 	{
 		pVars["gWsPos"] = wsPos;

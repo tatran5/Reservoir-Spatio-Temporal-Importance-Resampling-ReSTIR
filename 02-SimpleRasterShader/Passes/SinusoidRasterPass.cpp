@@ -30,13 +30,10 @@ bool SinusoidRasterPass::initialize(RenderContext* pRenderContext, ResourceManag
 	mpResManager = pResManager;
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 
-  // We're rendering with the rasterizer, so we need to define our gfx pipeline state (we'll use the default)
-	// Creates a default DirectX raster pipeline state we will use when rednering
-	mpGfxState = GraphicsState::create();
+    // We're rendering with the rasterizer, so we need to define our gfx pipeline state (we'll use the default)
+    mpGfxState = GraphicsState::create();
 
-  // Create our simplistic full-screen pass shader (which computes and displays a sinusoidal color)
-	// Falcor's full-screen pass uses a default vertex shader, 
-	// so you only need to specify a pixel shader.
+    // Create our simplistic full-screen pass shader (which computes and displays a sinusoidal color)
 	mpSinusoidPass = FullscreenLaunch::create(kSinusoidShader);
 
     return true;
@@ -50,16 +47,8 @@ void SinusoidRasterPass::renderGui(Gui* pGui)
 
 void SinusoidRasterPass::execute(RenderContext* pRenderContext)
 {
-	///In this case, we're executing a raster shader. This means we need
-	///  a framebuffer to draw into, and we can't simply clear our texture
-	
-	// Create a framebuffer object to render to.  
-	// Done here once per frame for simplicity, not performance.
-	// This function allows us provide a list of managed texture names, 
-	// which get combined into an FBO
-	// Bind the kOutputChannel as the framebuffer object's color channel
-	// Ideally, you would not create a new framebuffer each frame, 
-	// but this is left as an exercise for more advanced readers
+	// Create a framebuffer object to render to.  Done here once per frame for simplicity, not performance.
+	//     This function allows us provide a list of managed texture names, which get combined into an FBO
 	Fbo::SharedPtr outputFbo = mpResManager->createManagedFbo({ ResourceManager::kOutputChannel });
 
     // No valid framebuffer?  We're done.
@@ -71,8 +60,6 @@ void SinusoidRasterPass::execute(RenderContext* pRenderContext)
 	shaderVars["PerFrameCB"]["gMultValue"]  = mScaleValue;
 
     // Execute our shader
-	// update our DirectX pipeline state to send results 
-	// to this new FBO when we run our shader.
 	mpGfxState->setFbo(outputFbo);
 	mpSinusoidPass->execute(pRenderContext, mpGfxState);
 }

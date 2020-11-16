@@ -16,31 +16,28 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************************************************/
 
+// This is the C++ code contain the "main" function for our application.  However,
+//     these main() routines contain little more then setting up our RenderingPipeline,
+//     which defines the sequence of RenderPasses that are executed each frame.
+//
+// This first tutorial only uses a *single* render pass, which clears the screen to 
+//     a constant color
+
 #include "Falcor.h"
 #include "../SharedUtils/RenderingPipeline.h"
-#include "Passes/SimpleGBufferPass.h"
-#include "Passes/CopyToOutputPass.h"
+#include "Passes/ConstantColorPass.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
 	// Create our rendering pipeline
 	RenderingPipeline *pipeline = new RenderingPipeline();
 
-	// Add render passes into our pipeline
-	/// First SimpleGBufferPass is executed, and it stores its output 
-	/// in textures managed by our ResourceManager. This allows subsequent passes, 
-	/// like CopyToOutputPass to access and reuse these intermediate results.
-	/// In this particular tutorial, SimpleGBufferPass creates a G-Buffer 
-	/// containing each pixel's position, surface normal, diffuse color, 
-	/// specular color, and z-buffer. CopyToOutputPass simply allows 
-	/// the user to select, via the GUI, which of those outputs to show 
-	/// and then copies the appropriate buffer to the kOutputChannel to display.
-	pipeline->setPass(0, SimpleGBufferPass::create());   // This pass renders a g-buffer for the scene that's loaded
-	pipeline->setPass(1, CopyToOutputPass::create());    // This pass allows the user to select which g-buffer image to display
+	// Add passes into our pipeline
+	pipeline->setPass(0, ConstantColorPass::create());   // Displays a user-selectable color on the screen
 
 	// Define a set of config / window parameters for our program
     SampleConfig config;
-    config.windowDesc.title = "Tutorial 3:  Allows you to load a scene and generate a G-buffer (and then display various textures in the G-buffer)";
+    config.windowDesc.title = "Tutorial 1:  Opening an window and setting up a simple rendering pipeline";
     config.windowDesc.resizableWindow = true;
 
 	// Start our program!
