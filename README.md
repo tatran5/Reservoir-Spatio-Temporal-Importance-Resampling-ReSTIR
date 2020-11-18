@@ -1,1 +1,0 @@
-# Reservoir-Spatio-Temporal-Importance-Resampling-ReSTIR
