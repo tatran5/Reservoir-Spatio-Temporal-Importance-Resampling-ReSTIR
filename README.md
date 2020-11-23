@@ -56,9 +56,9 @@ We uses a data structure called reservoir for each pixel that holds the current 
 
 * <img src="https://latex.codecogs.com/svg.latex?weight=\frac{\hat{p}(x)}{p(x)}=\frac{\rho(x)*L_e(x)*G(x)}{p(x)}" title="w(x)" />
 
-    * <img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
-    * <img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
-    * <img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+    * <img src="https://latex.codecogs.com/svg.latex?\rho(x)" title="rho(x)" />
+    * <img src="https://latex.codecogs.com/svg.latex?\L_e(x)" title="le(x)" />
+    * <img src="https://latex.codecogs.com/svg.latex?G(x)" title="G(x)" />
 
 ## Results
 *Final images of our implementation and images at crucial steps of our implementation.*
