@@ -59,10 +59,12 @@ The first 5 pseudocode in the paper are the main parts that helped us implementi
 
 
 ## Results
-
+*Final images of our implementation and images at crucial steps of our implementation*
 
 ## Performance analysis
+*Analysis of visual aspects and runtime comparisons*
 
+## Potential improvements
 
 ## Progress
 *This serves as our "diary" of problems we ran into and our solutions to those*
