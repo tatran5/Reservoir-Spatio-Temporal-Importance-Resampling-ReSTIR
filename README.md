@@ -19,7 +19,7 @@
 This is a team project implementing ReSTIR based on the [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf) with the same title, published by NVIDIA in 2020. Briefly, the purpose of ReSTIR is to help rendering scenes with a lot of lights but make it much less noisy than the basic path tracing algorithm. This is a result of continuously finding and updating the most ideal light for a pixel based on its surrounding neighbor pixels and its light in previous frames.
 
 ## Requirements
-
+*Please let me know if you run into any problems building and running the code. I would be happy to assist, and it would be useful for me to know so I can update this section*
 * **Windows 10 RS5 or later**
     * If you run "winver.exe" you should have Version 1809 (OS Build 17763.)
     * This project does not run on Windows 10 RS4 or earlier.
@@ -33,12 +33,12 @@ This is a team project implementing ReSTIR based on the [research paper](https:/
     * If Visual Studio prompts to upgrade the SDK and version when first opening the solution, hit "cancel".
     * If Visual Studio complains about Falcor library, run ./Falcor/update_dependencies.bat, then go back to Visual Studio to build the solution.
     * If Visual Studio complains about some inaccessible pybind11, try installing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html)
-* ** Others**
+* **Others**
     * Developer Mode must be enabled
     * Permission to run PowerShell files that are not digitally signed
  
 ## ReSTIR explained 
-*Please let us know if you find any errors in our understanding of the paper*
+*Please let us know if you find any errors in our understandings of the paper*
 
 ### High level
 
@@ -80,6 +80,7 @@ Fortunately, in the end, our school IT helped us set things up at a lab that had
 We still could not build the project on the provided computers by our school. We narrowed down that a .bat file to update dependencies for Falcor library for some reasons could not run. After some debugging effort, we realized that the .bat file needs to run some PowerShell files, but the school computers do not allow us to run .ps1 files that are not digitally signed by the school itself. There went another exchange with our school IT. They ended up configuring on I configured the PowerShell Execution Policy on those machines to allow .ps1 files to run and added us to the Local Administrators Group so that we could make changes to the machines as needed. We did run into the problems where VS threw error for missing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html), and we were able to resolved by installing it.
 
 ## Credits and resources
+* [Jilin Liu](https://www.linkedin.com/in/jilin-liu97/), [Li Zheng](https://www.linkedin.com/in/li-zheng-1955ba169/) and [Keyi Yu](https://www.linkedin.com/in/keyi-linda-yu-8b1178137/) who were also implementing ReSTIR in DirectX as a team. They helped us with clarifying parts of the paper and providing feedback on our project.
 * A Gentle Introduction To DirectX Raytracing - [tutorials and base code](http://cwyman.org/code/dxrTutors/dxr_tutors.md.html)
 * NVIDIA Falcor [library](https://developer.nvidia.com/falcor)
 * ReSTIR [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf)
