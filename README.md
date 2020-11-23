@@ -5,37 +5,18 @@
 * Thy Tran: [LinkedIn](), [porfolio](), [email]()
 
 ## Outlines
-1. [Introduction](#introduction)
-2. [Requirements](#requirements)
-3. [ReSTIR explained](#restir-explained)
-4. [Results](results)
-5. [Performance analysis](#performance-analysis)
-6. [Progress](progress)
-7. [Credits and resources](#credits-and-resources)
-8. [Final words](#final-words)
+* [Introduction](#introduction)
+* [Results](results)
+* [Performance analysis](#performance-analysis)
+* [ReSTIR explained](#restir-explained)
+* [Progress](progress)
+* [Build and run](#build-and-run)
+* [Credits and resources](#credits-and-resources)
+* [Final words](#final-words)
 
 ## Introduction
 
 This is a team project implementing ReSTIR based on the [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf) with the same title, published by NVIDIA in 2020. Briefly, the purpose of ReSTIR is to help rendering scenes with a lot of lights but make it much less noisy than the basic path tracing algorithm. This is a result of continuously finding and updating the most ideal light for a pixel based on its surrounding neighbor pixels and its light in previous frames.
-
-## Requirements
-*Please let me know if you run into any problems building and running the code. I would be happy to assist, and it would be useful for me to know so I can update this section.*
-* **Windows 10 RS5 or later**
-    * If you run "winver.exe" you should have Version 1809 (OS Build 17763.)
-    * This project does not run on Windows 10 RS4 or earlier.
-* **Graphics card**
-    * Must support [DirectX Raytracing (DXR)](https://www.nvidia.com/en-us/geforce/news/geforce-gtx-dxr-ray-tracing-available-now/) (**not** fallback layer) due to Falcor library (which does not support fallback layer.)
-* **A driver that natively supports DirectX Raytracing**
-     * For NVIDIA, use 416.xx or later drivers (in theory any NVIDIA driver for RS5 should work)
-* **Visual Studio**
-    * Visual Studio 2019. If you have multiple Visual Studio versions, right click on the solution and choose to open the project in Visual Studio 2019.
-    * Windows 10 SDK 10.0.17763.0
-    * If Visual Studio prompts to upgrade the SDK and version when first opening the solution, hit "cancel".
-    * If Visual Studio complains about Falcor library, run ./Falcor/update_dependencies.bat, then go back to Visual Studio to build the solution.
-    * If Visual Studio complains about some inaccessible pybind11, try installing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html)
-* **Others**
-    * Developer Mode must be enabled
-    * Permission to run PowerShell files that are not digitally signed
 
 ## Results
 *Final images of our implementation and images at crucial steps of our implementation.*
@@ -62,9 +43,9 @@ We uses a data structure called reservoir for each pixel that holds the current 
 
 * <img src="https://latex.codecogs.com/svg.latex?weight=\frac{\hat{p}(x)}{p(x)}=\frac{\rho(x)*L_e(x)*G(x)}{p(x)}" title="w(x)" />
 
-    * <img src="https://latex.codecogs.com/svg.latex?\rho(x)" title="rho(x)" /> : the BSDF of the current point given the incident and outgoing light ray.
+    * <img src="https://latex.codecogs.com/svg.latex?\rho(x)" title="rho(x)" /> : the BSDF of the current point, which is the material color given the incident and outgoing light ray.
     * <img src="https://latex.codecogs.com/svg.latex?L_e(x)" title="le(x)" /> : light emmitance from a chosen point on the light to the current point.
-    * <img src="https://latex.codecogs.com/svg.latex?G(x)=\frac{(\vec{n}\cdot\vec{w})(\vec{n'}\cdot\vec{w'})}{\|x-x'\|^{2}}" title="G(x)" /> : the solid angle term, where <img src="https://latex.codecogs.com/svg.latex?\vec{n}" title="n" /> is the normal vector at the current point, <img src="https://latex.codecogs.com/svg.latex?\vec{w}" title="w" /> is the direction from the current point to a chosen point on the light, while <img src="https://latex.codecogs.com/svg.latex?\vec{n'}" title="n'" /> is the normal at the chosen point on the light, and <img src="https://latex.codecogs.com/svg.latex?\vec{w'}" title="w'" /> is the vector from the chosen point to the current point. $x$ and $x'$ respectively are the current point and the chosen point on the light.
+    * <img src="https://latex.codecogs.com/svg.latex?G(x)=\frac{(\vec{n}\cdot\vec{w})(\vec{n'}\cdot\vec{w'})}{\|x-x'\|^{2}}" title="G(x)" /> : the solid angle term, where <img src="https://latex.codecogs.com/svg.latex?\vec{n}" title="n" /> is the normal vector at the current point, <img src="https://latex.codecogs.com/svg.latex?\vec{w}" title="w" /> is the direction from the current point to a chosen point on the light, while <img src="https://latex.codecogs.com/svg.latex?\vec{n'}" title="n'" /> is the normal at the chosen point on the light, and <img src="https://latex.codecogs.com/svg.latex?\vec{w'}" title="w'" /> is the vector from the chosen point to the current point. $x$ and $x'$ respectively are the current point and the chosen point on the light. In the case that the light itself is a point light, the numerator is reduced to the dot product of the normal vector at the current point and the ray direction from the point to the light over the denomiator.
 
 ## Potential improvements
 
@@ -80,6 +61,25 @@ This whole process took place in 2 weeks. We tried to have other options availab
 
 Fortunately, in the end, our school IT helped us set things up at a lab that had computers with graphics cards that met our requirements. 
 
+## Build and run
+*Please let me know if you run into any problems building and running the code. I would be happy to assist, and it would be useful for me to know so I can update this section.*
+* **Windows 10 RS5 or later**
+    * If you run "winver.exe" you should have Version 1809 (OS Build 17763.)
+    * This project does not run on Windows 10 RS4 or earlier.
+* **Graphics card**
+    * Must support [DirectX Raytracing (DXR)](https://www.nvidia.com/en-us/geforce/news/geforce-gtx-dxr-ray-tracing-available-now/) (**not** fallback layer) due to Falcor library (which does not support fallback layer.)
+* **A driver that natively supports DirectX Raytracing**
+     * For NVIDIA, use 416.xx or later drivers (in theory any NVIDIA driver for RS5 should work)
+* **Visual Studio**
+    * Visual Studio 2019. If you have multiple Visual Studio versions, right click on the solution and choose to open the project in Visual Studio 2019.
+    * Windows 10 SDK 10.0.17763.0
+    * If Visual Studio prompts to upgrade the SDK and version when first opening the solution, hit "cancel".
+    * If Visual Studio complains about Falcor library, run ./Falcor/update_dependencies.bat, then go back to Visual Studio to build the solution.
+    * If Visual Studio complains about some inaccessible pybind11, try installing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html)
+* **Others**
+    * Developer Mode must be enabled
+    * Permission to run PowerShell files that are not digitally signed
+    
 #### Restrictions on remote computers
 We still could not build the project on the provided computers by our school. We narrowed down that a .bat file to update dependencies for Falcor library for some reasons could not run. After some debugging effort, we realized that the .bat file needs to run some PowerShell files, but the school computers do not allow us to run .ps1 files that are not digitally signed by the school itself. There went another exchange with our school IT. They ended up configuring on I configured the PowerShell Execution Policy on those machines to allow .ps1 files to run and added us to the Local Administrators Group so that we could make changes to the machines as needed. We did run into the problems where VS threw error for missing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html), and we were able to resolved by installing it.
 
