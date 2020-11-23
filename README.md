@@ -64,7 +64,7 @@ We uses a data structure called reservoir for each pixel that holds the current 
 
     * <img src="https://latex.codecogs.com/svg.latex?\rho(x)" title="rho(x)" /> : the BSDF of the current point given the incident and outgoing light ray.
     * <img src="https://latex.codecogs.com/svg.latex?L_e(x)" title="le(x)" /> : light emmitance from a chosen point on the light to the current point.
-    * <img src="https://latex.codecogs.com/svg.latex?G(x)=\frac{(\vec{n}\cdot\vec{w})(\vec{n'}\cdot\vec{w'})}{\|x-x'\|^{2}}" title="G(x)" /> : the solid angle term, where $\vec{n}$ is the normal vector at the current point, $\vec{w}$ is the direction from the current point to a chosen point on the light, while $\vec{n'}$ is the normal at the chosen point on the light, and $\vec{w'}$ is the vector from the chosen point to the current point. $x$ and $x'$ respectively are the current point and the chosen point on the light.
+    * <img src="https://latex.codecogs.com/svg.latex?G(x)=\frac{(\vec{n}\cdot\vec{w})(\vec{n'}\cdot\vec{w'})}{\|x-x'\|^{2}}" title="G(x)" /> : the solid angle term, where <img src="https://latex.codecogs.com/svg.latex?\vec{n}" title="n" /> is the normal vector at the current point, <img src="https://latex.codecogs.com/svg.latex?\vec{w}" title="w" /> is the direction from the current point to a chosen point on the light, while <img src="https://latex.codecogs.com/svg.latex?\vec{n'}" title="n'" /> is the normal at the chosen point on the light, and <img src="https://latex.codecogs.com/svg.latex?\vec{w'}" title="w'" /> is the vector from the chosen point to the current point. $x$ and $x'$ respectively are the current point and the chosen point on the light.
 
 ## Potential improvements
 
