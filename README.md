@@ -53,7 +53,7 @@ This uses a combination of Weighted Reservoir Sampling and Resampled Importance 
 ### Details
 
 We uses a data structure called reservoir for each pixel that holds the current light and sum of all weights seen for the light. Each light candidate has a weight corresponding to their chance of being chosen as the current sampled light per pixel.
-* <img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="light weight on a pixel" />$
+* <img src="https://latex.codecogs.com/svg.latex?\Large&space;weight_i=w_i=\frac{\hat(p)(x)}{p(x)}=\frac{\rho(x)*L_e(x)*G(x)}{p(x)}" title="light weight on a pixel" />$
     * $\rho(x)$: the BSDF at the current point in 3D space
     * $L_e(x)$: light emittance term from the current light to the current point
     * $G(x)$: combination of the lambert term and the solid-angle term.
