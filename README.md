@@ -9,9 +9,10 @@
 2. [Requirements](#requirements)
 3. [ReSTIR explained](#restir-explained)
 4. [Results](results)
-5. [Progress](progress)
-6. [Performance analysis](#performance-analysis)
+5. [Performance analysis](#performance-analysis)
+6. [Progress](progress)
 7. [Credits and resources](#credits-and-resources)
+8. [Final words](#final-words)
 
 ## Introduction
 
@@ -31,9 +32,10 @@ This is a team project implementing ReSTIR based on the [research paper](https:/
     * Windows 10 SDK 10.0.17763.0
     * If Visual Studio prompts to upgrade the SDK and version when first opening the solution, hit "cancel".
     * If Visual Studio complains about Falcor library, run ./Falcor/update_dependencies.bat, then go back to Visual Studio to build the solution.
+    * If Visual Studio complains about some unaccessible pybind11, try installing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html)
 * ** Others**
     * Developer Mode must be enabled
-    * Permission to run power shell files that are not digitally signed
+    * Permission to run PowerShell files that are not digitally signed
  
 ## ReSTIR explained 
 *Please let us know if you find any errors in our understanding of the paper*
@@ -47,18 +49,36 @@ The first 5 pseudocode in the paper are the main parts that helped us implementi
 
 #### Algorithm 5
 
+#### Algorithm 4
+
+#### Algorithm 3
+
+#### Algorithm 2
+
+#### Algorithm 1
+
+
 ## Results
 
+
+## Performance analysis
+
+
 ## Progress
+*This serves as our "diary" of problems we ran into and our solutions to those*
 
 ### Requirement hurdles
 
 #### Hardware
-Our team did not all Windows computer, and we ended up having to remotely connect to an available computer at our college. However, Developer Mode was not enabled on any of those computers, so there was some communication with the school IT, and they quickly helped us with setting up some computers at a lab with Developer Mode with DXR-fallback graphics cards. However, we couldn't get our base code to run on those computers, and after some digging, we found that Falcor library does not support DXR fallback, so another conversation with the school IT happened. This whole process took place in 2 weeks. We tried to have other options available to us because we were on time crunch and worried of facing more problems with school computers due to restricted access on any computer. Other options on the table includes Amazon Web Services and using someone's PC. However, the AWS Educate program, which is free for students, did not allow us to have access to a GPU with DXR, and the normal AWS account would cost quite a bit. We went ahead and set things up with a normal account anyway, and also borrowed someone's computer with the specifications but with limited time access as our plan Z. Fortunately, in the end, our school IT helped us set things up at a lab that has computers with graphics cards that met our requirements. 
+Our team did not all Windows computer, and we ended up having to remotely connect to an available computer at our college. However, Developer Mode was not enabled on any of those computers, so there was some communication with the school IT, and they quickly helped us with setting up some computers at a lab with Developer Mode with DXR-fallback graphics cards. We also had asked for admin access to those computers in case we would to make changes that requires admin acess just like switching to Developer Mode, but we understandably did not have the permission. We still couldn't get our base code to run on those computers despite Developer Mode turned on, and after some digging, we found that Falcor library does not support DXR fallback, so another conversation with the school IT happened. 
+
+This whole process took place in 2 weeks. We tried to have other options available to us because we were on time crunch and worried of facing more problems with school computers due to restricted access on any computer. Other options on the table includes Amazon Web Services and using someone's PC. However, the AWS Educate program, which is free for students, did not allow us to have access to a GPU with DXR, and the normal AWS account would cost quite a bit. We went ahead and set things up with a normal account anyway, and also borrowed someone's computer with the specifications but with limited time access as our plan Z. 
+
+Fortunately, in the end, our school IT helped us set things up at a lab that had computers with graphics cards that met our requirements. 
 
 #### Restrictions on remote computers
+We still could not build the project on the provided computers by our school. We narrowed down that a .bat file to update dependencies for Falcor library for some reasons could not run. After some debugging effort, we realized that the .bat file needs to run some PowerShell files, but the school computers do not allow us to run .ps1 files that are not digitally signed by the school itself. There went another exchange with our school IT. They ended up configuring on I configured the PowerShell Execution Policy on those machines to allow .ps1 files to run and added us to the Local Administrators Group so that we could make changes to the machines as needed.
 
-## Performance analysis
 
 ## Credits and resources
 * A Gentle Introduction To DirectX Raytracing - [tutorials and base code](http://cwyman.org/code/dxrTutors/dxr_tutors.md.html)
@@ -66,5 +86,6 @@ Our team did not all Windows computer, and we ended up having to remotely connec
 * ReSTIR [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf)
 * NVDIA GTC 2020 [presentation](https://www.nvidia.com/en-us/gtc/session-catalog/?search.language=1594320459782001LCjF&tab.catalogtabfields=1600209910618002Tlxt&search=restir#/session/1596757976864001iz1p) provides a clear high level concept and results of ReSTIR
 * Wojciech Jarosz, one of the authors, also has some [presentation](https://cs.dartmouth.edu/wjarosz/publications/bitterli20spatiotemporal.html) in SIGGRAPH 2020 that helps with understanding ReSTIR in a deeper level
+
 
 ## Final words
