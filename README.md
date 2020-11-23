@@ -54,7 +54,8 @@ This uses a combination of Weighted Reservoir Sampling and Resampled Importance 
 
 We uses a data structure called reservoir for each pixel that holds the current light and sum of all weights seen for the light. Each light candidate has a weight corresponding to their chance of being chosen as the current sampled light per pixel.
 
-* <img src="https://latex.codecogs.com/svg.latex?\Large&space;weight=\frac{\hat{p}(x)}{p(x)}=\frac{\rho(x)*L_e(x)*G(x)}{p(x)}" title="w(x)" />
+* <img src="https://latex.codecogs.com/svg.latex?weight=\frac{\hat{p}(x)}{p(x)}=\frac{\rho(x)*L_e(x)*G(x)}{p(x)}" title="w(x)" />
+
     * <img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
     * <img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
     * <img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
