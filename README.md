@@ -19,7 +19,7 @@
 This is a team project implementing ReSTIR based on the [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf) with the same title, published by NVIDIA in 2020. Briefly, the purpose of ReSTIR is to help rendering scenes with a lot of lights but make it much less noisy than the basic path tracing algorithm. This is a result of continuously finding and updating the most ideal light for a pixel based on its surrounding neighbor pixels and its light in previous frames.
 
 ## Requirements
-*Please let me know if you run into any problems building and running the code. I would be happy to assist, and it would be useful for me to know so I can update this section*
+*Please let me know if you run into any problems building and running the code. I would be happy to assist, and it would be useful for me to know so I can update this section.*
 * **Windows 10 RS5 or later**
     * If you run "winver.exe" you should have Version 1809 (OS Build 17763.)
     * This project does not run on Windows 10 RS4 or earlier.
@@ -38,28 +38,28 @@ This is a team project implementing ReSTIR based on the [research paper](https:/
     * Permission to run PowerShell files that are not digitally signed
  
 ## ReSTIR explained 
-*Please let us know if you find any errors in our understandings of the paper*
+*Please let us know if you find any errors in our understandings of the paper.*
 
-### High level
+### Overview
+For each pixel:
+1. Select 1 light from randomly 32 chosen lights
+2. Shoot a shadow ray from the light to the pixel. If it is obscured, discard the chosen light.
+3. Compare the light used in the last iteration to the light from step 2 and choose one.
+4. Compare the lights from random adjacent pixels to light from step 3 and choose one.
+5. Shoot a shadow ray to light from step 4 and shade the pixel.
+
+This uses a combination of Weighted Reservoir Sampling and Resampled Importance Sampling to select and compare lights. 
 
 ### Details
 
-### Pseudocode breakdown
-The first 5 pseudocode in the paper are the main parts that helped us implementing this paper. We will go through in details what each variable means in the pseudo code.
-
-#### Algorithm 5
-
-#### Algorithm 4
-
-#### Algorithm 3
-
-#### Algorithm 2
-
-#### Algorithm 1
-
+We uses a data structure called reservoir for each pixel that holds the current light and sum of all weights seen for the light. Each light candidate has a weight corresponding to their chance of being chosen as the current sampled light per pixel.
+    * weight = $\hat{p(x)} / p(x) = (\rho(x) * L_e(x) * G(x) / p(x)$
+        * $\rho(x)$: the BSDF at the current point in 3D space
+        * $L_e(x)$: light emittance term from the current light to the current point
+        * $G(x)$: combination of the lambert term and the solid-angle term.
 
 ## Results
-*Final images of our implementation and images at crucial steps of our implementation*
+*Final images of our implementation and images at crucial steps of our implementation.*
 
 ## Performance analysis
 *Analysis of visual aspects and runtime comparisons*
@@ -67,7 +67,7 @@ The first 5 pseudocode in the paper are the main parts that helped us implementi
 ## Potential improvements
 
 ## Progress
-*This serves as our "diary" of problems we ran into and our solutions to those*
+*This serves as our "diary" of problems we ran into and our solutions to those.*
 
 ### Requirement hurdles
 
