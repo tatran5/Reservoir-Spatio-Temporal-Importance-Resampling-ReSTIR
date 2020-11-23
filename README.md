@@ -1,4 +1,4 @@
-#Reservoir Spatio Temporal Importance Resampling (ReSTIR)
+# Reservoir Spatio Temporal Importance Resampling (ReSTIR)
 
 * Sydney Miller: [LinkedIn](), [porfolio](), [email]()
 * Sireesha Putcha: [LinkedIn](), [porfolio](), [email]()
