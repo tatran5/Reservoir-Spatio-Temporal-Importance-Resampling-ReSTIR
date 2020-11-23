@@ -5,12 +5,12 @@
 * Thy Tran: [LinkedIn](), [porfolio](), [email]()
 
 ## Outlines
-* [Introduction](introduction)
-* [Requirements](requirements)
-* [ReSTIR explained](restir-explained)
-* [Progress](progress)
-* [Performance analysis](performance-analysis)
-* [Credits](resources)
+1. [Introduction](#introduction)
+2. [Requirements](#requirements)
+3. [ReSTIR explained](#restir-explained)
+4. [Progress](progress)
+5. [Performance analysis](#performance-analysis)
+6. [Credits](#resources)
 
 ## Introduction
 
