@@ -11,41 +11,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\CommonPasses\LightProbeGBufferPass.cpp" />
     <ClCompile Include="..\CommonPasses\SimpleAccumulationPass.cpp" />
-    <ClCompile Include="..\CommonPasses\SimpleGBufferPass.cpp" />
-    <ClCompile Include="..\CommonPasses\ThinLensGBufferPass.cpp" />
     <ClCompile Include="..\SharedUtils\FullscreenLaunch.cpp" />
-    <ClCompile Include="..\SharedUtils\RasterLaunch.cpp" />
     <ClCompile Include="..\SharedUtils\RayLaunch.cpp" />
     <ClCompile Include="..\SharedUtils\RenderingPipeline.cpp" />
     <ClCompile Include="..\SharedUtils\RenderPass.cpp" />
     <ClCompile Include="..\SharedUtils\ResourceManager.cpp" />
     <ClCompile Include="..\SharedUtils\SceneLoaderWrapper.cpp" />
     <ClCompile Include="..\SharedUtils\SimpleVars.cpp" />
-    <ClCompile Include="Passes\LambertianPlusShadowPass.cpp" />
+    <ClCompile Include="Passes\SimpleDiffuseGIPass.cpp" />
     <ClCompile Include="ReSTIR.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\CommonPasses\LightProbeGBufferPass.h" />
     <ClInclude Include="..\CommonPasses\SimpleAccumulationPass.h" />
-    <ClInclude Include="..\CommonPasses\SimpleGBufferPass.h" />
-    <ClInclude Include="..\CommonPasses\ThinLensGBufferPass.h" />
     <ClInclude Include="..\SharedUtils\FullscreenLaunch.h" />
-    <ClInclude Include="..\SharedUtils\RasterLaunch.h" />
     <ClInclude Include="..\SharedUtils\RayLaunch.h" />
     <ClInclude Include="..\SharedUtils\RenderingPipeline.h" />
     <ClInclude Include="..\SharedUtils\RenderPass.h" />
     <ClInclude Include="..\SharedUtils\ResourceManager.h" />
     <ClInclude Include="..\SharedUtils\SceneLoaderWrapper.h" />
     <ClInclude Include="..\SharedUtils\SimpleVars.h" />
-    <ClInclude Include="Passes\LambertianPlusShadowPass.h" />
+    <ClInclude Include="Passes\SimpleDiffuseGIPass.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Tutorial09\lambertianPlusShadowsUtils.hlsli" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Tutorial09\lambertianPlusShadows.rt.hlsl">
+    <None Include="Data\Tutorial12\simpleDiffuseGI.rt.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Tutorial12\simpleDiffuseGIUtils.hlsli" />
+    <None Include="Data\Tutorial12\standardShadowRay.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Falcor\Framework\FalcorSharedObjects\FalcorSharedObjects.vcxproj">
@@ -56,7 +53,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{b102bcf4-cb32-41df-bcde-0b79bad9af59}</ProjectGuid>
+    <ProjectGuid>{fd14bfef-f9d2-4d82-ac1d-8eec95210906}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ReSTIR</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>

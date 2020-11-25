@@ -18,9 +18,8 @@
 
 #include "Falcor.h"
 #include "../SharedUtils/RenderingPipeline.h"
-#include "../CommonPasses/ThinLensGBufferPass.h"
-#include "../CommonPasses/SimpleGBufferPass.h"
-#include "Passes/LambertianPlusShadowPass.h"
+#include "../CommonPasses/LightProbeGBufferPass.h"
+#include "Passes/SimpleDiffuseGIPass.h"
 #include "../CommonPasses/SimpleAccumulationPass.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
@@ -29,13 +28,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	RenderingPipeline *pipeline = new RenderingPipeline();
 
 	// Add passes into our pipeline
-	pipeline->setPass(0, ThinLensGBufferPass::create());    
-	pipeline->setPass(1, LambertianPlusShadowPass::create());   // Use Lambertian shading, rather than ambient occlusion
+	pipeline->setPass(0, LightProbeGBufferPass::create());
+	pipeline->setPass(1, SimpleDiffuseGIPass::create());
 	pipeline->setPass(2, SimpleAccumulationPass::create(ResourceManager::kOutputChannel));  
 
 	// Define a set of config / window parameters for our program
     SampleConfig config;
-	config.windowDesc.title = "ReSTIR:  Use Lambertian shading plus one shadow ray per light from tutorial 9.";
+	config.windowDesc.title = "ReSTIR (Tutorial 12:  Add indirect rays for diffuse global illumination.)";
 	config.windowDesc.resizableWindow = true;
 
 	// Start our program!

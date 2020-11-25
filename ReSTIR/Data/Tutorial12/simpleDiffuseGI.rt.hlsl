@@ -40,12 +40,14 @@ cbuffer RayGenCB
 	bool  gDoIndirectGI;   // A boolean determining if we should shoot indirect GI rays
 	bool  gCosSampling;    // Use cosine sampling (true) or uniform sampling (false)
 	bool  gDirectShadow;   // Should we shoot shadow rays from our first hit point?
+	bool	gInitLight;			 // For ReSTIR to choose an arbitrary light for this pixel after choosing 32 random light candidates
 }
 
 // Input and out textures that need to be set by the C++ code (for the ray gen shader)
 Texture2D<float4> gPos;
 Texture2D<float4> gNorm;
 Texture2D<float4> gDiffuseMatl;
+RWTexture2D<float4> gReservoir;
 RWTexture2D<float4> gOutput;
 
 // The payload used for our indirect global illumination rays
@@ -138,15 +140,15 @@ void SimpleDiffuseGIRayGen()
 {
 	// Where is this ray on screen?
 	uint2 launchIndex = DispatchRaysIndex().xy;
-	uint2 launchDim   = DispatchRaysDimensions().xy;
+	uint2 launchDim = DispatchRaysDimensions().xy;
 
 	// Load g-buffer data
-	float4 worldPos     = gPos[launchIndex];
-	float4 worldNorm    = gNorm[launchIndex];
+	float4 worldPos = gPos[launchIndex];
+	float4 worldNorm = gNorm[launchIndex];
 	float4 difMatlColor = gDiffuseMatl[launchIndex];
 
 	// If we don't hit any geometry, our difuse material contains our background color.
-	float3 shadeColor = worldPos.w != 0.0f ? float3(0,0,0) : difMatlColor.rgb;
+	float3 shadeColor = worldPos.w != 0.0f ? float3(0, 0, 0) : difMatlColor.rgb;
 
 	// Initialize our random number generator
 	uint randSeed = initRand(launchIndex.x + launchIndex.y * launchDim.x, gFrameCount, 16);
@@ -155,16 +157,50 @@ void SimpleDiffuseGIRayGen()
 	if (worldPos.w != 0.0f)
 	{
 		// Pick a random light from our scene to sample for direct lighting
-		int lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
-
+		
 		// We need to query our scene to find info about the current light
+		int lightToSample;
 		float distToLight;
 		float3 lightIntensity;
 		float3 toLight;
+		float LdotN;
+	
+		float4 reservoir = gReservoir[launchIndex];
+		float weight;
+
+		if (gInitLight) {
+			// ReSTIR: Pick 32 light candidates then choose 1 from them
+			int candidateLightsCount = 32;
+			if (gLightsCount < 32) candidateLightsCount = gLightsCount;
+			
+			for (int i = 0; i < candidateLightsCount; i++) {
+				lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
+				getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
+				LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+
+				// weight of the light is f * Le * G / pdf
+				weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
+				
+				// Algorithm 2 of ReSTIR paper
+				reservoir.x = reservoir.x + weight;
+				reservoir.z = reservoir.z + 1.0f;
+				if (nextRand(randSeed) < weight / reservoir.x) {
+					reservoir.y = lightToSample;
+				}
+			}
+
+			gReservoir[launchIndex] = reservoir;
+			lightToSample = reservoir.y;
+		}
+		else {
+			// Original base code based on tutorial 12
+			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
+		}
+		
 		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
 
 		// Compute our lambertion term (L dot N)
-		float LdotN = saturate(dot(worldNorm.xyz, toLight));
+		LdotN = saturate(dot(worldNorm.xyz, toLight));
 
 		// Shoot our ray for our direct lighting
 		float shadowMult = float(gLightsCount);
@@ -201,7 +237,38 @@ void SimpleDiffuseGIRayGen()
 			shadeColor += (NdotL * bounceColor * difMatlColor.rgb / M_PI) / sampleProb;
 		}
 	}
-	
+
 	// Save out our AO color
 	gOutput[launchIndex] = float4(shadeColor, 1.0f);
 }
+
+
+//// ReSTIR: randomly picking light candidates per pixel then choose one among them
+//if (gInitLight) {
+//	// Generate maximum 32 sampled lights per pixel 
+//	int sampleLightCount = 32;
+//	if (gLightsCount < 32) sampleLightCount = gLightsCount;
+//	for (int i = 0; i < sampleLightCount; i++) {
+//		// A randomly chosen light candidate
+//		lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
+//		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
+//		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+//
+//		// weight of the light is f * Le * G / pdf
+//		weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
+//
+//		reservoir = gReservoir[launchIndex];
+//		updateReservoir.x = reservoir.x + weight;
+//		updateReservoir.z = reservoir.z + 1;
+//		if (nextRand(randSeed) < weight / updateReservoir.x) {
+//			updateReservoir.y = lightToSample;
+//		}
+//		gReservoir[launchIndex] = updateReservoir;
+//	}
+//	lightToSample = gReservoir[launchIndex].y; // the chosen initial light among (maximum) 32 candidates
+//}
+//else {
+//	// Original base code
+//	// Pick a random light from our scene to shoot a shadow ray towards	
+//	lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
+//}
