@@ -65,7 +65,6 @@
     <ClCompile Include="..\CommonPasses\LightProbeGBufferPass.cpp">
       <Filter>CommonPasses</Filter>
     </ClCompile>
-    <ClCompile Include="Tutor12-DiffuseGlobalIllumination.cpp" />
     <ClCompile Include="Passes\SimpleDiffuseGIPass.cpp">
       <Filter>Passes</Filter>
     </ClCompile>
@@ -78,6 +77,7 @@
     <ClCompile Include="..\SharedUtils\RenderPass.cpp">
       <Filter>SharedUtils</Filter>
     </ClCompile>
+    <ClCompile Include="ReSTIR.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Tutorial12\standardShadowRay.hlsli">

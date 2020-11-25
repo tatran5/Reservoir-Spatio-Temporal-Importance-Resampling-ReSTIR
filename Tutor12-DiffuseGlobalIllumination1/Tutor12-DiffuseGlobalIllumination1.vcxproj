@@ -21,7 +21,7 @@
     <ClCompile Include="..\SharedUtils\SceneLoaderWrapper.cpp" />
     <ClCompile Include="..\SharedUtils\SimpleVars.cpp" />
     <ClCompile Include="Passes\SimpleDiffuseGIPass.cpp" />
-    <ClCompile Include="ReSTIR.cpp" />
+    <ClCompile Include="Tutor12-DiffuseGlobalIllumination.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CommonPasses\LightProbeGBufferPass.h" />
@@ -53,11 +53,11 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6CE0B2E6-0EB4-4251-9DB4-BE2D6B7F3082}</ProjectGuid>
+    <ProjectGuid>{d5a7df67-3d74-46c1-a46e-efa37d1ca4c2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DXRT</RootNamespace>
+    <RootNamespace>Tutor12_DiffuseGlobalIllumination1</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
-    <ProjectName>ReSTIR</ProjectName>
+    <ProjectName>Tutor12-DiffuseGlobalIllumination</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

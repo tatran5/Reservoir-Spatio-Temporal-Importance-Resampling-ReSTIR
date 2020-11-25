@@ -55,11 +55,7 @@ protected:
 	bool                                    mDoIndirectGI = true;
 	bool                                    mDoCosSampling = true;
 	bool                                    mDoDirectShadows = true;
-	
-	// For ReSTIR
-	bool																		mInitLightPerPixel = true;
-
+    
 	// Various internal parameters
 	uint32_t                                mFrameCount = 0x1337u;  ///< A frame counter to vary random numbers over time
-	
 };

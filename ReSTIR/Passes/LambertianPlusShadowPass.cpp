@@ -34,7 +34,7 @@ bool LambertianPlusShadowPass::initialize(RenderContext* pRenderContext, Resourc
 {
 	// Keep a copy of our resource manager; request needed buffer resources
 	mpResManager = pResManager;
-	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse" });
+	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir" });
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 
 	// Set the default scene to load
@@ -72,6 +72,7 @@ void LambertianPlusShadowPass::execute(RenderContext* pRenderContext)
 	rayGenVars["gPos"]         = mpResManager->getTexture("WorldPosition");     
 	rayGenVars["gNorm"]        = mpResManager->getTexture("WorldNormal");
 	rayGenVars["gDiffuseMatl"] = mpResManager->getTexture("MaterialDiffuse");
+	rayGenVars["gReservoir"] = mpResManager->getTexture("Reservoir");
 	rayGenVars["gOutput"]      = pDstTex;
 
 	// Shoot our rays and shade our primary hit points

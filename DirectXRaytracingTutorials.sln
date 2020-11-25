@@ -25,7 +25,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutor10-LightProbeEnvironme
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutor11-OneShadowRayPerPixel", "11-OneShadowRayPerPixel\11-OneShadowRayPerPixel.vcxproj", "{D04DA011-0F3F-459E-8B18-41180F9ACCAD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutor12-DiffuseGlobalIllumination", "12-DiffuseGlobalIllumination\12-DiffuseGlobalIllumination.vcxproj", "{6CE0B2E6-0EB4-4251-9DB4-BE2D6B7F3082}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReSTIR", "12-DiffuseGlobalIllumination\12-DiffuseGlobalIllumination.vcxproj", "{6CE0B2E6-0EB4-4251-9DB4-BE2D6B7F3082}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutor13-SimpleToneMapping", "13-SimpleToneMapping\13-SimpleToneMapping.vcxproj", "{1B0E95BF-E2BA-4A75-B167-018C3C6DE512}"
 EndProject
@@ -35,7 +35,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Falcor", "Falcor\Framework\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FalcorSharedObjects", "Falcor\Framework\FalcorSharedObjects\FalcorSharedObjects.vcxproj", "{2C535635-E4C5-4098-A928-574F0E7CD5F9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReSTIR", "ReSTIR\ReSTIR.vcxproj", "{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutor12-DiffuseGlobalIllumination", "Tutor12-DiffuseGlobalIllumination1\Tutor12-DiffuseGlobalIllumination1.vcxproj", "{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -325,20 +325,20 @@ Global
 		{2C535635-E4C5-4098-A928-574F0E7CD5F9}.ReleaseD3D12|x64.ActiveCfg = ReleaseD3D12|x64
 		{2C535635-E4C5-4098-A928-574F0E7CD5F9}.ReleaseD3D12|x64.Build.0 = ReleaseD3D12|x64
 		{2C535635-E4C5-4098-A928-574F0E7CD5F9}.ReleaseD3D12|x86.ActiveCfg = ReleaseD3D12|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.Debug|x64.ActiveCfg = Debug|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.Debug|x64.Build.0 = Debug|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.Debug|x86.ActiveCfg = Debug|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.DebugD3D12|x64.ActiveCfg = Debug|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.DebugD3D12|x64.Build.0 = Debug|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.DebugD3D12|x86.ActiveCfg = Release|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.DebugD3D12|x86.Build.0 = Release|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.Release|x64.ActiveCfg = Release|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.Release|x64.Build.0 = Release|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.Release|x86.ActiveCfg = Release|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.ReleaseD3D12|x64.ActiveCfg = Release|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.ReleaseD3D12|x64.Build.0 = Release|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.ReleaseD3D12|x86.ActiveCfg = Release|x64
-		{B102BCF4-CB32-41DF-BCDE-0B79BAD9AF59}.ReleaseD3D12|x86.Build.0 = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.Debug|x64.ActiveCfg = Debug|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.Debug|x64.Build.0 = Debug|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.Debug|x86.ActiveCfg = Debug|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.DebugD3D12|x64.ActiveCfg = Debug|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.DebugD3D12|x64.Build.0 = Debug|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.DebugD3D12|x86.ActiveCfg = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.DebugD3D12|x86.Build.0 = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.Release|x64.ActiveCfg = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.Release|x64.Build.0 = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.Release|x86.ActiveCfg = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.ReleaseD3D12|x64.ActiveCfg = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.ReleaseD3D12|x64.Build.0 = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.ReleaseD3D12|x86.ActiveCfg = Release|x64
+		{D5A7DF67-3D74-46C1-A46E-EFA37D1CA4C2}.ReleaseD3D12|x86.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -45,6 +45,7 @@ cbuffer RayGenCB
 Texture2D<float4>   gPos;           // G-buffer world-space position
 Texture2D<float4>   gNorm;          // G-buffer world-space normal
 Texture2D<float4>   gDiffuseMatl;   // G-buffer diffuse material (RGB) and opacity (A)
+Texture2D<float4>		gReservoir;			// G-buffer for pixel reservoir - storing one sampled light in the first float and the sum of the weights in the second float
 RWTexture2D<float4> gOutput;        // Output to store shaded result
 
 // Helper function to shoot shadow rays.  In: ray origin, dir, & min/max dist;  Out: 1=lit, 0=shadowed
@@ -68,6 +69,8 @@ float shadowRayVisibility( float3 origin, float3 direction, float minT, float ma
 	// Return our ray payload (which is 1 for visible, 0 for occluded)
 	return payload.visFactor;
 }
+
+
 
 // How do we shade our g-buffer and generate shadow rays?
 [shader("raygeneration")]
