@@ -131,22 +131,7 @@ Finally within the function ```void SimpleDiffuseGIRayGen()```, we add the step 
 ```
 void SimpleDiffuseGIRayGen()
 {
-	// Where is this ray on screen?
-	uint2 launchIndex = DispatchRaysIndex().xy;
-	uint2 launchDim = DispatchRaysDimensions().xy;
-
-	// Load g-buffer data
-	float4 worldPos = gPos[launchIndex];
-	float4 worldNorm = gNorm[launchIndex];
-	float4 difMatlColor = gDiffuseMatl[launchIndex];
-
-	// If we don't hit any geometry, our difuse material contains our background color.
-	float3 shadeColor = worldPos.w != 0.0f ? float3(0, 0, 0) : difMatlColor.rgb;
-
-	// Initialize our random number generator
-	uint randSeed = initRand(launchIndex.x + launchIndex.y * launchDim.x, gFrameCount, 16);
-
-	// Our camera sees the background if worldPos.w is 0, only do diffuse shading & GI elsewhere
+	...
 	if (worldPos.w != 0.0f)
 	{
 		// Pick a random light from our scene to sample for direct lighting
