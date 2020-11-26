@@ -71,10 +71,9 @@ We still could not build the project on the provided computers by our school. We
 The errors can be something like "missing ';' before..." even though it is not true. The project must be run in DebugD3D12 or ReleaseD3D12 mode, **not** the usual Debug and Release mode due to DirectX 12.
 
 ### Initializing light candidates
-The initialization would be done in the shader fie ```simpleDiffuseGI.rt.hlsl```. We only initialize the light once in the beginning when the scene is being loaded. Hence, we add this field in ```SimpleDiffuseGiPass.h``` so that we can toggle on/off and tell the shader to stop initilizing lights per pixel
-```bool	mInitLightPerPixel = true;```
+The initialization would be done in the shader fie ```simpleDiffuseGI.rt.hlsl```. We only initialize the light once in the beginning when the scene is being loaded. Hence, we add this field ```bool	mInitLightPerPixel = true;``` in ```SimpleDiffuseGiPass.h``` so that we can toggle on/off and tell the shader to stop initilizing lights per pixel
 
-To store the data for reservoir per pixel, we need to create a G-buffer. Hence, in ```SimpleDiffuseGIPass::initilize```, we request DirectX to allocate resources for the G-buffer as below:
+Additionally, to store the data for reservoir per pixel, we need to create a G-buffer. Hence, in ```SimpleDiffuseGIPass::initilize```, we request DirectX to allocate resources for the G-buffer as below:
 
 ```
 bool SimpleDiffuseGIPass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
@@ -86,7 +85,7 @@ bool SimpleDiffuseGIPass::initialize(RenderContext* pRenderContext, ResourceMana
 }
 ```
 
-We also need to pass the ```mInitLightPerPixel``` variable down into the shader and update it so that we stop initilizing lights after the first time, and also pass the buffer into the shader as well. This is done in ```SimpleDiffuseGIPass::execute```
+We also need to pass the ```mInitLightPerPixel``` variable and the ```Reservoir``` G-buffer down into the shader. We also need to update ```mInitLightPerPixel``` variable so that we stop initilizing lights after the first time. This is done in ```SimpleDiffuseGIPass::execute```
 ```
 void SimpleDiffuseGIPass::execute(RenderContext* pRenderContext)
 {
