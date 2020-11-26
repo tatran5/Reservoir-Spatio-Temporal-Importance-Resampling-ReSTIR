@@ -6,7 +6,7 @@
 
 ## Outlines
 * [Introduction](#introduction)
-* [Results](results)
+* [Results](#results)
 * [Performance analysis](#performance-analysis)
 * [ReSTIR explained](#restir-explained)
 * [Progress](#progress)
