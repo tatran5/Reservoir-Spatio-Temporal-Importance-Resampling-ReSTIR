@@ -181,6 +181,8 @@ void SimpleDiffuseGIRayGen()
 		LdotN = saturate(dot(worldNorm.xyz, toLight));
 
 		...
+	}
+}
 ```
 
 
