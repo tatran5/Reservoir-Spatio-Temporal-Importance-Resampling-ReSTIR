@@ -10,6 +10,9 @@
 * [Performance analysis](#performance-analysis)
 * [ReSTIR explained](#restir-explained)
 * [Progress](progress)
+    * [Requirement hurdles](#requirement-hurdles)
+    * [Nonsense errors with debug or release mode](nonsense-errors-with-debug-or-release-mode)
+    * [Initializing light candidates](initializing-light-candidates)
 * [Build and run](#build-and-run)
 * [Credits and resources](#credits-and-resources)
 * [Final words](#final-words)
@@ -64,10 +67,10 @@ Fortunately, in the end, our school IT helped us set things up at a lab that had
 #### Restrictions on remote computers
 We still could not build the project on the provided computers by our school. We narrowed down that a .bat file to update dependencies for Falcor library for some reasons could not run. After some debugging effort, we realized that the .bat file needs to run some PowerShell files, but the school computers do not allow us to run .ps1 files that are not digitally signed by the school itself. There went another exchange with our school IT. They ended up configuring on I configured the PowerShell Execution Policy on those machines to allow .ps1 files to run and added us to the Local Administrators Group so that we could make changes to the machines as needed. We did run into the problems where VS threw error for missing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html), and we were able to resolved by installing it.
 
-#### Many nonsense error (such as missing ';' even though it is not true)
-The project must be run in DebugD3D12 or ReleaseD3D12 mode, **not** the usual Debug and Release mode due to DirectX 12.
+### Nonsense errors with debug or release mode
+The errors can be something like "missing ';' before..." even though it is not true. The project must be run in DebugD3D12 or ReleaseD3D12 mode, **not** the usual Debug and Release mode due to DirectX 12.
 
-#### Initializing light candidates
+### Initializing light candidates
 The initialization would be done in the shader fie ```simpleDiffuseGI.rt.hlsl```. We only initialize the light once in the beginning when the scene is being loaded. Hence, we add this field in ```SimpleDiffuseGiPass.h``` so that we can toggle on/off and tell the shader to stop initilizing lights per pixel
 ```bool	mInitLightPerPixel = true;```
 
