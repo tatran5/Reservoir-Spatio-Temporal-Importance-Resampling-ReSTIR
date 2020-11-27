@@ -33,7 +33,7 @@
     <ClInclude Include="..\CommonPasses\LightProbeGBufferPass.h">
       <Filter>CommonPasses</Filter>
     </ClInclude>
-    <ClInclude Include="Passes\SimpleDiffuseGIPass.h">
+    <ClInclude Include="Passes\DiffuseOneShadowRayPass.h">
       <Filter>Passes</Filter>
     </ClInclude>
     <ClInclude Include="..\SharedUtils\FullscreenLaunch.h">
@@ -65,7 +65,7 @@
     <ClCompile Include="..\CommonPasses\LightProbeGBufferPass.cpp">
       <Filter>CommonPasses</Filter>
     </ClCompile>
-    <ClCompile Include="Passes\SimpleDiffuseGIPass.cpp">
+    <ClCompile Include="Passes\DiffuseOneShadowRayPass.cpp">
       <Filter>Passes</Filter>
     </ClCompile>
     <ClCompile Include="..\SharedUtils\FullscreenLaunch.cpp">
@@ -80,13 +80,13 @@
     <ClCompile Include="ReSTIR.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Tutorial12\standardShadowRay.hlsli">
+    <None Include="Data\Tutorial11\diffusePlus1ShadowUtils.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\Tutorial12\simpleDiffuseGIUtils.hlsli">
+    <None Include="Data\Tutorial11\standardShadowRay.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\Tutorial12\simpleDiffuseGI.rt.hlsl">
+    <None Include="Data\Tutorial11\diffusePlus1Shadow.rt.hlsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

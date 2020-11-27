@@ -16,50 +16,48 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************************************************/
 
-// This render pass starts to add global illumination (i.e., accumulating *indirect* lighting), which
-//     is very difficult to do with traditional rasterization.  In addition to our shadow ray, we also
-//     shoot one randomly selected interreflection ray (or 'color ray').
+// This render pass is similar to the "LambertianPlusShadowPass" in Tutorial #9, except in this
+//      pass, we *randomly* select just one light to trace a shadow ray towards.  This is especially
+//      helpful in scenes with a large number of lights.  It also provides a very simple example
+//      of Monte Carlo sampling for shadows.  This adds noise, but it is reduced quickly when
+//      applying our temporal accumulation pass from Tutorial #6.  Additionally, the noise from
+//      stochastic sampling of direct illumination is much less than the noise we'll introduce
+//      when we start stochastically sampling indirect light (in Tutorial #12), so adding a little
+//      noise with random shadow rays is not such a crazy idea.
+
 
 #pragma once
 #include "../SharedUtils/RenderPass.h"
 #include "../SharedUtils/RayLaunch.h"
 
-class SimpleDiffuseGIPass : public ::RenderPass, inherit_shared_from_this<::RenderPass, SimpleDiffuseGIPass>
+class DiffuseOneShadowRayPass : public ::RenderPass, inherit_shared_from_this<::RenderPass, DiffuseOneShadowRayPass>
 {
 public:
-    using SharedPtr = std::shared_ptr<SimpleDiffuseGIPass>;
-    using SharedConstPtr = std::shared_ptr<const SimpleDiffuseGIPass>;
+	using SharedPtr = std::shared_ptr<DiffuseOneShadowRayPass>;
+	using SharedConstPtr = std::shared_ptr<const DiffuseOneShadowRayPass>;
 
-    static SharedPtr create() { return SharedPtr(new SimpleDiffuseGIPass()); }
-    virtual ~SimpleDiffuseGIPass() = default;
+	static SharedPtr create() { return SharedPtr(new DiffuseOneShadowRayPass()); }
+	virtual ~DiffuseOneShadowRayPass() = default;
 
 protected:
-	SimpleDiffuseGIPass() : ::RenderPass("Simple Diffuse GI Ray", "Simple Diffuse GI Options") {}
+	DiffuseOneShadowRayPass() : ::RenderPass("Diffuse + 1 Rand Shadow Ray", "Diffuse + 1 Random Shadow  Options") {}
 
-    // Implementation of RenderPass interface
-    bool initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager) override;
-    void initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene) override;
-    void execute(RenderContext* pRenderContext) override;
-	void renderGui(Gui* pGui) override;
+	// Implementation of RenderPass interface
+	bool initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager) override;
+	void initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene) override;
+	void execute(RenderContext* pRenderContext) override;
 
 	// Override some functions that provide information to the RenderPipeline class
 	bool requiresScene() override { return true; }
 	bool usesRayTracing() override { return true; }
-	bool usesEnvironmentMap() override { return true; }
 
-    // Rendering state
+	// Rendering state
 	RayLaunch::SharedPtr                    mpRays;                 ///< Our wrapper around a DX Raytracing pass
-    RtScene::SharedPtr                      mpScene;                ///< Our scene file (passed in from app)  
+	RtScene::SharedPtr                      mpScene;                ///< Our scene file (passed in from app)  
 
-	// Recursive ray tracing can be slow.  Add a toggle to disable, to allow you to manipulate the scene
-	bool                                    mDoIndirectGI = true;
-	bool                                    mDoCosSampling = true;
-	bool                                    mDoDirectShadows = true;
-	
-	// For ReSTIR
-	bool																		mInitLightPerPixel = true;
+	// For ReSTIR - only true during the first frame to choose a light candidate per pixel and will be toggled off after that
+	bool																		mInitLightPerPixel = true; 
 
 	// Various internal parameters
 	uint32_t                                mFrameCount = 0x1337u;  ///< A frame counter to vary random numbers over time
-	
 };

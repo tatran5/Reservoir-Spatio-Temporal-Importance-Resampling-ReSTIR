@@ -20,7 +20,7 @@
     <ClCompile Include="..\SharedUtils\ResourceManager.cpp" />
     <ClCompile Include="..\SharedUtils\SceneLoaderWrapper.cpp" />
     <ClCompile Include="..\SharedUtils\SimpleVars.cpp" />
-    <ClCompile Include="Passes\SimpleDiffuseGIPass.cpp" />
+    <ClCompile Include="Passes\DiffuseOneShadowRayPass.cpp" />
     <ClCompile Include="ReSTIR.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -33,16 +33,16 @@
     <ClInclude Include="..\SharedUtils\ResourceManager.h" />
     <ClInclude Include="..\SharedUtils\SceneLoaderWrapper.h" />
     <ClInclude Include="..\SharedUtils\SimpleVars.h" />
-    <ClInclude Include="Passes\SimpleDiffuseGIPass.h" />
+    <ClInclude Include="Passes\DiffuseOneShadowRayPass.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Tutorial12\simpleDiffuseGI.rt.hlsl">
+    <None Include="Data\Tutorial11\diffusePlus1ShadowUtils.hlsli" />
+    <None Include="Data\Tutorial11\standardShadowRay.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Tutorial11\diffusePlus1Shadow.rt.hlsl">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Tutorial12\simpleDiffuseGIUtils.hlsli" />
-    <None Include="Data\Tutorial12\standardShadowRay.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Falcor\Framework\FalcorSharedObjects\FalcorSharedObjects.vcxproj">
@@ -53,7 +53,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{fd14bfef-f9d2-4d82-ac1d-8eec95210906}</ProjectGuid>
+    <ProjectGuid>{90b71832-31aa-4b87-8b60-53d7ef4cc7f8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ReSTIR</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
