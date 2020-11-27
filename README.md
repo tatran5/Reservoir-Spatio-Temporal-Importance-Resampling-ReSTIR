@@ -71,56 +71,58 @@ We still could not build the project on the provided computers by our school. We
 The errors can be something like "missing ';' before..." even though it is not true. The project must be run in DebugD3D12 or ReleaseD3D12 mode, **not** the usual Debug and Release mode due to DirectX 12.
 
 ### Initializing light candidates
-The initialization would be done in the shader fie ```simpleDiffuseGI.rt.hlsl```. We only initialize the light once in the beginning when the scene is being loaded. Hence, we add this field ```bool	mInitLightPerPixel = true;``` in ```SimpleDiffuseGiPass.h``` so that we can toggle on/off and tell the shader to stop initilizing lights per pixel
+The files that were changed include ```DiffuseOneShadowRayPass.h```, ```DiffuseOneShadowRayPass.cpp``` and ```diffusePlus1Shadow.rt.hlsl```
 
-Additionally, to store the data for reservoir per pixel, we need to create a G-buffer. Hence, in ```SimpleDiffuseGIPass::initilize```, we request DirectX to allocate resources for the G-buffer as below:
+#### ```DiffuseOneShadowRayPass.h```
+We only initialize the light perpixelonce in the beginning when the scene is being loaded. Hence, we add this field in the header so that we can toggle on/off and tell the shader to stop initilizing lights per pixel.
 
 ```
-bool SimpleDiffuseGIPass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
+	// For ReSTIR - only true during the first frame to choose a light candidate per pixel and will be toggled off after that
+	bool mInitLightPerPixel = true; 
+```
+
+#### ```DiffuseOneShadowRayPass.cpp```
+
+To store the data for reservoir per pixel, we need to create a G-buffer. Hence, in ```DiffuseOneShadowRayPass::initilize```, we request DirectX to allocate resources for the G-buffer as below:
+
+```
+bool DiffuseOneShadowRayPass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
 {
-	// Stash a copy of our resource manager so we can get rendering resources
-	mpResManager = pResManager;
+	...
 	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir"});
 	...
 }
 ```
 
-We also need to pass the ```mInitLightPerPixel``` variable and the ```Reservoir``` G-buffer down into the shader. We also need to update ```mInitLightPerPixel``` variable so that we stop initilizing lights after the first time. This is done in ```SimpleDiffuseGIPass::execute```
+We also need to pass the ```mInitLightPerPixel``` variable and the ```Reservoir``` G-buffer down into the shader. We also need to update ```mInitLightPerPixel``` variable so that we stop initilizing lights after the first time. This is done in ```DiffuseOneShadowRayPass::execute```
 ```
-void SimpleDiffuseGIPass::execute(RenderContext* pRenderContext)
+void DiffuseOneShadowRayPass::execute(RenderContext* pRenderContext)
 {
 	...
-	rayGenVars["RayGenCB"]["gDirectShadow"] 	= mDoDirectShadows;
-	**rayGenVars["RayGenCB"]["gInitLight"]		= mInitLightPerPixel;**
-	
-	// Pass our G-buffer textures down to the HLSL so we can shade
+	// For ReSTIR - update the toggle in the shader
+	rayGenVars["RayGenCB"]["gInitLight"]		= mInitLightPerPixel;
 	...
-	rayGenVars["gReservoir"]	 = mpResManager->getTexture("Reservoir");
-	
+	// For ReSTIR - update the buffer storing reservoir (weight sum, chosen light index, number of candidates seen) 
+	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
 	...
 	mInitLightPerPixel = false;
 }
 ```
 
-Now to the shader part in ```simpleDiffuseGI.rt.hlsl```. We need to update the buffers to include the variable ```gInitLight``` and ```gReservoir```. 
+#### ```diffusePlus1Shadow.rt.hlsl```
+We need to update the buffers to include the variable ```gInitLight``` and ```gReservoir```. 
 
 ```
 cbuffer RayGenCB
 {
-	float gMinT;           // Min distance to start a ray to avoid self-occlusion
-	uint  gFrameCount;     // An integer changing every frame to update the random number
-	bool  gDoIndirectGI;   // A boolean determining if we should shoot indirect GI rays
-	bool  gCosSampling;    // Use cosine sampling (true) or uniform sampling (false)
-	bool  gDirectShadow;   // Should we shoot shadow rays from our first hit point?
-	bool  gInitLight;			 // For ReSTIR to choose an arbitrary light for this pixel after choosing 32 random light candidates
+	...
+	bool  gInitLight; // For ReSTIR - to choose an arbitrary light for this pixel after choosing 32 random light candidates
 }
 
 // Input and out textures that need to be set by the C++ code (for the ray gen shader)
-Texture2D<float4> gPos;
-Texture2D<float4> gNorm;
-Texture2D<float4> gDiffuseMatl;
+...
 RWTexture2D<float4> gReservoir;
-RWTexture2D<float4> gOutput;
+...
 ```
 
 Note that ```gReservoir``` is a texture of float4 where the first float (.x) is the weight sum, the second float (.y) is the chosen light for the pixel, while the third float (.z) is the number of samples seen for this current light, and the last float (.w?) is extra. 
@@ -128,7 +130,7 @@ Note that ```gReservoir``` is a texture of float4 where the first float (.x) is 
 Finally within the function ```void SimpleDiffuseGIRayGen()```, we add the step where the pixel picks random 32 lights, then choose the best one among of of them as below
 
 ```
-void SimpleDiffuseGIRayGen()
+void LambertShadowsRayGen()
 {
 	...
 	if (worldPos.w != 0.0f)
@@ -170,20 +172,13 @@ void SimpleDiffuseGIRayGen()
 			lightToSample = reservoir.y;
 		}
 		else {
-			// Original base code based on tutorial 12
+			// Original base code based on tutorial 11
 			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
 		}
-		
-		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
-
-		// Compute our lambertion term (L dot N)
-		LdotN = saturate(dot(worldNorm.xyz, toLight));
-
 		...
 	}
 }
 ```
-
 
 ## Build and run
 *Please let me know if you run into any problems building and running the code. I would be happy to assist, and it would be useful for me to know so I can update this section.*
