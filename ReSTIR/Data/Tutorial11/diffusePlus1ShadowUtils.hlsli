@@ -16,6 +16,17 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************************************************/
 
+float4 updateReservoir(float4 reservior, int sample, double weight) {
+	// Algorithm 2 of ReSTIR paper
+	reservoir.x = reservoir.x + weight;
+	reservoir.z = reservoir.z + 1.0f;
+	if (nextRand(randSeed) < weight / reservoir.x) {
+		reservoir.y = lightToSample;
+	}
+
+	return reservior;
+}
+
 // A helper to extract important light data from internal Falcor data structures.  What's going on isn't particularly
 //     important -- any framework you use will expose internal scene data in some way.  Use your framework's utilities.
 void getLightData(in int index, in float3 hitPos, out float3 toLight, out float3 lightIntensity, out float distToLight)
