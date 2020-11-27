@@ -6,10 +6,13 @@
 
 ## Outlines
 * [Introduction](#introduction)
-* [Results](results)
+* [Results](#results)
 * [Performance analysis](#performance-analysis)
 * [ReSTIR explained](#restir-explained)
-* [Progress](progress)
+* [Progress](#progress)
+    * [Requirement hurdles](#requirement-hurdles)
+    * [Nonsense errors with debug or release mode](#nonsense-errors-with-debug-or-release-mode)
+    * [Initializing light candidates](#initializing-light-candidates)
 * [Build and run](#build-and-run)
 * [Credits and resources](#credits-and-resources)
 * [Final words](#final-words)
@@ -64,14 +67,13 @@ Fortunately, in the end, our school IT helped us set things up at a lab that had
 #### Restrictions on remote computers
 We still could not build the project on the provided computers by our school. We narrowed down that a .bat file to update dependencies for Falcor library for some reasons could not run. After some debugging effort, we realized that the .bat file needs to run some PowerShell files, but the school computers do not allow us to run .ps1 files that are not digitally signed by the school itself. There went another exchange with our school IT. They ended up configuring on I configured the PowerShell Execution Policy on those machines to allow .ps1 files to run and added us to the Local Administrators Group so that we could make changes to the machines as needed. We did run into the problems where VS threw error for missing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html), and we were able to resolved by installing it.
 
-#### Many nonsense error (such as missing ';' even though it is not true)
-The project must be run in DebugD3D12 or ReleaseD3D12 mode, **not** the usual Debug and Release mode due to DirectX 12.
+### Nonsense errors with debug or release mode
+The errors can be something like "missing ';' before..." even though it is not true. The project must be run in DebugD3D12 or ReleaseD3D12 mode, **not** the usual Debug and Release mode due to DirectX 12.
 
-#### Initializing light candidates
-The initialization would be done in the shader fie ```simpleDiffuseGI.rt.hlsl```. We only initialize the light once in the beginning when the scene is being loaded. Hence, we add this field in ```SimpleDiffuseGiPass.h``` so that we can toggle on/off and tell the shader to stop initilizing lights per pixel
-```bool	mInitLightPerPixel = true;```
+### Initializing light candidates
+The initialization would be done in the shader fie ```simpleDiffuseGI.rt.hlsl```. We only initialize the light once in the beginning when the scene is being loaded. Hence, we add this field ```bool	mInitLightPerPixel = true;``` in ```SimpleDiffuseGiPass.h``` so that we can toggle on/off and tell the shader to stop initilizing lights per pixel
 
-To store the data for reservoir per pixel, we need to create a G-buffer. Hence, in ```SimpleDiffuseGIPass::initilize```, we request DirectX to allocate resources for the G-buffer as below:
+Additionally, to store the data for reservoir per pixel, we need to create a G-buffer. Hence, in ```SimpleDiffuseGIPass::initilize```, we request DirectX to allocate resources for the G-buffer as below:
 
 ```
 bool SimpleDiffuseGIPass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
@@ -83,7 +85,7 @@ bool SimpleDiffuseGIPass::initialize(RenderContext* pRenderContext, ResourceMana
 }
 ```
 
-We also need to pass the ```mInitLightPerPixel``` variable down into the shader and update it so that we stop initilizing lights after the first time, and also pass the buffer into the shader as well. This is done in ```SimpleDiffuseGIPass::execute```
+We also need to pass the ```mInitLightPerPixel``` variable and the ```Reservoir``` G-buffer down into the shader. We also need to update ```mInitLightPerPixel``` variable so that we stop initilizing lights after the first time. This is done in ```SimpleDiffuseGIPass::execute```
 ```
 void SimpleDiffuseGIPass::execute(RenderContext* pRenderContext)
 {
@@ -128,22 +130,7 @@ Finally within the function ```void SimpleDiffuseGIRayGen()```, we add the step 
 ```
 void SimpleDiffuseGIRayGen()
 {
-	// Where is this ray on screen?
-	uint2 launchIndex = DispatchRaysIndex().xy;
-	uint2 launchDim = DispatchRaysDimensions().xy;
-
-	// Load g-buffer data
-	float4 worldPos = gPos[launchIndex];
-	float4 worldNorm = gNorm[launchIndex];
-	float4 difMatlColor = gDiffuseMatl[launchIndex];
-
-	// If we don't hit any geometry, our difuse material contains our background color.
-	float3 shadeColor = worldPos.w != 0.0f ? float3(0, 0, 0) : difMatlColor.rgb;
-
-	// Initialize our random number generator
-	uint randSeed = initRand(launchIndex.x + launchIndex.y * launchDim.x, gFrameCount, 16);
-
-	// Our camera sees the background if worldPos.w is 0, only do diffuse shading & GI elsewhere
+	...
 	if (worldPos.w != 0.0f)
 	{
 		// Pick a random light from our scene to sample for direct lighting
@@ -193,6 +180,8 @@ void SimpleDiffuseGIRayGen()
 		LdotN = saturate(dot(worldNorm.xyz, toLight));
 
 		...
+	}
+}
 ```
 
 
