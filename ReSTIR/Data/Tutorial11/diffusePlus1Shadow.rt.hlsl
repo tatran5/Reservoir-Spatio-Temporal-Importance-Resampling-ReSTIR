@@ -94,7 +94,7 @@ void LambertShadowsRayGen()
 				// weight of the light is f * Le * G / pdf
 				weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
 
-				reservoir = updateReservoir(launchIndex, lightToSample, weight);
+				reservoir = updateReservoir(reservoir, lightToSample, weight, randSeed);
 			}
 
 			lightToSample = reservoir.y;
@@ -109,10 +109,10 @@ void LambertShadowsRayGen()
 			// weight of the light is f * Le * G / pdf
 			weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
 
-			reservoir = updateReservoir(launchIndex, lightToSample, weight);
+			reservoir = updateReservoir(reservoir, lightToSample, weight, randSeed);
 		}
 
-		reservoir.x = (1.0 / reservoir.z) * reservoir.x;
+		reservoir.x = (1.0 / max(reservoir.z, 0.0001)) * reservoir.x;
 		lightToSample = reservoir.y;
 
 		// A helper (from the included .hlsli) to query the Falcor scene to get this data
@@ -132,7 +132,7 @@ void LambertShadowsRayGen()
 		gReservoir[launchIndex] = reservoir;
 
 		// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
-		shadeColor = reservoir.x * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
+		shadeColor = shadowMult * reservoir.x * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
 	}
 	
 	// Save out our final shaded

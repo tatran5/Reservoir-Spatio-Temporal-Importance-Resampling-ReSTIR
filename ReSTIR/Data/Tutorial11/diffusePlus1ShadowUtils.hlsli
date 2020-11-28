@@ -16,7 +16,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************************************************/
 
-float4 updateReservoir(float4 reservior, int sample, double weight) {
+float4 updateReservoir(float4 reservoir, int lightToSample, double weight, uint randSeed) {
 	// Algorithm 2 of ReSTIR paper
 	reservoir.x = reservoir.x + weight;
 	reservoir.z = reservoir.z + 1.0f;
@@ -24,7 +24,7 @@ float4 updateReservoir(float4 reservior, int sample, double weight) {
 		reservoir.y = lightToSample;
 	}
 
-	return reservior;
+	return reservoir;
 }
 
 // A helper to extract important light data from internal Falcor data structures.  What's going on isn't particularly
