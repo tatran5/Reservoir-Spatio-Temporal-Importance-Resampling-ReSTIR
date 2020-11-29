@@ -111,8 +111,7 @@ void LambertShadowsRayGen()
 
 			reservoir = updateReservoir(reservoir, lightToSample, weight, randSeed);
 		}
-
-		reservoir.x = (1.0 / max(reservoir.z, 0.0001)) * reservoir.x;
+		
 		lightToSample = reservoir.y;
 
 		// A helper (from the included .hlsli) to query the Falcor scene to get this data
@@ -120,6 +119,10 @@ void LambertShadowsRayGen()
 
 		// Compute our lambertion term (L dot N)
 		LdotN = saturate(dot(worldNorm.xyz, toLight));
+
+		// set reservoir weight
+		weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+		reservoir.w = (reservoir.x / max(reservoir.z, 0.0001)) * (1.0 / max(weight, 0.0001));
 
 		// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
 		//    (we're uniformly sampling, so this probability is: 1 / #lights) 
@@ -132,7 +135,7 @@ void LambertShadowsRayGen()
 		gReservoir[launchIndex] = reservoir;
 
 		// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
-		shadeColor = shadowMult * reservoir.x * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
+		shadeColor = shadowMult * reservoir.w * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
 	}
 	
 	// Save out our final shaded

@@ -56,7 +56,7 @@ protected:
 	RtScene::SharedPtr                      mpScene;                ///< Our scene file (passed in from app)  
 
 	// For ReSTIR - only true during the first frame to choose a light candidate per pixel and will be toggled off after that
-	bool																		mInitLightPerPixel = true; 
+	bool									mInitLightPerPixel = true; 
 
 	// Various internal parameters
 	uint32_t                                mFrameCount = 0x1337u;  ///< A frame counter to vary random numbers over time
