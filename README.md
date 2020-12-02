@@ -96,12 +96,12 @@ The errors can be something like "missing ';' before..." even though it is not t
 ### Initializing light candidates
 The files that were changed include ```DiffuseOneShadowRayPass.cpp```, ```diffusePlus1Shadow.rt.hlsl```, and ```diffusePlus1ShadowUtils.hlsli```
 
-* [```DiffuseOneShadowRayPass.cpp```](#```diffuseoneshadowraypass.cpp```)
-* [```diffusePlus1ShadowUtils.hlsli```](#```diffuseplus1shadowutils.hlsli```)
-* [```diffusePlus1Shadow.rt.hlsl```](#```diffuseplus1shadow.rt.hlsl```)
+* [DiffuseOneShadowRayPass.cpp](#diffuseoneshadowraypass.cpp)
+* [diffusePlus1ShadowUtils.hlsli](#diffuseplus1shadowutils.hlsli)
+* [diffusePlus1Shadow.rt.hlsl](#diffuseplus1shadow.rt.hlsl)
 * [Tips for debugging light candidates generation](#tips-for-debugging-light-candidates-generation)
 
-#### ```DiffuseOneShadowRayPass.cpp```
+#### DiffuseOneShadowRayPass.cpp
 
 To store the data for reservoir per pixel, we need to create a G-buffer. Hence, in ```DiffuseOneShadowRayPass::initilize```, we request DirectX to allocate resources for the G-buffer as below:
 
@@ -123,7 +123,7 @@ void DiffuseOneShadowRayPass::execute(RenderContext* pRenderContext)
 	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
 }
 ```
-#### ```diffusePlus1ShadowUtils.hlsli```
+#### diffusePlus1ShadowUtils.hlsli
 We added a utility function in this file corresponding to algorithm 2 of the paper to update the reservoirs: 
 ```
 float4 updateReservoir(float4 reservior, int sample, double weight) {
@@ -138,7 +138,7 @@ float4 updateReservoir(float4 reservior, int sample, double weight) {
 }
 ```
 
-#### ```diffusePlus1Shadow.rt.hlsl```
+#### diffusePlus1Shadow.rt.hlsl
 We need to include the buffer ```gReservoir``` in the shader. Note that ```gReservoir``` is a texture of float4 where the first float (.x) is the weight sum, the second float (.y) is the chosen light for the pixel, while the third float (.z) is the number of samples seen for this current light, and the last float (.w) is the final adjusted weight for the current pixel following the given formula in algorithm 3 of the paper where <img src="https://latex.codecogs.com/svg.latex?r.W=\frac{1}{\hat{p_q}(r.y)}\frac{1}{r.w_{sum}}" title="r.W" /> (here <img src="https://latex.codecogs.com/svg.latex?r.M" title="r.M" /> is the light candidates seen by the reservoir, and  <img src="https://latex.codecogs.com/svg.latex?r.w_{sum}" title="r.w_{sum}" /> is the weight sum of all light candidates seen by the reservoir.)
 
 ```
