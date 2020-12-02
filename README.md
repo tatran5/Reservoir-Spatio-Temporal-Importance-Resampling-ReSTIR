@@ -1,4 +1,4 @@
-# Reservoir Spatio Temporal Importance Resampling (ReSTIR)
++# Reservoir Spatio Temporal Importance Resampling (ReSTIR)
 
 * Sydney Miller: [LinkedIn](https://www.linkedin.com/in/sydney-miller-upenn/), [portfolio](https://youtu.be/8jFfHmBhf7Y), [email](millersy@seas.upenn.edu)
 * Sireesha Putcha: [LinkedIn](), [portfolio](), [email]()
@@ -10,10 +10,6 @@
 * [Performance analysis](#performance-analysis)
 * [ReSTIR explained](#restir-explained)
 * [Progress](#progress)
-    * [Requirement hurdles](#requirement-hurdles)
-    * [Nonsense errors with debug or release mode](#nonsense-errors-with-debug-or-release-mode)
-    * [Initializing light candidates](#initializing-light-candidates)
-    * [Spatial reuse](#spatial-reuse)
 * [Build and run](#build-and-run)
 * [Credits and resources](#credits-and-resources)
 
@@ -76,6 +72,11 @@ We uses a data structure called reservoir for each pixel that holds the current 
 
 ## Progress
 *This serves as our "diary" of problems we ran into and our solutions to those. This is also useful for us as teammates to know each other's progress and purpose of written code, as well as solutions to bugs if encountering similar ones.*
+
+* [Requirement hurdles](#requirement-hurdles)
+* [Nonsense errors with debug or release mode](#nonsense-errors-with-debug-or-release-mode)
+* [Initializing light candidates](#initializing-light-candidates)
+* [Spatial reuse](#spatial-reuse)
 
 ### Requirement hurdles
 
@@ -173,6 +174,16 @@ void LambertShadowsRayGen() {
 		}
 		...
 ```
+#### Useful tips
+
+It is helpful to output things from the reservoir to help with debugging. 
+
+![Weights (gReservoir.x)](!Images/Recordings/restir_generate_candidates_weights.gif)
+![Chosen light (gReservoir.y)](!Images/Recordings/restir_generate_candidates_chosen_light.gif)
+![Number of light candidates seen (gReservoir.z)](!Images/Recordings/restir_generate_candidates_lights_seen.gif)
+
+We were able to find a bug where we forgot to update the reservoir by outputing the light candidate seen per reservoir. We expected the image to get brighter over time as above, but the image color stays the same due to the bug.
+
 ### Spatial reuse
 Spatial reuse happens after generating light candidates per reservoir, and each reservoir would sample random neighbor reservoirs and update the current chosen light base on the neighbor chosen lights.
 
