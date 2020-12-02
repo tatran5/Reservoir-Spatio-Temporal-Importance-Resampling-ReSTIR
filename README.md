@@ -112,7 +112,7 @@ float4 updateReservoir(float4 reservior, int sample, double weight) {
 ```
 
 #### ```diffusePlus1Shadow.rt.hlsl```
-We need to include the buffer ```gReservoir``` in the shader. Note that ```gReservoir``` is a texture of float4 where the first float (.x) is the weight sum, the second float (.y) is the chosen light for the pixel, while the third float (.z) is the number of samples seen for this current light, and the last float (.w) is the final adjusted weight for the current pixel following the given formula in algorithm 3 of the paper where <img src="https://latex.codecogs.com/svg.latex?r.W=\frac{1}{^{p_q(r.y)}}(\frac{1}{r.M}r.w_sum)" title="r.W" /> (here <img src="https://latex.codecogs.com/svg.latex?r.M" title="r.M" /> is the light candidates seen by the reservoir, and  <img src="https://latex.codecogs.com/svg.latex?r.w_sum" title="r.w_sum" /> is the weight sum of all light candidates seen by the reservoir.)
+We need to include the buffer ```gReservoir``` in the shader. Note that ```gReservoir``` is a texture of float4 where the first float (.x) is the weight sum, the second float (.y) is the chosen light for the pixel, while the third float (.z) is the number of samples seen for this current light, and the last float (.w) is the final adjusted weight for the current pixel following the given formula in algorithm 3 of the paper where <img src="https://latex.codecogs.com/svg.latex?r.W=\frac{1}{^{p_q(r.y)}}" title="r.W" /> (here <img src="https://latex.codecogs.com/svg.latex?r.M" title="r.M" /> is the light candidates seen by the reservoir, and  <img src="https://latex.codecogs.com/svg.latex?r.w_sum" title="r.w_{sum}" /> is the weight sum of all light candidates seen by the reservoir.)
 
 ```
 RWTexture2D<float4> gReservoir;
