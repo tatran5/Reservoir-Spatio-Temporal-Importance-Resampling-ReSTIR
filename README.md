@@ -25,6 +25,10 @@ This is a team project implementing ReSTIR based on the [research paper](https:/
 ### Visual analysis
 
 #### Light candidates generation
+![](Images/restir_generate_candidates.png)
+
+The above is a rendered image after implementing light candidate generation per reservoir. Below is our comparison with ground truth.
+
 |Ground truth (multiple frames)| Ground truth (first frame) | ReSTIR (first frame, no spatial or temporal reuse)|
 |---|---|---|
 |![](Images/base_multiple_frames.png)|![](Images/base_first_frame.png)|![](Images/restir_generate_candidates.png)|
@@ -38,7 +42,6 @@ Because there's no temporal reuse here, we only mainly compare the firs frame of
 |Ground truth (multiple frames)| Ground truth (first frame) | ReSTIR (first frame, no spatial or temporal reuse)|
 |---|---|---|
 |![](Images/base_multiple_frames_sofa_pillow_shadow.png)|![](Images/base_first_frame_sofa_pillow_shadow.png)|![](Images/restir_generate_candidates_sofa_pillow_shadow.png)|
-
 
 The reason for this is due to better sampling - choosing lights that are have more effects on each pixel, versus choosing some random light.
 
@@ -71,7 +74,7 @@ We uses a data structure called reservoir for each pixel that holds the current 
 *To be updated once the project is complete*
 
 ## Progress
-*This serves as our "diary" of problems we ran into and our solutions to those. This is also useful for us as teammates to know each other's progress and purpose of written code, as well as solutions to bugs if encountering similar ones.*
+*This serves as our "diary" of problems and solutions, useful for us as teammates to know each other's progress, as well as solutions to bugs if encountering similar ones.*
 
 * [Requirement hurdles](#requirement-hurdles)
 * [Nonsense errors with debug or release mode](#nonsense-errors-with-debug-or-release-mode)
@@ -100,6 +103,7 @@ The files that were changed include ```DiffuseOneShadowRayPass.cpp```, ```diffus
 * [diffusePlus1ShadowUtils.hlsli](#diffuseplus1shadowutilshlsli)
 * [diffusePlus1Shadow.rt.hlsl](#diffuseplus1shadowrthlsl)
 * [Tips for debugging light candidates generation](#tips-for-debugging-light-candidates-generation)
+* [Bloopers of light candidates generation](bloopers-of-light-candidates-generation)
 
 #### DiffuseOneShadowRayPass.cpp
 
@@ -188,6 +192,12 @@ It is helpful to output things from the reservoir to help with debugging.
 |![Weights (gReservoir.x)](Images/Recordings/restir_generate_candidates_weights.gif)|![Chosen light (gReservoir.y)](Images/restir_generate_candidates_chosen_lignt.png)|![Number of light candidates seen (gReservoir.z)](Images/Recordings/restir_generate_candidates_light_seen.gif)|
 
 We were able to find a bug where we forgot to update the reservoir by outputing the light candidate seen per reservoir. We expected the image to get brighter over time as above, but the image color stays the same due to the bug.
+
+#### Bloopers of light candidates generation
+
+|Wrong weight calculation| Wrong visibility calculation |
+|---|---|
+|![](Images/Bloopers/restir_generate_candidates_wrong_weights.png)|![](Images/restir_generation_candidates_wrong_visibility.png)|
 
 ### Spatial reuse
 Spatial reuse happens after generating light candidates per reservoir, and each reservoir would sample random neighbor reservoirs and update the current chosen light base on the neighbor chosen lights.
