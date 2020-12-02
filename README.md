@@ -2,7 +2,7 @@
 
 * Sydney Miller: [LinkedIn](https://www.linkedin.com/in/sydney-miller-upenn/), [portfolio](https://youtu.be/8jFfHmBhf7Y), [email](millersy@seas.upenn.edu)
 * Sireesha Putcha: [LinkedIn](), [portfolio](), [email]()
-* Thy Tran: [LinkedIn](), [portfolio](), [email]()
+* Thy Tran: [LinkedIn](https://www.linkedin.com/in/thy-tran-97a30b148/), [portfolio](https://tatran5.github.io/demo-reel.html), [email](tatran@seas.upenn.edu)
 
 ## Outlines
 * [Introduction](#introduction)
@@ -51,9 +51,10 @@ We uses a data structure called reservoir for each pixel that holds the current 
     * <img src="https://latex.codecogs.com/svg.latex?G(x)=\frac{(\vec{n}\cdot\vec{w})(\vec{n'}\cdot\vec{w'})}{\|x-x'\|^{2}}" title="G(x)" /> : the solid angle term, where <img src="https://latex.codecogs.com/svg.latex?\vec{n}" title="n" /> is the normal vector at the current point, <img src="https://latex.codecogs.com/svg.latex?\vec{w}" title="w" /> is the direction from the current point to a chosen point on the light, while <img src="https://latex.codecogs.com/svg.latex?\vec{n'}" title="n'" /> is the normal at the chosen point on the light, and <img src="https://latex.codecogs.com/svg.latex?\vec{w'}" title="w'" /> is the vector from the chosen point to the current point. $x$ and $x'$ respectively are the current point and the chosen point on the light. In the case that the light itself is a point light, the numerator is reduced to the dot product of the normal vector at the current point and the ray direction from the point to the light over the denominator.
 
 ## Potential improvements
+*To be updated once the project is complete*
 
 ## Progress
-*This serves as our "diary" of problems we ran into and our solutions to those.*
+*This serves as our "diary" of problems we ran into and our solutions to those. This is also useful for us as teammates to know each other's progress and purpose of written code, as well as solutions to bugs if encountering similar ones.*
 
 ### Requirement hurdles
 
@@ -71,15 +72,7 @@ We still could not build the project on the provided computers by our school. We
 The errors can be something like "missing ';' before..." even though it is not true. The project must be run in DebugD3D12 or ReleaseD3D12 mode, **not** the usual Debug and Release mode due to DirectX 12.
 
 ### Initializing light candidates
-The files that were changed include ```DiffuseOneShadowRayPass.h```, ```DiffuseOneShadowRayPass.cpp```, ```diffusePlus1Shadow.rt.hlsl```, and ```diffusePlus1ShadowUtils.hlsli```
-
-#### ```DiffuseOneShadowRayPass.h```
-We only initialize the light perpixelonce in the beginning when the scene is being loaded. Hence, we add this field in the header so that we can toggle on/off and tell the shader to stop initilizing lights per pixel.
-
-```
-	// For ReSTIR - only true during the first frame to choose a light candidate per pixel and will be toggled off after that
-	bool mInitLightPerPixel = true; 
-```
+The files that were changed include ```DiffuseOneShadowRayPass.cpp```, ```diffusePlus1Shadow.rt.hlsl```, and ```diffusePlus1ShadowUtils.hlsli```
 
 #### ```DiffuseOneShadowRayPass.cpp```
 
@@ -94,18 +87,13 @@ bool DiffuseOneShadowRayPass::initialize(RenderContext* pRenderContext, Resource
 }
 ```
 
-We also need to pass the ```mInitLightPerPixel``` variable and the ```Reservoir``` G-buffer down into the shader. We also need to update ```mInitLightPerPixel``` variable so that we stop initilizing lights after the first time. This is done in ```DiffuseOneShadowRayPass::execute```
+We also need to pass the ``Reservoir``` G-buffer down into the shader. This is done in ```DiffuseOneShadowRayPass::execute```
 ```
 void DiffuseOneShadowRayPass::execute(RenderContext* pRenderContext)
 {
 	...
-	// For ReSTIR - update the toggle in the shader
-	rayGenVars["RayGenCB"]["gInitLight"]		= mInitLightPerPixel;
-	...
 	// For ReSTIR - update the buffer storing reservoir (weight sum, chosen light index, number of candidates seen) 
 	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
-	...
-	mInitLightPerPixel = false;
 }
 ```
 #### ```diffusePlus1ShadowUtils.hlsli```
@@ -124,72 +112,16 @@ float4 updateReservoir(float4 reservior, int sample, double weight) {
 ```
 
 #### ```diffusePlus1Shadow.rt.hlsl```
-We need to update the buffers to include the variable ```gInitLight``` and ```gReservoir```. 
+We need to include the buffer ```gReservoir``` in the shader. Note that ```gReservoir``` is a texture of float4 where the first float (.x) is the weight sum, the second float (.y) is the chosen light for the pixel, while the third float (.z) is the number of samples seen for this current light, and the last float (.w) is the final adjusted weight for the current pixel following the given formula in algorithm 3 of the paper where <img src="https://latex.codecogs.com/svg.latex?r.W=\frac{1}{^{p_q(r.y)}}(\frac{1}{r.M}r.w_sum)" title="r.W" /> (here <img src="https://latex.codecogs.com/svg.latex?r.M" title="r.M" /> is the light candidates seen by the reservoir, and  <img src="https://latex.codecogs.com/svg.latex?r.w_sum" title="r.w_sum" /> is the weight sum of all light candidates seen by the reservoir.)
 
 ```
-cbuffer RayGenCB
-{
-	...
-	bool  gInitLight; // For ReSTIR - to choose an arbitrary light for this pixel after choosing 32 random light candidates
-}
-
-// Input and out textures that need to be set by the C++ code (for the ray gen shader)
-...
 RWTexture2D<float4> gReservoir;
-...
 ```
 
-Note that ```gReservoir``` is a texture of float4 where the first float (.x) is the weight sum, the second float (.y) is the chosen light for the pixel, while the third float (.z) is the number of samples seen for this current light, and the last float (.w?) is extra. 
-
-Finally within the function ```void SimpleDiffuseGIRayGen()```, we add the step where the pixel picks random 32 lights, then choose the best one among of of them as below
-
+Finally within the function ```void SimpleDiffuseGIRayGen()```, we add the step where the pixel picks random 32 lights, then choose the best one among of of them as below, and update the reservoirs each iteration and do a shadow test before the pixel is finally shaded: 
 ```
-void LambertShadowsRayGen()
-{
-	...
-	if (worldPos.w != 0.0f)
-	{
-		// Pick a random light from our scene to sample for direct lighting
-		
-		// We need to query our scene to find info about the current light
-		int lightToSample;
-		float distToLight;
-		float3 lightIntensity;
-		float3 toLight;
-		float LdotN;
-	
-		float4 reservoir = gReservoir[launchIndex];
-		float weight;
-
-		if (gInitLight) {
-			// ReSTIR: Pick 32 light candidates then choose 1 from them
-			int candidateLightsCount = 32;
-			if (gLightsCount < 32) candidateLightsCount = gLightsCount;
-			
-			for (int i = 0; i < candidateLightsCount; i++) {
-				lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
-				getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
-				LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-
-				// weight of the light is f * Le * G / pdf
-				weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
-				
-				reservoir = updateReservoir(launchIndex, lightToSample, weight);
-			}
-
-			gReservoir[launchIndex] = reservoir;
-			lightToSample = reservoir.y;
-		}
-		else {
-			// Original base code based on tutorial 11
-			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
-		}
+void LambertShadowsRayGen() {
 		...
-
-```
-
-Later in the function is logic to update the reservoiors each iteration and do a shadow test before the pixel is finally shaded: 
-```
 		// Algorithm 3 of ReSTIR paper
 		for (int i = 0; i < 32; i++) {
 			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
@@ -218,6 +150,7 @@ Later in the function is logic to update the reservoiors each iteration and do a
 		if (shadowMult == 0.0) {
 			reservoir.x = 0.0;
 		}
+		...
 ```
 
 ## Build and run
