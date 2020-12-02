@@ -39,6 +39,11 @@ Because there's no temporal reuse here, we only mainly compare the firs frame of
 |---|---|---|
 |![](Images/base_multiple_frames_side_table_shadow.png)|![](Images/base_first_frame_side_table_shadow.png)|![](Images/restir_generate_candidates_side_table_shadow.png)|
 
+|Ground truth (multiple frames)| Ground truth (first frame) | ReSTIR (first frame, no spatial or temporal reuse)|
+|---|---|---|
+|![](Images/base_multiple_frames_sofa_pillow_shadow.png)|![](Images/base_first_frame_sofa_pillow_shadow.png)|![](Images/restir_generate_candidates_sofa_pillow_shadow.png)|
+
+
 The reason for this is due to better sampling - choosing lights that are have more effects on each pixel, versus choosing some random light.
 
 ### Runtime analysis
