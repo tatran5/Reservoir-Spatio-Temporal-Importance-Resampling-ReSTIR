@@ -1,8 +1,8 @@
 # Reservoir Spatio Temporal Importance Resampling (ReSTIR)
 
-* Sydney Miller: [LinkedIn](), [porfolio](), [email]()
-* Sireesha Putcha: [LinkedIn](), [porfolio](), [email]()
-* Thy Tran: [LinkedIn](), [porfolio](), [email]()
+* Sydney Miller: [LinkedIn](https://www.linkedin.com/in/sydney-miller-upenn/), [portfolio](https://youtu.be/8jFfHmBhf7Y), [email](millersy@seas.upenn.edu)
+* Sireesha Putcha: [LinkedIn](), [portfolio](), [email]()
+* Thy Tran: [LinkedIn](), [portfolio](), [email]()
 
 ## Outlines
 * [Introduction](#introduction)
@@ -71,7 +71,7 @@ We still could not build the project on the provided computers by our school. We
 The errors can be something like "missing ';' before..." even though it is not true. The project must be run in DebugD3D12 or ReleaseD3D12 mode, **not** the usual Debug and Release mode due to DirectX 12.
 
 ### Initializing light candidates
-The files that were changed include ```DiffuseOneShadowRayPass.h```, ```DiffuseOneShadowRayPass.cpp``` and ```diffusePlus1Shadow.rt.hlsl```
+The files that were changed include ```DiffuseOneShadowRayPass.h```, ```DiffuseOneShadowRayPass.cpp```, ```diffusePlus1Shadow.rt.hlsl```, and ```diffusePlus1ShadowUtils.hlsli```
 
 #### ```DiffuseOneShadowRayPass.h```
 We only initialize the light perpixelonce in the beginning when the scene is being loaded. Hence, we add this field in the header so that we can toggle on/off and tell the shader to stop initilizing lights per pixel.
@@ -106,6 +106,20 @@ void DiffuseOneShadowRayPass::execute(RenderContext* pRenderContext)
 	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
 	...
 	mInitLightPerPixel = false;
+}
+```
+#### ```diffusePlus1ShadowUtils.hlsli```
+We added a utility function in this file corresponding to algorithm 2 of the paper to update the reservoirs: 
+```
+float4 updateReservoir(float4 reservior, int sample, double weight) {
+	// Algorithm 2 of ReSTIR paper
+	reservoir.x = reservoir.x + weight;
+	reservoir.z = reservoir.z + 1.0f;
+	if (nextRand(randSeed) < weight / reservoir.x) {
+		reservoir.y = lightToSample;
+	}
+
+	return reservior;
 }
 ```
 
@@ -160,12 +174,7 @@ void LambertShadowsRayGen()
 				// weight of the light is f * Le * G / pdf
 				weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
 				
-				// Algorithm 2 of ReSTIR paper
-				reservoir.x = reservoir.x + weight;
-				reservoir.z = reservoir.z + 1.0f;
-				if (nextRand(randSeed) < weight / reservoir.x) {
-					reservoir.y = lightToSample;
-				}
+				reservoir = updateReservoir(launchIndex, lightToSample, weight);
 			}
 
 			gReservoir[launchIndex] = reservoir;
@@ -176,8 +185,39 @@ void LambertShadowsRayGen()
 			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
 		}
 		...
-	}
-}
+
+```
+
+Later in the function is logic to update the reservoiors each iteration and do a shadow test before the pixel is finally shaded: 
+```
+		// Algorithm 3 of ReSTIR paper
+		for (int i = 0; i < 32; i++) {
+			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
+			getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
+			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+
+			// weight of the light is f * Le * G / pdf
+			weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
+
+			reservoir = updateReservoir(launchIndex, lightToSample, weight);
+		}
+
+		reservoir.x = (1.0 / reservoir.z) * reservoir.x;
+		lightToSample = reservoir.y;
+
+		// A helper (from the included .hlsli) to query the Falcor scene to get this data
+		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
+
+		// Compute our lambertion term (L dot N)
+		LdotN = saturate(dot(worldNorm.xyz, toLight));
+
+		// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
+		//    (we're uniformly sampling, so this probability is: 1 / #lights) 
+		float shadowMult = float(gLightsCount) * shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight);
+
+		if (shadowMult == 0.0) {
+			reservoir.x = 0.0;
+		}
 ```
 
 ## Build and run
