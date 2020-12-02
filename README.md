@@ -96,6 +96,11 @@ The errors can be something like "missing ';' before..." even though it is not t
 ### Initializing light candidates
 The files that were changed include ```DiffuseOneShadowRayPass.cpp```, ```diffusePlus1Shadow.rt.hlsl```, and ```diffusePlus1ShadowUtils.hlsli```
 
+* [```DiffuseOneShadowRayPass.cpp```](#```diffuseoneshadowraypass.cpp```)
+* [```diffusePlus1ShadowUtils.hlsli```](#```diffuseplus1shadowutils.hlsli```)
+* [```diffusePlus1Shadow.rt.hlsl```](#```diffuseplus1shadow.rt.hlsl```)
+* [Tips for debugging light candidates generation](#tips-for-debugging-light-candidates-generation)
+
 #### ```DiffuseOneShadowRayPass.cpp```
 
 To store the data for reservoir per pixel, we need to create a G-buffer. Hence, in ```DiffuseOneShadowRayPass::initilize```, we request DirectX to allocate resources for the G-buffer as below:
@@ -174,7 +179,7 @@ void LambertShadowsRayGen() {
 		}
 		...
 ```
-#### Useful tips
+#### Tips for debugging light candidates generation
 
 It is helpful to output things from the reservoir to help with debugging. 
 
