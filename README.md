@@ -193,7 +193,9 @@ We are also planning to ping-pong the reservoirs to make sure the reservoirs are
 
 We ran into problems where the Visual Studio giving us errors about "Cannot open file "HostDeviceSharedMacros.h"" even though the .h file is clearly added to the project external dependencies, and the other original ```diffusePlus1Shadow.rt.hlsl``` does not complain. We also found that if we clone the original ```diffusePlus1Shadow.rt.hlsl``` as a new shader then add the file to the project, the error persists. Hence, we thought that it might have to do with project properties or the file properties, and bingo. When comparing ```diffusePlus1Shadow.rt.hlsl``` and ```spatialReuse.rt.hlsl```, we found that under Configuration &rarr General &rarr Item type, the setting in ```diffusePlus1Shadow.rt.hlsl``` is "Does not participate in build", while the default for a newly added .hlsl file is "HLSL Compiler"
 
+#### Update ```diffusePlus1Shadow.rt.hlsl```
 
+We simply output the reservoir value instead of the pixel shading so that we can process the values in the spatial reuse shader, and do the shading in a separate final pass.
 
 ### Temporal reuse
 
