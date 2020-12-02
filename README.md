@@ -198,7 +198,7 @@ We were able to find a bug where we forgot to update the reservoir by outputing 
 
 |Wrong weight calculation| Wrong visibility calculation |
 |---|---|
-|![](Images/Bloopers/restir_generate_candidates_wrong_weights.png)|![](Images/Bloopers/restir_generation_candidates_wrong_visibility.png)|
+|![](Images/Bloopers/restir_generate_candidates_incorrect_weights.png)|![](Images/Bloopers/restir_generation_candidates_wrong_visibility.png)|
 
 ### Spatial reuse
 Spatial reuse happens after generating light candidates per reservoir, and each reservoir would sample random neighbor reservoirs and update the current chosen light base on the neighbor chosen lights.
