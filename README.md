@@ -25,6 +25,7 @@ This is a team project implementing ReSTIR based on the [research paper](https:/
 ### Visual analysis
 
 #### Light candidates generation
+
 ![](Images/restir_generate_candidates.png)
 
 The above is a rendered image after implementing light candidate generation per reservoir. Below is our comparison with ground truth.
@@ -197,14 +198,14 @@ We were able to find a bug where we forgot to update the reservoir by outputing 
 
 |Wrong weight calculation| Wrong visibility calculation |
 |---|---|
-|![](Images/Bloopers/restir_generate_candidates_wrong_weights.png)|![](Images/restir_generation_candidates_wrong_visibility.png)|
+|![](Images/Bloopers/restir_generate_candidates_wrong_weights.png)|![](Images/Bloopers/restir_generation_candidates_wrong_visibility.png)|
 
 ### Spatial reuse
 Spatial reuse happens after generating light candidates per reservoir, and each reservoir would sample random neighbor reservoirs and update the current chosen light base on the neighbor chosen lights.
 
 To avoid race conditions of writing into the reservoir buffer in the light candidates initilization versus reading data of neighboring neighbors for spatial reuse, we decided to create a new pass after the light candidate pass. Hence, ```SpatialReusePass.h```, ```SpatialReusePass.cpp``` and ```spatialReuse.rt.hlsl``` are added. They are really similar to the ```DiffuseOneShadowRayPass.h``` and ```DiffuseOneShadowRayPass.cpp``` with some exceptions.
 
-#### ```SpatialReusePass.cpp```
+#### SpatialReusePass.cpp
 
 We want avoid reading and writing into a buffer in parallel which can create undefined behaviors. Therefore, we added a new buffer ```Reservoir2``` or ```gReservoir2```. We also need another shader to deal with spatial reuse separating from all the parts above. In ```SpatialReusePass.cpp```, the difference from ```DiffuseOneShadowRayPass.cpp``` is as below to reflect this.
 
@@ -235,11 +236,11 @@ void SpatialReusePass::execute(RenderContext* pRenderContext)
 
 We are also planning to ping-pong the reservoirs to make sure the reservoirs are updated correctly.
 
-#### ```spatialReuse.rt.hlsl```
+#### spatialReuse.rt.hlsl
 
 We ran into problems where the Visual Studio giving us errors about "Cannot open file "HostDeviceSharedMacros.h"" even though the .h file is clearly added to the project external dependencies, and the other original ```diffusePlus1Shadow.rt.hlsl``` does not complain. We also found that if we clone the original ```diffusePlus1Shadow.rt.hlsl``` as a new shader then add the file to the project, the error persists. Hence, we thought that it might have to do with project properties or the file properties, and bingo. When comparing ```diffusePlus1Shadow.rt.hlsl``` and ```spatialReuse.rt.hlsl```, we found that under Configuration &rarr General &rarr Item type, the setting in ```diffusePlus1Shadow.rt.hlsl``` is "Does not participate in build", while the default for a newly added .hlsl file is "HLSL Compiler"
 
-#### Update ```diffusePlus1Shadow.rt.hlsl```
+#### Update diffusePlus1Shadow.rt.hlsl
 
 We simply output the reservoir value instead of the pixel shading so that we can process the values in the spatial reuse shader, and do the shading in a separate final pass.
 
