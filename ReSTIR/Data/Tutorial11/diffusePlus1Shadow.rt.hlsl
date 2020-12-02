@@ -94,21 +94,25 @@ void LambertShadowsRayGen()
 				// weight of the light is f * Le * G / pdf
 				weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
 
-				// Algorithm 2 of ReSTIR paper
-				reservoir.x = reservoir.x + weight;
-				reservoir.z = reservoir.z + 1.0f;
-				if (nextRand(randSeed) < weight / reservoir.x) {
-					reservoir.y = lightToSample;
-				}
+				reservoir = updateReservoir(reservoir, lightToSample, weight, randSeed);
 			}
 
-			gReservoir[launchIndex] = reservoir;
 			lightToSample = reservoir.y;
 		}
-		else {
-			// Original base code based on tutorial 12
+
+		// Algorithm 3 of ReSTIR paper
+		for (int i = 0; i < 32; i++) {
 			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
+			getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
+			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+
+			// weight of the light is f * Le * G / pdf
+			weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
+
+			reservoir = updateReservoir(reservoir, lightToSample, weight, randSeed);
 		}
+		
+		lightToSample = reservoir.y;
 
 		// A helper (from the included .hlsli) to query the Falcor scene to get this data
 		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
@@ -116,12 +120,22 @@ void LambertShadowsRayGen()
 		// Compute our lambertion term (L dot N)
 		LdotN = saturate(dot(worldNorm.xyz, toLight));
 
+		// set reservoir weight
+		weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+		reservoir.w = (reservoir.x / max(reservoir.z, 0.0001)) * (1.0 / max(weight, 0.0001));
+
 		// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
 		//    (we're uniformly sampling, so this probability is: 1 / #lights) 
 		float shadowMult = float(gLightsCount) * shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight);
 
+		if (shadowMult == 0.0) {
+			reservoir.x = 0.0;
+		}
+
+		gReservoir[launchIndex] = reservoir;
+
 		// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
-		shadeColor = shadowMult * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
+		shadeColor = shadowMult * reservoir.w * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
 	}
 	
 	// Save out our final shaded
