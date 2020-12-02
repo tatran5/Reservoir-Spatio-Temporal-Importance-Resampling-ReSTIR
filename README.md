@@ -29,13 +29,13 @@ This is a team project implementing ReSTIR based on the [research paper](https:/
 ### Visual analysis
 
 #### Light candidates generation
-|Ground truth (multiple frames)| Ground truth (first frame) | ReSTIR (no spatial or temporal reuse)|
+|Ground truth (multiple frames)| Ground truth (first frame) | ReSTIR (first frame, no spatial or temporal reuse)|
 |---|---|---|
 |![](Images/base_multiple_frames.png)|![](Images/base_first_frame.png)|![](Images/restir_generate_candidates.png)|
 
 Because there's no temporal reuse here, we only mainly compare the firs frame of ground truth and our implementation. There is a clear improvement by only adding light candidates generation and picking one with more influence on the current pixel. The base image (first frame) is much more grainy with many shadows that are not reflected in the final ground truth (accumulation through multiple frames.) In contrast, the ReSTIR image does not have large areas of shadow that are not in the ground truth with multiple-frames accumulation. 
 
-|Ground truth (multiple frames)| Ground truth (first frame) | ReSTIR (no spatial or temporal reuse)|
+|Ground truth (multiple frames)| Ground truth (first frame) | ReSTIR (first frame, no spatial or temporal reuse)|
 |---|---|---|
 |![](Images/base_multiple_frames_side_table_shadow.png)|![](Images/base_first_frame_side_table_shadow.png)|![](Images/restir_generate_candidates_side_table_shadow.png)|
 
