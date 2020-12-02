@@ -96,9 +96,9 @@ The errors can be something like "missing ';' before..." even though it is not t
 ### Initializing light candidates
 The files that were changed include ```DiffuseOneShadowRayPass.cpp```, ```diffusePlus1Shadow.rt.hlsl```, and ```diffusePlus1ShadowUtils.hlsli```
 
-* [DiffuseOneShadowRayPass.cpp](#diffuseoneshadowraypass.cpp)
-* [diffusePlus1ShadowUtils.hlsli](#diffuseplus1shadowutils.hlsli)
-* [diffusePlus1Shadow.rt.hlsl](#diffuseplus1shadow.rt.hlsl)
+* [DiffuseOneShadowRayPass.cpp](#diffuseoneshadowraypasscpp)
+* [diffusePlus1ShadowUtils.hlsli](#diffuseplus1shadowutilshlsli)
+* [diffusePlus1Shadow.rt.hlsl](#diffuseplus1shadowrthlsl)
 * [Tips for debugging light candidates generation](#tips-for-debugging-light-candidates-generation)
 
 #### DiffuseOneShadowRayPass.cpp
