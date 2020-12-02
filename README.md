@@ -13,6 +13,7 @@
     * [Requirement hurdles](#requirement-hurdles)
     * [Nonsense errors with debug or release mode](#nonsense-errors-with-debug-or-release-mode)
     * [Initializing light candidates](#initializing-light-candidates)
+    * [Spatial reuse](#spatial-reuse)
 * [Build and run](#build-and-run)
 * [Credits and resources](#credits-and-resources)
 * [Final words](#final-words)
@@ -152,6 +153,49 @@ void LambertShadowsRayGen() {
 		}
 		...
 ```
+### Spatial reuse
+Spatial reuse happens after generating light candidates per reservoir, and each reservoir would sample random neighbor reservoirs and update the current chosen light base on the neighbor chosen lights.
+
+To avoid race conditions of writing into the reservoir buffer in the light candidates initilization versus reading data of neighboring neighbors for spatial reuse, we decided to create a new pass after the light candidate pass. Hence, ```SpatialReusePass.h```, ```SpatialReusePass.cpp``` and ```spatialReuse.rt.hlsl``` are added. They are really similar to the ```DiffuseOneShadowRayPass.h``` and ```DiffuseOneShadowRayPass.cpp``` with some exceptions.
+
+#### ```SpatialReusePass.cpp```
+
+We want avoid reading and writing into a buffer in parallel which can create undefined behaviors. Therefore, we added a new buffer ```Reservoir2``` or ```gReservoir2```. We also need another shader to deal with spatial reuse separating from all the parts above. In ```SpatialReusePass.cpp```, the difference from ```DiffuseOneShadowRayPass.cpp``` is as below to reflect this.
+
+```
+namespace {
+	// Where is our shader located?
+	const char* kFileRayTrace = "Tutorial11\\spatialReuse.rt.hlsl";
+	...
+}
+
+bool SpatialReusePass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
+{
+	// Stash a copy of our resource manager so we can get rendering resources
+	mpResManager = pResManager;
+	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "Reservoir2"});
+	...
+}
+
+void SpatialReusePass::execute(RenderContext* pRenderContext)
+{
+	...
+	// For ReSTIR - update the buffer storing reservoir (weight sum, chosen light index, number of candidates seen, adjusted final weight) 
+	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
+	rayGenVars["gReservoir2"]	 = mpResManager->getTexture("Reservoir2");
+	...
+}
+```
+
+We are also planning to ping-pong the reservoirs to make sure the reservoirs are updated correctly.
+
+#### ```spatialReuse.rt.hlsl```
+
+We ran into problems where the Visual Studio giving us errors about "Cannot open file "HostDeviceSharedMacros.h"" even though the file is clearly added to the project external dependencies, and the other original ```diffusePlus1Shadow.rt.hlsl``` does not complain. We also found that if we clone the original ```diffusePlus1Shadow.rt.hlsl``` as a new shader then add the file to the project, the error persists. Hence, we thought that it might have to do with project properties or the file properties, and bingo.
+
+
+
+### Temporal reuse
 
 ## Build and run
 *Please let me know if you run into any problems building and running the code. I would be happy to assist, and it would be useful for me to know so I can update this section.*
