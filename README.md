@@ -180,7 +180,7 @@ It is helpful to output things from the reservoir to help with debugging.
 
 |Weights (gReservoir.x)| Index of chosen light (gReservoir.y) | Number of light candidates seen (gReservoir.z)|
 |---|---|---|
-|![Weights (gReservoir.x)](Images/Recordings/restir_generate_candidates_weights.gif)|![Chosen light (gReservoir.y)](Images/restir_generate_candidates_chosen_light.png)|![Number of light candidates seen (gReservoir.z)](Images/Recordings/restir_generate_candidates_light_seen.gif)|
+|![Weights (gReservoir.x)](Images/Recordings/restir_generate_candidates_weights.gif)|![Chosen light (gReservoir.y)](Images/restir_generate_candidates_chosen_lignt.png)|![Number of light candidates seen (gReservoir.z)](Images/Recordings/restir_generate_candidates_light_seen.gif)|
 
 We were able to find a bug where we forgot to update the reservoir by outputing the light candidate seen per reservoir. We expected the image to get brighter over time as above, but the image color stays the same due to the bug.
 
