@@ -16,17 +16,28 @@
     * [Spatial reuse](#spatial-reuse)
 * [Build and run](#build-and-run)
 * [Credits and resources](#credits-and-resources)
-* [Final words](#final-words)
 
 ## Introduction
 
 This is a team project implementing ReSTIR based on the [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf) with the same title, published by NVIDIA in 2020. Briefly, the purpose of ReSTIR is to help rendering scenes with a lot of lights but make it much less noisy than the basic path tracing algorithm. This is a result of continuously finding and updating the most ideal light for a pixel based on its surrounding neighbor pixels and its light in previous frames.
 
 ## Results
-*Final images of our implementation and images at crucial steps of our implementation.*
 
 ## Performance analysis
-*Analysis of visual aspects and runtime comparisons*
+*Analyze performance at crucial steps or final step with ground truth*
+
+### Visual analysis
+
+#### Light candidates generation
+|Ground truth (multiple frames)| Ground truth (first frame) | ReSTIR (no spatial or temporal reuse)|
+|---|---|---|
+|![](Images/restir_gt.png)|![](Images/base_first_frame.png)|![](Images/restir_generate_candidates.png)|
+
+Because there's no temporal reuse here, we only mainly compare the firs frame of ground truth and our implementation. There is a clear improvement by only adding light candidates generation and picking one with more influence on the current pixel. The base image (first frame) is much more grainy with many shadows that are not reflected in the final ground truth (accumulation through multiple frames.) In contrast, the ReSTIR image does not have large areas of shadow that are not in the ground truth with multiple-frames accumulation. 
+
+The reason for this is due to better sampling - choosing lights that are have more effects on each pixel, versus choosing some random light.
+
+### Runtime analysis
 
 ## ReSTIR explained 
 *Please let us know if you find any errors in our understandings of the paper.*
@@ -225,6 +236,3 @@ We simply output the reservoir value instead of the pixel shading so that we can
 * ReSTIR [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf)
 * NVDIA GTC 2020 [presentation](https://www.nvidia.com/en-us/gtc/session-catalog/?search.language=1594320459782001LCjF&tab.catalogtabfields=1600209910618002Tlxt&search=restir#/session/1596757976864001iz1p) provides a clear high level concept and results of ReSTIR
 * Wojciech Jarosz, one of the authors, also has some [presentation](https://cs.dartmouth.edu/wjarosz/publications/bitterli20spatiotemporal.html) in SIGGRAPH 2020 that helps with understanding ReSTIR in a deeper level
-
-
-## Final words
