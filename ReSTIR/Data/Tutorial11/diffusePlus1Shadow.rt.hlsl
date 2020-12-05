@@ -78,58 +78,70 @@ void LambertShadowsRayGen()
 		float3 toLight;         // What direction is it from our current pixel?
 		float LdotN;						// Lambert term
 
-		float4 reservoir = gReservoir[launchIndex];
-		float weight;
+		float4 prev_reservoir = gReservoir[launchIndex];
+		float4 reservoir = { 0, 0, 0, 0 };
+		float p_hat;
 
-
-		if (gInitLight) { // For ReSTIR - check if this is the first frame to sample random candidate light per pixel
+		// populate previous reservoir with candidates if first iteration
+		if (gInitLight) {
 			int candidateLightsCount = 32;
 			if (gLightsCount < 32) candidateLightsCount = gLightsCount;
 
+			prev_reservoir = { 0, 0, 0, 0};
 			for (int i = 0; i < candidateLightsCount; i++) {
 				lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
 				getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
 				LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
 
-				// weight of the light is f * Le * G / pdf
-				weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
+				// p_hat of the light is f * Le * G / pdf
+				p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically p_hat is divided by pdf, but point light pdf is 1
 
-				reservoir = updateReservoir(reservoir, lightToSample, weight, randSeed);
+				prev_reservoir = updateReservoir(prev_reservoir, lightToSample, p_hat, randSeed);
 			}
 
-			lightToSample = reservoir.y;
+			lightToSample = prev_reservoir.y;
+
+			// Set r.W for previour reservoir
+			getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
+			LdotN = saturate(dot(worldNorm.xyz, toLight));
+			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+			prev_reservoir.w = (prev_reservoir.x / max(prev_reservoir.z, 0.0001)) * (1.0 / max(p_hat, 0.0001));
 		}
 
-		// Algorithm 3 of ReSTIR paper
+		// Generate Initial Candidates - Algorithm 3 of ReSTIR paper
 		for (int i = 0; i < 32; i++) {
 			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
 			getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
 			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
 
-			// weight of the light is f * Le * G / pdf
-			weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
+			// p_hat of the light is f * Le * G / pdf
+			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically p_hat is divided by pdf, but point light pdf is 1
 
-			reservoir = updateReservoir(reservoir, lightToSample, weight, randSeed);
+			reservoir = updateReservoir(reservoir, lightToSample, p_hat, randSeed);
 		}
-		
+
+		// Temporal Reuse
+		getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+
+		reservoir = updateReservoir(reservoir, prev_reservoir.y, p_hat * prev_reservoir.w * prev_reservoir.z, randSeed);
+		reservoir.z = reservoir.z + prev_reservoir.z;
+
 		lightToSample = reservoir.y;
 
-		// A helper (from the included .hlsli) to query the Falcor scene to get this data
+		// set final r.W
 		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
-
-		// Compute our lambertion term (L dot N)
 		LdotN = saturate(dot(worldNorm.xyz, toLight));
-
-		// set reservoir weight
-		weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
-		reservoir.w = (reservoir.x / max(reservoir.z, 0.0001)) * (1.0 / max(weight, 0.0001));
+		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+		reservoir.w = (reservoir.x / max(reservoir.z, 0.0001)) * (1.0 / max(p_hat, 0.0001));
 
 		// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
 		//    (we're uniformly sampling, so this probability is: 1 / #lights) 
 		float shadowMult = float(gLightsCount) * shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight);
 
 		if (shadowMult == 0.0) {
-			reservoir.x = 0.0;
+			reservoir.w = 0.0;
 		}
 
 		gReservoir[launchIndex] = reservoir;

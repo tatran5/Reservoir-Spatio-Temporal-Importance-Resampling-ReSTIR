@@ -18,10 +18,10 @@
 
 float4 updateReservoir(float4 reservoir, int lightToSample, double weight, uint randSeed) {
 	// Algorithm 2 of ReSTIR paper
-	reservoir.x = reservoir.x + weight;
-	reservoir.z = reservoir.z + 1.0f;
+	reservoir.x = reservoir.x + weight; // r.w_sum
+	reservoir.z = reservoir.z + 1.0f; // r.M
 	if (nextRand(randSeed) < weight / reservoir.x) {
-		reservoir.y = lightToSample;
+		reservoir.y = lightToSample; // r.y
 	}
 
 	return reservoir;

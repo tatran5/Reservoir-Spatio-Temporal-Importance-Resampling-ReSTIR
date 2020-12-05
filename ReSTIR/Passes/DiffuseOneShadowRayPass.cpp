@@ -49,10 +49,23 @@ bool DiffuseOneShadowRayPass::initialize(RenderContext* pRenderContext, Resource
     return true;
 }
 
+bool DiffuseOneShadowRayPass::hasCameraMoved()
+{
+	// Has our camera moved?
+	return mpScene &&                      // No scene?  Then the answer is no
+		mpScene->getActiveCamera() &&   // No camera in our scene?  Then the answer is no
+		(mpLastCameraMatrix != mpScene->getActiveCamera()->getViewMatrix());   // Compare the current matrix with the last one
+}
+
 void DiffuseOneShadowRayPass::initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene)
 {
 	// Stash a copy of the scene and pass it to our ray tracer (if initialized)
     mpScene = std::dynamic_pointer_cast<RtScene>(pScene);
+
+	// Grab a copy of the current scene's camera matrix (if it exists)
+	if (mpScene && mpScene->getActiveCamera())
+		mpLastCameraMatrix = mpScene->getActiveCamera()->getViewMatrix();
+
 	if (mpRays) mpRays->setScene(mpScene);
 }
 
@@ -63,6 +76,13 @@ void DiffuseOneShadowRayPass::execute(RenderContext* pRenderContext)
 
 	// Do we have all the resources we need to render?  If not, return
 	if (!pDstTex || !mpRays || !mpRays->readyToRender()) return;
+
+	// If the camera in our current scene has moved, we want to reset mInitLightPerPixel
+	if (hasCameraMoved())
+	{
+		mInitLightPerPixel = true;
+		mpLastCameraMatrix = mpScene->getActiveCamera()->getViewMatrix();
+	}
 
 	// Set our ray tracing shader variables 
 	auto rayGenVars = mpRays->getRayGenVars();

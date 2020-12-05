@@ -51,9 +51,13 @@ protected:
 	bool requiresScene() override { return true; }
 	bool usesRayTracing() override { return true; }
 
+	// A helper utility to determine if the current scene (if any) has had any camera motion
+	bool hasCameraMoved();
+
 	// Rendering state
 	RayLaunch::SharedPtr                    mpRays;                 ///< Our wrapper around a DX Raytracing pass
 	RtScene::SharedPtr                      mpScene;                ///< Our scene file (passed in from app)  
+	mat4                          mpLastCameraMatrix;
 
 	// For ReSTIR - only true during the first frame to choose a light candidate per pixel and will be toggled off after that
 	bool									mInitLightPerPixel = true; 
