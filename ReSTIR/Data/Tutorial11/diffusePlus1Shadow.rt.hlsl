@@ -79,34 +79,15 @@ void LambertShadowsRayGen()
 		float LdotN;						// Lambert term
 
 		float4 prev_reservoir = gReservoir[launchIndex];
-		float4 reservoir = { 0, 0, 0, 0 };
+		float4 reservoir = float4(0.f);
 		float p_hat;
 
-		// populate previous reservoir with candidates if first iteration
-		if (gInitLight) {
-			int candidateLightsCount = 32;
-			if (gLightsCount < 32) candidateLightsCount = gLightsCount;
+		// initialize prev reservoir if this is the first iteraation
+		if (gInitLight) { prev_reservoir = float4(0.f); }
 
-			prev_reservoir = { 0, 0, 0, 0};
-			for (int i = 0; i < candidateLightsCount; i++) {
-				lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
-				getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
-				LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-
-				// p_hat of the light is f * Le * G / pdf
-				p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically p_hat is divided by pdf, but point light pdf is 1
-
-				prev_reservoir = updateReservoir(prev_reservoir, lightToSample, p_hat, randSeed);
-			}
-
-			lightToSample = prev_reservoir.y;
-
-			// Set r.W for previour reservoir
-			getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
-			LdotN = saturate(dot(worldNorm.xyz, toLight));
-			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
-			prev_reservoir.w = (prev_reservoir.x / max(prev_reservoir.z, 0.0001)) * (1.0 / max(p_hat, 0.0001));
-		}
+		// ----------------------------------------------------------------------------------------------
+		// -----------------------------Initial candidates generation BEGIN -----------------------------
+		// ----------------------------------------------------------------------------------------------
 
 		// Generate Initial Candidates - Algorithm 3 of ReSTIR paper
 		for (int i = 0; i < 32; i++) {
@@ -116,32 +97,61 @@ void LambertShadowsRayGen()
 
 			// p_hat of the light is f * Le * G / pdf
 			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically p_hat is divided by pdf, but point light pdf is 1
-
 			reservoir = updateReservoir(reservoir, lightToSample, p_hat, randSeed);
 		}
 
-		// Temporal Reuse
-		getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
-		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
-
-		reservoir = updateReservoir(reservoir, prev_reservoir.y, p_hat * prev_reservoir.w * prev_reservoir.z, randSeed);
-		reservoir.z = reservoir.z + prev_reservoir.z;
-
+		// Evaluate visibility for initial candidate
 		lightToSample = reservoir.y;
-
-		// set final r.W
 		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
 		LdotN = saturate(dot(worldNorm.xyz, toLight));
 		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
-		reservoir.w = (reservoir.x / max(reservoir.z, 0.0001)) * (1.0 / max(p_hat, 0.0001));
+		reservoir.w = (reservoir.x / max(reservoir.z, 0.0001f)) * (1.f / max(p_hat, 0.0001f));
+		if (shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight) < 0.001f) {
+			reservoir.w = 0.f;
+		}
+
+		// ----------------------------------------------------------------------------------------------
+		// -----------------------------Initial candidates generation END -------------------------------
+		// ----------------------------------------------------------------------------------------------
+
+		// ----------------------------------------------------------------------------------------------
+		// ----------------------------------- Temporal reuse BEGIN -------------------------------------
+		// ----------------------------------------------------------------------------------------------
+
+		float4 temporal_reservoir = float4(0.f);
+
+		// combine current reservoir
+		getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+		temporal_reservoir = updateReservoir(temporal_reservoir, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
+
+		// combine previous reservoir
+		getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+		temporal_reservoir = updateReservoir(temporal_reservoir, prev_reservoir.y, p_hat * prev_reservoir.w * prev_reservoir.z, randSeed);
+
+		temporal_reservoir.z = prev_reservoir.z + reservoir.z;
+		reservoir = temporal_reservoir;
+
+		// ----------------------------------------------------------------------------------------------
+		// ----------------------------------- Temporal reuse END ---------------------------------------
+		// ----------------------------------------------------------------------------------------------
+
+		// set final r.W
+		lightToSample = reservoir.y;
+		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
+		LdotN = saturate(dot(worldNorm.xyz, toLight));
+		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+		reservoir.w = (reservoir.x / max(reservoir.z, 0.0001f)) * (1.f / max(p_hat, 0.0001f));
 
 		// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
 		//    (we're uniformly sampling, so this probability is: 1 / #lights) 
 		float shadowMult = float(gLightsCount) * shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight);
 
-		if (shadowMult == 0.0) {
-			reservoir.w = 0.0;
+		if (shadowMult < 0.001f * float(gLightsCount)) {
+			reservoir.w = 0.f;
 		}
 
 		gReservoir[launchIndex] = reservoir;
