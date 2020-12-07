@@ -19,9 +19,6 @@ bool UpdateReservoirPlusShadePass::initialize(RenderContext* pRenderContext, Res
 	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "Reservoir2", "IndirectOutput" });
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 
-	// Set the default scene to load
-	mpResManager->setDefaultSceneName("Data/pink_room/pink_room.fscene");
-
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
 	mpRays = RayLaunch::create(kFileRayTrace, kEntryPointRayGen);
 	mpRays->addMissShader(kFileRayTrace, kEntryPointMiss0);
