@@ -146,19 +146,8 @@ void LambertShadowsRayGen()
 		// ----------------------------------- Temporal reuse END ---------------------------------------
 		// ----------------------------------------------------------------------------------------------
 
-		//// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
-		////    (we're uniformly sampling, so this probability is: 1 / #lights) 
-		//float shadowMult = float(gLightsCount) * shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight);
-
-		//if (shadowMult == 0.001f) {
-		//	reservoir.w = 0.f;
-		//}
-
-		// TODO: TEST ONLY - CHANGE BACK TO gReservoir instead of ____2
-		gReservoir2[launchIndex] = reservoir;
-
-		//// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
-		//shadeColor = shadowMult * reservoir.w * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
+		// Save the computed reserrvoir back into the buffer
+		gReservoir[launchIndex] = reservoir;
 	}
 
 	// Save out our final shaded

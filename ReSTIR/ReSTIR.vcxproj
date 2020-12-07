@@ -21,6 +21,7 @@
     <ClCompile Include="..\SharedUtils\SceneLoaderWrapper.cpp" />
     <ClCompile Include="..\SharedUtils\SimpleVars.cpp" />
     <ClCompile Include="Passes\InitLightPlusTemporalPass.cpp" />
+    <ClCompile Include="Passes\SpatialReusePass.cpp" />
     <ClCompile Include="Passes\UpdateReservoirPlusShadePass.cpp" />
     <ClCompile Include="ReSTIR.cpp" />
   </ItemGroup>
@@ -35,6 +36,7 @@
     <ClInclude Include="..\SharedUtils\SceneLoaderWrapper.h" />
     <ClInclude Include="..\SharedUtils\SimpleVars.h" />
     <ClInclude Include="Passes\InitLightPlusTemporalPass.h" />
+    <ClInclude Include="Passes\SpatialReusePass.h" />
     <ClInclude Include="Passes\UpdateReservoirPlusShadePass.h" />
   </ItemGroup>
   <ItemGroup>
@@ -56,6 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Tutorial11\updateReservoirPlusShade.rt.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Tutorial11\spatialReuse.rt.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

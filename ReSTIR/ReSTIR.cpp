@@ -21,6 +21,7 @@
 #include "../CommonPasses/SimpleAccumulationPass.h"
 #include "../SharedUtils/RenderingPipeline.h"
 #include "Passes/InitLightPlusTemporalPass.h"
+#include "Passes/SpatialReusePass.h"
 #include "Passes/UpdateReservoirPlusShadePass.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
@@ -39,9 +40,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	initLightPlusTemporalPass->mTemporalReuse = temporalReuse;
 	pipeline->setPass(1, initLightPlusTemporalPass);
 
-	pipeline->setPass(2, UpdateReservoirPlusShadePass::create());
+	pipeline->setPass(2, SpatialReusePass::create());
 
-	pipeline->setPass(3, SimpleAccumulationPass::create(ResourceManager::kOutputChannel));  
+	pipeline->setPass(3, UpdateReservoirPlusShadePass::create());
+
+	pipeline->setPass(4, SimpleAccumulationPass::create(ResourceManager::kOutputChannel));  
 
 	// Define a set of config / window parameters for our program
     SampleConfig config;
