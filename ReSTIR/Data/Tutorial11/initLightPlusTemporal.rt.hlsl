@@ -97,7 +97,7 @@ void LambertShadowsRayGen()
 			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
 
 			// p_hat of the light is f * Le * G / pdf
-			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically p_hat is divided by pdf, but point light pdf is 1
+			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight)); // technically p_hat is divided by pdf, but point light pdf is 1
 			reservoir = updateReservoir(reservoir, lightToSample, p_hat, randSeed);
 		}
 
@@ -109,7 +109,7 @@ void LambertShadowsRayGen()
 		lightToSample = reservoir.y;
 		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
 		LdotN = saturate(dot(worldNorm.xyz, toLight));
-		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+		p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 		reservoir.w = (1.f / max(p_hat, 0.0001f)) * (reservoir.x / max(reservoir.z, 0.0001f));
 		if (shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight) < 0.001f) {
 			reservoir.w = 0.f;
@@ -124,13 +124,13 @@ void LambertShadowsRayGen()
 			// combine current reservoir
 			getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
 			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 			temporal_reservoir = updateReservoir(temporal_reservoir, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
 
 			// combine previous reservoir
 			getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
 			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 			prev_reservoir.z = min(prev_reservoir.z, 20.f * reservoir.z); // clamp r.M value if it is too large
 			temporal_reservoir = updateReservoir(temporal_reservoir, prev_reservoir.y, p_hat * prev_reservoir.w * prev_reservoir.z, randSeed);
 
@@ -140,7 +140,7 @@ void LambertShadowsRayGen()
 			// set W value
 			getLightData(temporal_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
 			LdotN = saturate(dot(worldNorm.xyz, toLight));
-			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 			temporal_reservoir.w = (1.f / max(p_hat, 0.0001f)) * (temporal_reservoir.x / max(temporal_reservoir.z, 0.0001f));
 
 			// set current reservoir to the combined temporal reservoir
