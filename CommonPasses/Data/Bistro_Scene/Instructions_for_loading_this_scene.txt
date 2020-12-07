@@ -1,0 +1,6 @@
+Bistro.fbx is too heavy to be commited to github along with all the other project files. So, it is better to download the scene locally and include it to this folder ~ it is not a difficult process!
+Find the scene at : https://developer.nvidia.com/orca/amazon-lumberyard-bistro
+Unzip Bistro_v5 inside the Bistro_scene folder -> Right click -> extract all
+You will see the contents including BistroExterior.fbx file. (*Make sure bistro.fscene is in the same root folder as BistroExterior.fbx!) 
+You should then be able to load the scene in the ReStir Raytracer :) 
+

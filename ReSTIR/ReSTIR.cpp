@@ -52,7 +52,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	// Define a set of config / window parameters for our program
     SampleConfig config;
-	config.windowDesc.title = "ReSTIR - Tutorial 11:  Instead of shooting one shadow ray per light, randomly shoot one shadow ray and accumulate over time.";
+	config.windowDesc.title = "ReSTIR";
 	config.windowDesc.resizableWindow = true;
 
 	// Start our program!
