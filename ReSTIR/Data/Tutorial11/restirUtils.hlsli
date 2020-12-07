@@ -16,6 +16,9 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************************************************/
 
+// Define pi
+#define M_PI  3.14159265359
+
 float4 updateReservoir(float4 reservoir, int lightToSample, float weight, uint randSeed) {
 	// Algorithm 2 of ReSTIR paper
 	reservoir.x = reservoir.x + weight; // r.w_sum

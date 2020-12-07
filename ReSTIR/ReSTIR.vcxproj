@@ -20,7 +20,7 @@
     <ClCompile Include="..\SharedUtils\ResourceManager.cpp" />
     <ClCompile Include="..\SharedUtils\SceneLoaderWrapper.cpp" />
     <ClCompile Include="..\SharedUtils\SimpleVars.cpp" />
-    <ClCompile Include="Passes\DiffuseOneShadowRayPass.cpp" />
+    <ClCompile Include="Passes\InitLightPlusTemporalPass.cpp" />
     <ClCompile Include="ReSTIR.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -33,14 +33,14 @@
     <ClInclude Include="..\SharedUtils\ResourceManager.h" />
     <ClInclude Include="..\SharedUtils\SceneLoaderWrapper.h" />
     <ClInclude Include="..\SharedUtils\SimpleVars.h" />
-    <ClInclude Include="Passes\DiffuseOneShadowRayPass.h" />
+    <ClInclude Include="Passes\InitLightPlusTemporalPass.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Tutorial11\diffusePlus1ShadowUtils.hlsli" />
+    <None Include="Data\Tutorial11\restirUtils.hlsli" />
     <None Include="Data\Tutorial11\standardShadowRay.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Tutorial11\diffusePlus1Shadow.rt.hlsl">
+    <None Include="Data\Tutorial11\initLightPlusTemporal.rt.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

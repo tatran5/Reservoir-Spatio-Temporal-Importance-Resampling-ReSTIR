@@ -16,12 +16,12 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************************************************/
 
-#include "DiffuseOneShadowRayPass.h"
+#include "InitLightPlusTemporalPass.h"
 
 // Some global vars, used to simplify changing shader location & entry points
 namespace {
 	// Where is our shader located?
-	const char* kFileRayTrace = "Tutorial11\\diffusePlus1Shadow.rt.hlsl";
+	const char* kFileRayTrace = "Tutorial11\\initLightPlusTemporal.rt.hlsl";
 
 	// What are the entry points in that shader for various ray tracing shaders?
 	const char* kEntryPointRayGen  = "LambertShadowsRayGen";
@@ -30,7 +30,7 @@ namespace {
 	const char* kEntryAoClosestHit = "ShadowClosestHit";
 };
 
-bool DiffuseOneShadowRayPass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
+bool InitLightPlusTemporalPass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
 {
 	// Stash a copy of our resource manager so we can get rendering resources
 	mpResManager = pResManager;
@@ -49,7 +49,7 @@ bool DiffuseOneShadowRayPass::initialize(RenderContext* pRenderContext, Resource
     return true;
 }
 
-bool DiffuseOneShadowRayPass::hasCameraMoved()
+bool InitLightPlusTemporalPass::hasCameraMoved()
 {
 	// Has our camera moved?
 	return mpScene &&                      // No scene?  Then the answer is no
@@ -57,7 +57,7 @@ bool DiffuseOneShadowRayPass::hasCameraMoved()
 		(mpLastCameraMatrix != mpScene->getActiveCamera()->getViewMatrix());   // Compare the current matrix with the last one
 }
 
-void DiffuseOneShadowRayPass::initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene)
+void InitLightPlusTemporalPass::initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene)
 {
 	// Stash a copy of the scene and pass it to our ray tracer (if initialized)
     mpScene = std::dynamic_pointer_cast<RtScene>(pScene);
@@ -69,7 +69,7 @@ void DiffuseOneShadowRayPass::initScene(RenderContext* pRenderContext, Scene::Sh
 	if (mpRays) mpRays->setScene(mpScene);
 }
 
-void DiffuseOneShadowRayPass::execute(RenderContext* pRenderContext)
+void InitLightPlusTemporalPass::execute(RenderContext* pRenderContext)
 {
 	// Get the output buffer we're writing into; clear it to black.
 	Texture::SharedPtr pDstTex = mpResManager->getClearedTexture(ResourceManager::kOutputChannel, vec4(0.0f, 0.0f, 0.0f, 0.0f));

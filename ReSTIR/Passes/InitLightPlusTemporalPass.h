@@ -30,17 +30,17 @@
 #include "../SharedUtils/RenderPass.h"
 #include "../SharedUtils/RayLaunch.h"
 
-class DiffuseOneShadowRayPass : public ::RenderPass, inherit_shared_from_this<::RenderPass, DiffuseOneShadowRayPass>
+class InitLightPlusTemporalPass : public ::RenderPass, inherit_shared_from_this<::RenderPass, InitLightPlusTemporalPass>
 {
 public:
-	using SharedPtr = std::shared_ptr<DiffuseOneShadowRayPass>;
-	using SharedConstPtr = std::shared_ptr<const DiffuseOneShadowRayPass>;
+	using SharedPtr = std::shared_ptr<InitLightPlusTemporalPass>;
+	using SharedConstPtr = std::shared_ptr<const InitLightPlusTemporalPass>;
 
-	static SharedPtr create() { return SharedPtr(new DiffuseOneShadowRayPass()); }
-	virtual ~DiffuseOneShadowRayPass() = default;
+	static SharedPtr create() { return SharedPtr(new InitLightPlusTemporalPass()); }
+	virtual ~InitLightPlusTemporalPass() = default;
 
 protected:
-	DiffuseOneShadowRayPass() : ::RenderPass("Diffuse + 1 Rand Shadow Ray", "Diffuse + 1 Random Shadow  Options") {}
+	InitLightPlusTemporalPass() : ::RenderPass("Diffuse + 1 Rand Shadow Ray", "Diffuse + 1 Random Shadow  Options") {}
 
 	// Implementation of RenderPass interface
 	bool initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager) override;

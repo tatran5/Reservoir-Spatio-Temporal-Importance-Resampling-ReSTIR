@@ -27,7 +27,7 @@ import Shading;                      // Shading functions, etc
 import Lights;                       // Light structures for our current scene
 
 // A separate file with some simple utility functions: getPerpendicularVector(), initRand(), nextRand()
-#include "diffusePlus1ShadowUtils.hlsli"
+#include "restirUtils.hlsli"
 
 // Include shader entries, data structures, and utility function to spawn shadow rays
 #include "standardShadowRay.hlsli"
