@@ -47,6 +47,7 @@ void SpatialReusePass::execute(RenderContext* pRenderContext)
 	auto rayGenVars = mpRays->getRayGenVars();
 	rayGenVars["RayGenCB"]["gMinT"]       = mpResManager->getMinTDist();
 	rayGenVars["RayGenCB"]["gFrameCount"] = mFrameCount++;
+	rayGenVars["RayGenCB"]["gSpatialReuse"] = mSpatialReuse;
 
 	// Pass our G-buffer textures down to the HLSL so we can shade
 	rayGenVars["gPos"]         = mpResManager->getTexture("WorldPosition");

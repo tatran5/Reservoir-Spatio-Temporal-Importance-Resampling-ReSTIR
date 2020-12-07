@@ -19,7 +19,7 @@ cbuffer RayGenCB
 {
 	float gMinT;        // Min distance to start a ray to avoid self-occlusion
 	uint  gFrameCount;  // Frame counter, used to perturb random seed each frame
-	
+	bool	gSpatialReuse;
 }
 
 // Input and out textures that need to be set by the C++ code
@@ -52,7 +52,7 @@ void LambertShadowsRayGen()
 	float4 reservoir = gReservoir[launchIndex];
 
 	// Our camera sees the background if worldPos.w is 0, only do diffuse shading elsewhere
-	if (worldPos.w != 0.0f)
+	if (worldPos.w != 0.0f && gSpatialReuse)
 	{
 		// We need to query our scene to find info about the current light
 		float distToLight;      // How far away is it?

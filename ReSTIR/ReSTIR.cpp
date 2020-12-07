@@ -28,6 +28,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 {
 	// Toggle
 	bool temporalReuse = true;
+	bool spatialReuse = true;
 
 	// Create our rendering pipeline
 	RenderingPipeline *pipeline = new RenderingPipeline();
@@ -40,7 +41,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	initLightPlusTemporalPass->mTemporalReuse = temporalReuse;
 	pipeline->setPass(1, initLightPlusTemporalPass);
 
-	pipeline->setPass(2, SpatialReusePass::create());
+
+	auto spatialReusePass = SpatialReusePass::create();
+	spatialReusePass->mSpatialReuse = spatialReuse;
+	pipeline->setPass(2, spatialReusePass);
 
 	pipeline->setPass(3, UpdateReservoirPlusShadePass::create());
 

@@ -5,6 +5,8 @@
 class SpatialReusePass : public ::RenderPass, inherit_shared_from_this<::RenderPass, SpatialReusePass>
 {
 public:
+	bool mSpatialReuse = true;
+
 	using SharedPtr = std::shared_ptr<SpatialReusePass>;
 	using SharedConstPtr = std::shared_ptr<const SpatialReusePass>;
 
