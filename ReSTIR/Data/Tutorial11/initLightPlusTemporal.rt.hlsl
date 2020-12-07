@@ -112,6 +112,7 @@ void LambertShadowsRayGen()
 		LdotN = saturate(dot(worldNorm.xyz, toLight));
 		p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 		reservoir.w = (1.f / max(p_hat, 0.0001f)) * (reservoir.x / max(reservoir.z, 0.0001f));
+
 		if (shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight) < 0.001f) {
 			reservoir.w = 0.f;
 		}
