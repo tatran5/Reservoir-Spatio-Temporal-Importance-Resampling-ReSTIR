@@ -36,6 +36,10 @@ protected:
 
 	// For ReSTIR - only true during the first frame to choose a light candidate per pixel and will be toggled off after that
 	bool									mInitLightPerPixel = true; 
+	// Recursive ray tracing can be slow.  Add a toggle to disable, to allow you to manipulate the scene
+	bool                                    mDoIndirectGI = true;
+	bool                                    mDoCosSampling = true;
+	bool                                    mDoDirectShadows = true;
 
 	// Various internal parameters
 	uint32_t                                mFrameCount = 0x1337u;  ///< A frame counter to vary random numbers over time

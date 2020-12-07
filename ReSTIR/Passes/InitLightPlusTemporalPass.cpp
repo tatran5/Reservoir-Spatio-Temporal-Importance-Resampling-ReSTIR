@@ -6,30 +6,42 @@ namespace {
 	const char* kFileRayTrace = "Tutorial11\\initLightPlusTemporal.rt.hlsl";
 
 	// What are the entry points in that shader for various ray tracing shaders?
-	const char* kEntryPointRayGen  = "LambertShadowsRayGen";
-	const char* kEntryPointMiss0   = "ShadowMiss";
-	const char* kEntryAoAnyHit     = "ShadowAnyHit";
-	const char* kEntryAoClosestHit = "ShadowClosestHit";
+	const char* kEntryPointRayGen = "LambertShadowsRayGen";
+	const char* kEntryPointMiss0 = "ShadowMiss";
+	const char* kEntryShadowAnyHit = "ShadowAnyHit";
+	const char* kEntryShadowClosestHit = "ShadowClosestHit";
+
+	const char* kEntryPointMiss1 = "IndirectMiss";
+	const char* kEntryIndirectAnyHit = "IndirectAnyHit";
+	const char* kEntryIndirectClosestHit = "IndirectClosestHit";
 };
 
 bool InitLightPlusTemporalPass::initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager)
 {
 	// Stash a copy of our resource manager so we can get rendering resources
 	mpResManager = pResManager;
-	// TODO: DELETE Reservoir2
-	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "Reservoir2"});
+	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "IndirectOutput" });
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
-
+	mpResManager->requestTextureResource(ResourceManager::kEnvironmentMap);
 	// Set the default scene to load
-	mpResManager->setDefaultSceneName("Data/pink_room/pink_room.fscene");
+	mpResManager->setDefaultSceneName("Data/forest/forest.fscene");
+
 
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
 	mpRays = RayLaunch::create(kFileRayTrace, kEntryPointRayGen);
+
+	// Add ray type #0 (shadow rays)
 	mpRays->addMissShader(kFileRayTrace, kEntryPointMiss0);
-	mpRays->addHitShader(kFileRayTrace, kEntryAoClosestHit, kEntryAoAnyHit);
+	mpRays->addHitShader(kFileRayTrace, kEntryShadowClosestHit, kEntryShadowAnyHit);
+
+	// Add ray type #1 (indirect GI rays)
+	mpRays->addMissShader(kFileRayTrace, kEntryPointMiss1);
+	mpRays->addHitShader(kFileRayTrace, kEntryIndirectClosestHit, kEntryIndirectAnyHit);
+
+	// Now that we've passed all our shaders in, compile and (if available) setup the scene
 	mpRays->compileRayProgram();
 	if (mpScene) mpRays->setScene(mpScene);
-    return true;
+	return true;
 }
 
 bool InitLightPlusTemporalPass::hasCameraMoved()
@@ -74,6 +86,9 @@ void InitLightPlusTemporalPass::execute(RenderContext* pRenderContext)
 	// For ReSTIR - update the toggle in the shader
 	rayGenVars["RayGenCB"]["gInitLight"]  = mInitLightPerPixel; 
 	rayGenVars["RayGenCB"]["gTemporalReuse"] = mTemporalReuse;
+	rayGenVars["RayGenCB"]["gDoIndirectGI"] = mDoIndirectGI;
+	rayGenVars["RayGenCB"]["gCosSampling"] = mDoCosSampling;
+	rayGenVars["RayGenCB"]["gDirectShadow"] = mDoDirectShadows;
 
 	// Pass our G-buffer textures down to the HLSL so we can shade
 	rayGenVars["gPos"]         = mpResManager->getTexture("WorldPosition");
@@ -81,9 +96,12 @@ void InitLightPlusTemporalPass::execute(RenderContext* pRenderContext)
 	rayGenVars["gDiffuseMatl"] = mpResManager->getTexture("MaterialDiffuse");
 	// For ReSTIR - update the buffer storing reservoir (weight sum, chosen light index, number of candidates seen) 
 	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
-	// TODO: DELETE Reservoir2
-	rayGenVars["gReservoir2"] = mpResManager->getTexture("Reservoir2");
 	rayGenVars["gOutput"]      = pDstTex;
+	rayGenVars["gIndirectOutput"] = mpResManager->getTexture("IndirectOutput");
+
+	// Set our environment map texture for indirect rays that miss geometry 
+	auto missVars = mpRays->getMissVars(1);       // Remember, indirect rays are ray type #1
+	missVars["gEnvMap"] = mpResManager->getTexture(ResourceManager::kEnvironmentMap);
 
 	// Shoot our rays and shade our primary hit points
 	mpRays->execute( pRenderContext, mpResManager->getScreenSize() );

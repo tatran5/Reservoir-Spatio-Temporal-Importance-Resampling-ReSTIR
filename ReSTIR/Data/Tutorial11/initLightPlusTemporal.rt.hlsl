@@ -39,15 +39,106 @@ cbuffer RayGenCB
 	uint  gFrameCount;  // Frame counter, used to perturb random seed each frame
 	bool  gInitLight;		// For ReSTIR - to choose an arbitrary light for this pixel after choosing 32 random light candidates
 	bool  gTemporalReuse;
+	//For GI
+	bool  gDoIndirectGI;   // A boolean determining if we should shoot indirect GI rays
+	bool  gCosSampling;    // Use cosine sampling (true) or uniform sampling (false)
+	bool  gDirectShadow;   // Should we shoot shadow rays from our first hit point?
 }
+
+
+// The payload used for our indirect global illumination rays
+struct IndirectRayPayload
+{
+	float3 color;    // The (returned) color in the ray's direction
+	uint   rndSeed;  // Our random seed, so we pick uncorrelated RNGs along our ray
+};
+
 
 // Input and out textures that need to be set by the C++ code
 Texture2D<float4>   gPos;           // G-buffer world-space position
 Texture2D<float4>   gNorm;          // G-buffer world-space normal
 Texture2D<float4>   gDiffuseMatl;   // G-buffer diffuse material (RGB) and opacity (A)
 RWTexture2D<float4> gReservoir;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
-RWTexture2D<float4> gReservoir2;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
 RWTexture2D<float4> gOutput;        // Output to store shaded result
+RWTexture2D<float4> gIndirectOutput; //For output from indirect illumination 
+
+// Our environment map, used for the miss shader for indirect rays
+Texture2D<float4> gEnvMap;
+
+// What code is executed when our ray misses all geometry?
+[shader("miss")]
+void IndirectMiss(inout IndirectRayPayload rayData)
+{
+	// Load some information about our lightprobe texture
+	float2 dims;
+	gEnvMap.GetDimensions(dims.x, dims.y);
+
+	// Convert our ray direction to a (u,v) coordinate
+	float2 uv = wsVectorToLatLong(WorldRayDirection());
+
+	// Load our background color, then store it into our ray payload
+	rayData.color = gEnvMap[uint2(uv * dims)].rgb;
+}
+
+// What code is executed when our ray hits a potentially transparent surface?
+[shader("anyhit")]
+void IndirectAnyHit(inout IndirectRayPayload rayData, BuiltInTriangleIntersectionAttributes attribs)
+{
+	// Is this a transparent part of the surface?  If so, ignore this hit
+	if (alphaTestFails(attribs))
+		IgnoreHit();
+}
+
+// What code is executed when we have a new closest hitpoint?   Well, pick a random light,
+//    shoot a shadow ray to that light, and shade using diffuse shading.
+[shader("closesthit")]
+void IndirectClosestHit(inout IndirectRayPayload rayData, BuiltInTriangleIntersectionAttributes attribs)
+{
+	// Run a helper functions to extract Falcor scene data for shading
+	ShadingData shadeData = getHitShadingData(attribs);
+
+	// Pick a random light from our scene to shoot a shadow ray towards	
+	int lightToSample = min(int(nextRand(rayData.rndSeed) * gLightsCount), gLightsCount - 1);
+
+	// Query the scene to find info about the randomly selected light
+	float distToLight;
+	float3 lightIntensity;
+	float3 toLight;
+	getLightData(lightToSample, shadeData.posW, toLight, lightIntensity, distToLight);
+
+	// Compute our lambertion term (L dot N)
+	float LdotN = saturate(dot(shadeData.N, toLight));
+
+	// Shoot our shadow ray to our randomly selected light
+	float shadowMult = float(gLightsCount) * shadowRayVisibility(shadeData.posW, toLight, RayTMin(), distToLight);
+
+	// Return the Lambertian shading color using the physically based Lambertian term (albedo / pi)
+	rayData.color = shadowMult * LdotN * lightIntensity * shadeData.diffuse / M_PI;
+}
+
+// A utility function to trace an idirect ray and return the color it sees.
+//    -> Note:  This assumes the indirect hit programs and miss programs are index 1!
+float3 shootIndirectRay(float3 rayOrigin, float3 rayDir, float minT, uint seed)
+{
+	// Setup shadow ray
+	RayDesc rayColor;
+	rayColor.Origin = rayOrigin;  // Where does it start?
+	rayColor.Direction = rayDir;  // What direction do we shoot it?
+	rayColor.TMin = minT;         // The closest distance we'll count as a hit
+	rayColor.TMax = 1.0e38f;      // The farthest distance we'll count as a hit
+
+	// Initialize the ray's payload data with black return color and the current rng seed
+	IndirectRayPayload payload;
+	payload.color = float3(0, 0, 0);
+	payload.rndSeed = seed;
+
+	// Trace our ray to get a color in the indirect direction.  Use hit group #1 and miss shader #1
+	TraceRay(gRtScene, 0, 0xFF, 1, hitProgramCount, 1, rayColor, payload);
+
+	// Return the color we got from our ray
+	return payload.color;
+}
+
 
 // How do we shade our g-buffer and generate shadow rays?
 [shader("raygeneration")]
@@ -147,10 +238,63 @@ void LambertShadowsRayGen()
 		// ----------------------------------- Temporal reuse END ---------------------------------------
 		// ----------------------------------------------------------------------------------------------
 
+		//----------------------------------- Global Illumination ---------------------------------------
+		
+		// Direct Illumination - Can be commented out since we are doing direct lighting in restir
+		// This gives a smoother op so ~!
+		// Pick a random light from our scene to sample for direct lighting
+		int GI_lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
+
+		// We need to query our scene to find info about the current light
+		float GI_distToLight;
+		float3 GI_lightIntensity;
+		float3 GI_toLight;
+		getLightData(GI_lightToSample, worldPos.xyz, GI_toLight, GI_lightIntensity, GI_distToLight);
+
+		// Compute our lambertion term (L dot N)
+		float GI_LdotN = saturate(dot(worldNorm.xyz, toLight));
+
+		// Shoot our ray for our direct lighting
+		float GI_shadowMult = float(gLightsCount);
+		if (gDirectShadow)
+			GI_shadowMult *= shadowRayVisibility(worldPos.xyz, GI_toLight, gMinT, GI_distToLight);
+
+		// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
+		shadeColor += GI_shadowMult * GI_LdotN * GI_lightIntensity * difMatlColor.rgb / M_PI;
+
+		//For Indirect Illumination 
+		float3 bounceColor;
+		float ID_NdotL;
+		float sampleProb;
+
+		// Indirect illumination
+		if (gDoIndirectGI)
+		{
+			// Select a random direction for our diffuse interreflection ray.
+			float3 bounceDir;
+			if (gCosSampling)
+				bounceDir = getCosHemisphereSample(randSeed, worldNorm.xyz);      // Use cosine sampling
+			else
+				bounceDir = getUniformHemisphereSample(randSeed, worldNorm.xyz);  // Use uniform random samples
+
+			// Get NdotL for our selected ray direction
+			ID_NdotL = saturate(dot(worldNorm.xyz, bounceDir));
+
+			// Shoot our indirect global illumination ray
+			bounceColor = shootIndirectRay(worldPos.xyz, bounceDir, gMinT, randSeed);
+
+			//bounceColor = (NdotL > 0.50f) ? float3(0, 0, 0) : bounceColor;
+
+			// Probability of selecting this ray ( cos/pi for cosine sampling, 1/2pi for uniform sampling )
+			sampleProb = gCosSampling ? (ID_NdotL / M_PI) : (1.0f / (2.0f * M_PI));
+		}
+
 		// Save the computed reserrvoir back into the buffer
 		gReservoir[launchIndex] = reservoir;
+		gIndirectOutput[launchIndex] = float4((ID_NdotL * bounceColor* difMatlColor.rgb / M_PI / sampleProb), 1.0);
 	}
 
 	// Save out our final shaded
-	gOutput[launchIndex] = float4(shadeColor, 1.0f);
+	//gOutput[launchIndex] = float4(shadeColor, 1.0f);
+	
 }

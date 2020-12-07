@@ -44,7 +44,9 @@ Texture2D<float4>   gNorm;          // G-buffer world-space normal
 Texture2D<float4>   gDiffuseMatl;   // G-buffer diffuse material (RGB) and opacity (A)
 
 RWTexture2D<float4> gReservoir;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
-Texture2D<float4>		gReservoir2;		
+Texture2D<float4>	gReservoir2;	
+
+RWTexture2D<float4> gIndirectOutput; //For output from indirect illumination 
 
 RWTexture2D<float4> gOutput;        // Output to store shaded result
 
@@ -88,5 +90,6 @@ void LambertShadowsRayGen()
 	}
 
 	// Save out our final shaded
-	gOutput[launchIndex] = float4(shadeColor, 1.0f);
+	//gOutput[launchIndex] = float4(shadeColor, 1.f);
+	gOutput[launchIndex] = float4(shadeColor, 1.f) + gIndirectOutput[launchIndex];
 }

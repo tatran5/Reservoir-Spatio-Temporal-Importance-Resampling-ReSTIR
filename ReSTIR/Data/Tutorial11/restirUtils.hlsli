@@ -16,6 +16,9 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************************************************/
 
+// Define pi
+#define M_1_PI  0.318309886183790671538
+
 float4 updateReservoir(float4 reservoir, int lightToSample, float weight, uint randSeed) {
 	// Algorithm 2 of ReSTIR paper
 	reservoir.x = reservoir.x + weight; // r.w_sum
@@ -115,3 +118,56 @@ bool alphaTestFails(BuiltInTriangleIntersectionAttributes attribs)
 	return (baseColor.a < gMaterial.alphaThreshold);
 }
 
+//-------- For GI -------------
+
+// Encapsulates a bunch of Falcor stuff into one simpler function. 
+//    -> This can only be called within a closest hit or any hit shader
+ShadingData getHitShadingData(BuiltInTriangleIntersectionAttributes attribs)
+{
+	// Run a pair of Falcor helper functions to compute important data at the current hit point
+	VertexOut  vsOut = getVertexAttributes(PrimitiveIndex(), attribs);
+	return prepareShadingData(vsOut, gMaterial, gCamera.posW, 0);
+}
+
+// A work-around function because some DXR drivers seem to have broken atan2() implementations
+float atan2_WAR(float y, float x)
+{
+	if (x > 0.f)
+		return atan(y / x);
+	else if (x < 0.f && y >= 0.f)
+		return atan(y / x) + M_PI;
+	else if (x < 0.f && y < 0.f)
+		return atan(y / x) - M_PI;
+	else if (x == 0.f && y > 0.f)
+		return M_PI / 2.f;
+	else if (x == 0.f && y < 0.f)
+		return -M_PI / 2.f;
+	return 0.f; // x==0 && y==0 (undefined)
+}
+
+// Convert our world space direction to a (u,v) coord in a latitude-longitude spherical map
+float2 wsVectorToLatLong(float3 dir)
+{
+	float3 p = normalize(dir);
+
+	// atan2_WAR is a work-around due to an apparent compiler bug in atan2
+	float u = (1.f + atan2_WAR(p.x, -p.z) * M_1_PI) * 0.5f;
+	float v = acos(p.y) * M_1_PI;
+	return float2(u, v);
+}
+
+// Get a uniform weighted random vector centered around a specified normal direction.
+float3 getUniformHemisphereSample(inout uint randSeed, float3 hitNorm)
+{
+	// Get 2 random numbers to select our sample with
+	float2 randVal = float2(nextRand(randSeed), nextRand(randSeed));
+
+	// Cosine weighted hemisphere sample from RNG
+	float3 bitangent = getPerpendicularVector(hitNorm);
+	float3 tangent = cross(bitangent, hitNorm);
+	float r = sqrt(max(0.0f, 1.0f - randVal.x*randVal.x));
+	float phi = 2.0f * 3.14159265f * randVal.y;
+
+	// Get our cosine-weighted hemisphere lobe sample direction
+	return tangent * (r * cos(phi).x) + bitangent * (r * sin(phi)) + hitNorm.xyz * randVal.x;
+}

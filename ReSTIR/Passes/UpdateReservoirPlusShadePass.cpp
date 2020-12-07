@@ -16,8 +16,11 @@ bool UpdateReservoirPlusShadePass::initialize(RenderContext* pRenderContext, Res
 {
 	// Stash a copy of our resource manager so we can get rendering resources
 	mpResManager = pResManager;
-	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "Reservoir2" });
+	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "Reservoir2", "IndirectOutput" });
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
+
+	// Set the default scene to load
+	mpResManager->setDefaultSceneName("Data/pink_room/pink_room.fscene");
 
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
 	mpRays = RayLaunch::create(kFileRayTrace, kEntryPointRayGen);
@@ -55,8 +58,10 @@ void UpdateReservoirPlusShadePass::execute(RenderContext* pRenderContext)
 	// For ReSTIR - update the buffer storing reservoir (weight sum, chosen light index, number of candidates seen) 
 	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
 	rayGenVars["gReservoir2"]  = mpResManager->getTexture("Reservoir2");
+	rayGenVars["gIndirectOutput"] = mpResManager->getTexture("IndirectOutput");
 
 	rayGenVars["gOutput"]      = pDstTex;
+
 
 	// Shoot our rays and shade our primary hit points
 	mpRays->execute( pRenderContext, mpResManager->getScreenSize() );
