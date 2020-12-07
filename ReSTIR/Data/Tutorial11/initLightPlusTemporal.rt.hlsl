@@ -119,13 +119,15 @@ void LambertShadowsRayGen()
 		// ----------------------------------- Temporal reuse BEGIN -------------------------------------
 		// ----------------------------------------------------------------------------------------------
 		if (gTemporalReuse) {
-			float4 temporal_reservoir = float4(0.f);
+			//float4 temporal_reservoir = float4(0.f);
 
-			// combine current reservoir
-			getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
-			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
-			temporal_reservoir = updateReservoir(temporal_reservoir, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
+			//// combine current reservoir
+			//getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+			//LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+			//p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
+			//temporal_reservoir = updateReservoir(temporal_reservoir, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
+
+			float4 temporal_reservoir = reservoir;
 
 			// combine previous reservoir
 			getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
