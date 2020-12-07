@@ -90,6 +90,7 @@ void InitLightPlusTemporalPass::execute(RenderContext* pRenderContext)
 	rayGenVars["RayGenCB"]["gFrameCount"] = mFrameCount++;
 	// For ReSTIR - update the toggle in the shader
 	rayGenVars["RayGenCB"]["gInitLight"]  = mInitLightPerPixel; 
+	rayGenVars["RayGenCB"]["gTemporalReuse"] = mTemporalReuse;
 
 	// Pass our G-buffer textures down to the HLSL so we can shade
 	rayGenVars["gPos"]         = mpResManager->getTexture("WorldPosition");

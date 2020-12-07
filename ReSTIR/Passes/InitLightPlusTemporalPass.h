@@ -33,6 +33,9 @@
 class InitLightPlusTemporalPass : public ::RenderPass, inherit_shared_from_this<::RenderPass, InitLightPlusTemporalPass>
 {
 public:
+
+	bool mTemporalReuse;
+
 	using SharedPtr = std::shared_ptr<InitLightPlusTemporalPass>;
 	using SharedConstPtr = std::shared_ptr<const InitLightPlusTemporalPass>;
 

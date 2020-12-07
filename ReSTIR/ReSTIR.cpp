@@ -24,12 +24,18 @@
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
+	bool temporalReuse = true;
+
 	// Create our rendering pipeline
 	RenderingPipeline *pipeline = new RenderingPipeline();
 
 	// Add passes into our pipeline
 	pipeline->setPass(0, LightProbeGBufferPass::create());
-	pipeline->setPass(1, InitLightPlusTemporalPass::create());    // Replace with our deferred shader that only shoots 1 random shadow ray
+
+	auto initLightPlusTemporalPass = InitLightPlusTemporalPass::create();
+	initLightPlusTemporalPass->mTemporalReuse = temporalReuse;
+	pipeline->setPass(1, initLightPlusTemporalPass);    // Replace with our deferred shader that only shoots 1 random shadow ray
+
 	pipeline->setPass(2, SimpleAccumulationPass::create(ResourceManager::kOutputChannel));  
 
 	// Define a set of config / window parameters for our program

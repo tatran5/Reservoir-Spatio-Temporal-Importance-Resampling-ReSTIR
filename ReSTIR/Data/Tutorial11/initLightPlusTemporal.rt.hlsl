@@ -38,6 +38,7 @@ cbuffer RayGenCB
 	float gMinT;        // Min distance to start a ray to avoid self-occlusion
 	uint  gFrameCount;  // Frame counter, used to perturb random seed each frame
 	bool  gInitLight;		// For ReSTIR - to choose an arbitrary light for this pixel after choosing 32 random light candidates
+	bool  gTemporalReuse;
 }
 
 // Input and out textures that need to be set by the C++ code
@@ -117,33 +118,34 @@ void LambertShadowsRayGen()
 		// ----------------------------------------------------------------------------------------------
 		// ----------------------------------- Temporal reuse BEGIN -------------------------------------
 		// ----------------------------------------------------------------------------------------------
+		if (gTemporalReuse) {
+			float4 temporal_reservoir = float4(0.f);
 
-		float4 temporal_reservoir = float4(0.f);
+			// combine current reservoir
+			getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+			temporal_reservoir = updateReservoir(temporal_reservoir, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
 
-		// combine current reservoir
-		getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
-		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
-		temporal_reservoir = updateReservoir(temporal_reservoir, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
+			// combine previous reservoir
+			getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+			prev_reservoir.z = min(prev_reservoir.z, 20.f * reservoir.z); // clamp r.M value if it is too large
+			temporal_reservoir = updateReservoir(temporal_reservoir, prev_reservoir.y, p_hat * prev_reservoir.w * prev_reservoir.z, randSeed);
 
-		// combine previous reservoir
-		getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
-		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
-		prev_reservoir.z = min(prev_reservoir.z, 20.f * reservoir.z); // clamp r.M value if it is too large
-		temporal_reservoir = updateReservoir(temporal_reservoir, prev_reservoir.y, p_hat * prev_reservoir.w * prev_reservoir.z, randSeed);
+			// set M value
+			temporal_reservoir.z = reservoir.z + prev_reservoir.z;
 
-		// set M value
-		temporal_reservoir.z = reservoir.z + prev_reservoir.z;
+			// set W value
+			getLightData(temporal_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+			LdotN = saturate(dot(worldNorm.xyz, toLight));
+			p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
+			temporal_reservoir.w = (1.f / max(p_hat, 0.0001f)) * (temporal_reservoir.x / max(temporal_reservoir.z, 0.0001f));
 
-		// set W value
-		getLightData(temporal_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
-		LdotN = saturate(dot(worldNorm.xyz, toLight));
-		p_hat = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight));
-		temporal_reservoir.w = (1.f / max(p_hat, 0.0001f)) * (temporal_reservoir.x / max(temporal_reservoir.z, 0.0001f));
-
-		// set current reservoir to the combined temporal reservoir
-		reservoir = temporal_reservoir;
+			// set current reservoir to the combined temporal reservoir
+			reservoir = temporal_reservoir;
+		}
 
 		// ----------------------------------------------------------------------------------------------
 		// ----------------------------------- Temporal reuse END ---------------------------------------
