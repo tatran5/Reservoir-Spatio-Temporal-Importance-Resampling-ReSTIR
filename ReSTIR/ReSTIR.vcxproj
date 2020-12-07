@@ -21,6 +21,7 @@
     <ClCompile Include="..\SharedUtils\SceneLoaderWrapper.cpp" />
     <ClCompile Include="..\SharedUtils\SimpleVars.cpp" />
     <ClCompile Include="Passes\InitLightPlusTemporalPass.cpp" />
+    <ClCompile Include="Passes\UpdateReservoirPlusShadePass.cpp" />
     <ClCompile Include="ReSTIR.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +35,7 @@
     <ClInclude Include="..\SharedUtils\SceneLoaderWrapper.h" />
     <ClInclude Include="..\SharedUtils\SimpleVars.h" />
     <ClInclude Include="Passes\InitLightPlusTemporalPass.h" />
+    <ClInclude Include="Passes\UpdateReservoirPlusShadePass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Tutorial11\restirUtils.hlsli" />
@@ -51,6 +53,11 @@
     <ProjectReference Include="..\Falcor\Framework\Source\Falcor.vcxproj">
       <Project>{3b602f0e-3834-4f73-b97d-7dfc91597a98}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Tutorial11\updateReservoirPlusShade.rt.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{90b71832-31aa-4b87-8b60-53d7ef4cc7f8}</ProjectGuid>

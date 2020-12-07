@@ -45,6 +45,9 @@
     <ClInclude Include="Passes\InitLightPlusTemporalPass.h">
       <Filter>Passes</Filter>
     </ClInclude>
+    <ClInclude Include="Passes\UpdateReservoirPlusShadePass.h">
+      <Filter>Passes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\SharedUtils\RenderingPipeline.cpp">
@@ -78,6 +81,9 @@
     <ClCompile Include="Passes\InitLightPlusTemporalPass.cpp">
       <Filter>Passes</Filter>
     </ClCompile>
+    <ClCompile Include="Passes\UpdateReservoirPlusShadePass.cpp">
+      <Filter>Passes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Tutorial11\standardShadowRay.hlsli">
@@ -87,6 +93,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Data\Tutorial11\initLightPlusTemporal.rt.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Tutorial11\updateReservoirPlusShade.rt.hlsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

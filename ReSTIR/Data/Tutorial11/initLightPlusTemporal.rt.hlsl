@@ -46,6 +46,7 @@ Texture2D<float4>   gPos;           // G-buffer world-space position
 Texture2D<float4>   gNorm;          // G-buffer world-space normal
 Texture2D<float4>   gDiffuseMatl;   // G-buffer diffuse material (RGB) and opacity (A)
 RWTexture2D<float4> gReservoir;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
+RWTexture2D<float4> gReservoir2;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
 RWTexture2D<float4> gOutput;        // Output to store shaded result
 
 // How do we shade our g-buffer and generate shadow rays?
@@ -119,14 +120,6 @@ void LambertShadowsRayGen()
 		// ----------------------------------- Temporal reuse BEGIN -------------------------------------
 		// ----------------------------------------------------------------------------------------------
 		if (gTemporalReuse) {
-			//float4 temporal_reservoir = float4(0.f);
-
-			//// combine current reservoir
-			//getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
-			//LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
-			//p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
-			//temporal_reservoir = updateReservoir(temporal_reservoir, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
-
 			float4 temporal_reservoir = reservoir;
 
 			// combine previous reservoir
@@ -153,18 +146,19 @@ void LambertShadowsRayGen()
 		// ----------------------------------- Temporal reuse END ---------------------------------------
 		// ----------------------------------------------------------------------------------------------
 
-		// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
-		//    (we're uniformly sampling, so this probability is: 1 / #lights) 
-		float shadowMult = float(gLightsCount) * shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight);
+		//// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
+		////    (we're uniformly sampling, so this probability is: 1 / #lights) 
+		//float shadowMult = float(gLightsCount) * shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight);
 
-		if (shadowMult < 0.001f) {
-			reservoir.w = 0.f;
-		}
+		//if (shadowMult == 0.001f) {
+		//	reservoir.w = 0.f;
+		//}
 
-		gReservoir[launchIndex] = reservoir;
+		// TODO: TEST ONLY - CHANGE BACK TO gReservoir instead of ____2
+		gReservoir2[launchIndex] = reservoir;
 
-		// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
-		shadeColor = shadowMult * reservoir.w * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
+		//// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
+		//shadeColor = shadowMult * reservoir.w * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
 	}
 
 	// Save out our final shaded
