@@ -68,7 +68,28 @@
             ],
             "opening_angle": 180.0,
             "penumbra_angle": 0.0
-        }
+        },
+        {
+            "name": "pointLight2",
+            "type": "point_light",
+            "intensity": [
+                0.005,
+                0.01,
+                0.07
+            ],
+            "pos": [
+                0.5,
+                0.1,
+                0.8
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
+        } 
     ],
     "cameras": [
         {
