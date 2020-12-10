@@ -280,7 +280,7 @@
             "penumbra_angle": 0.0
         },
         {
-            "name": "11_right_tree_right_bottom",
+            "name": "12_right_tree_right_bottom",
             "type": "point_light",
             "intensity": [
                 0.00,
