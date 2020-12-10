@@ -346,13 +346,13 @@
              "name": "15_below_tree_house_left_bottom",
             "type": "point_light",
             "intensity": [
-                0.009,
-                0.018,
-                0.022
+                0.01,
+                0.03,
+                0.03
             ],
             "pos": [
                 -0.2,
-                0.15,
+                0.2,
                 -0.6
             ],
             "direction": [
