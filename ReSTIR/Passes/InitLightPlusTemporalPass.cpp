@@ -24,7 +24,7 @@ bool InitLightPlusTemporalPass::initialize(RenderContext* pRenderContext, Resour
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 	mpResManager->requestTextureResource(ResourceManager::kEnvironmentMap);
 
-	mpResManager->updateEnvironmentMap("Data/BackgroundImages/MonValley_G_DirtRoad_3k.hdr");
+	mpResManager->updateEnvironmentMap("Data/BackgroundImages/noise.png");
 	mpResManager->setDefaultSceneName("Data/Scenes/forest/forest.fscene");
 
 
