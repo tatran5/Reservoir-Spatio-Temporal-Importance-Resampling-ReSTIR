@@ -49,7 +49,7 @@
     ],
     "lights": [
         {
-            "name": "pointLight1",
+            "name": "below_tree_house_left",
             "type": "point_light",
             "intensity": [
                 0.02,
@@ -70,7 +70,7 @@
             "penumbra_angle": 0.0
         },
         {
-            "name": "pointLight2",
+            "name": "right_tree_closest_front_bottom",
             "type": "point_light",
             "intensity": [
                 0.005,
@@ -91,7 +91,28 @@
             "penumbra_angle": 0.0
         },
         {
-            "name": "pointLight3",
+            "name": "right_tree_closest_front",
+            "type": "point_light",
+            "intensity": [
+                0.01,
+                0.005,
+                0.0005
+            ],
+            "pos": [
+                0.37,
+                0.37,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
+        },
+        {
+            "name": "right_tree_closest_back",
             "type": "point_light",
             "intensity": [
                 0.1,
@@ -110,7 +131,7 @@
             ],
             "opening_angle": 180.0,
             "penumbra_angle": 0.0
-        } 
+        }
     ],
     "cameras": [
         {
