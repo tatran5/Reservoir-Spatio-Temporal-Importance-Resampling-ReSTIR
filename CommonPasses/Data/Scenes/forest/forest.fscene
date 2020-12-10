@@ -133,6 +133,27 @@
             "penumbra_angle": 0.0
         },
         {
+            "name": "right_tree_closest_front_right",
+            "type": "point_light",
+            "intensity": [
+                0.02,
+                0.02,
+                0.007
+            ],
+            "pos": [
+                0.65,
+                0.3,
+                0.7
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
+        },
+        {
             "name": "right_tree_closest_back",
             "type": "point_light",
             "intensity": [
