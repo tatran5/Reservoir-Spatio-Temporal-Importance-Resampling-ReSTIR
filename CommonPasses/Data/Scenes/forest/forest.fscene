@@ -257,6 +257,27 @@
             ],
             "opening_angle": 180.0,
             "penumbra_angle": 0.0
+        },
+        {
+            "name": "11_right_tree_right",
+            "type": "point_light",
+            "intensity": [
+                0.03,
+                0.001,
+                0.00
+            ],
+            "pos": [
+                1.15,
+                0.27,
+                0.3
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
         }
     ],
     "cameras": [
