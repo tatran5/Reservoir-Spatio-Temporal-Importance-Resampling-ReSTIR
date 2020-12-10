@@ -91,7 +91,7 @@
             "penumbra_angle": 0.0
         },
         {
-            "name": "right_tree_closest_front",
+            "name": "right_tree_closest_front_left",
             "type": "point_light",
             "intensity": [
                 0.01,
@@ -102,6 +102,27 @@
                 0.37,
                 0.37,
                 1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
+        },
+        {
+            "name": "right_tree_closest_front",
+            "type": "point_light",
+            "intensity": [
+                0.007,
+                0.002,
+                0.0001
+            ],
+            "pos": [
+                0.47,
+                0.25,
+                0.8
             ],
             "direction": [
                 0.0,
