@@ -260,8 +260,8 @@ Converged Images:
 
 |With Global Illumination | Without Global Illumination |
 |---|---|
-![Global Illum (Pink Room Scene GI )](Images/pink_room_gi_converged.png)| [Global Illum (Pink Room Scene NO GI )](Images/pink_room_no_gi_converged.png)
-![Global Illum (Purple Room Scene GI )](Images/purple_room_gi_converged.png)| [Global Illum (Purple Room Scene NO GI )](Images/purple_room_no_gi_converged.png)
+![Global Illum (Pink Room Scene GI )](Images/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pink_room_no_gi_converged.png)
+![Global Illum (Purple Room Scene GI )](Images/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purple_room_no_gi_converged.png)
 
 ### Additional Scenes 
 
