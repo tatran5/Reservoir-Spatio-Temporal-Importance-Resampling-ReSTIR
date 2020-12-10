@@ -23,8 +23,9 @@ bool InitLightPlusTemporalPass::initialize(RenderContext* pRenderContext, Resour
 	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "IndirectOutput" });
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 	mpResManager->requestTextureResource(ResourceManager::kEnvironmentMap);
-	// Set the default scene to load
-	mpResManager->setDefaultSceneName("Data/forest/forest.fscene");
+
+	mpResManager->updateEnvironmentMap("Data/BackgroundImages/MonValley_G_DirtRoad_3k.hdr");
+	mpResManager->setDefaultSceneName("Data/Scenes/forest/forest.fscene");
 
 
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
