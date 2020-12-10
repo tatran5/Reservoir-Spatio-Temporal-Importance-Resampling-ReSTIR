@@ -341,6 +341,27 @@
             ],
             "opening_angle": 180.0,
             "penumbra_angle": 0.0
+        },
+        {
+             "name": "15_below_tree_house_left_bottom",
+            "type": "point_light",
+            "intensity": [
+                0.009,
+                0.018,
+                0.022
+            ],
+            "pos": [
+                -0.2,
+                0.15,
+                -0.6
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
         }
     ],
     "cameras": [
