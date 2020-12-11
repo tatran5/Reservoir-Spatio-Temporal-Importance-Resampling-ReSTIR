@@ -451,12 +451,12 @@
             "name": "20_house_front_left",
             "type": "point_light",
             "intensity": [
+                0.1,
                 0.05,
-                0.002,
-                0.04
+                0.005
             ],
             "pos": [
-                0.1,
+                -0.4,
                 1.2,
                 -0.8
             ],
