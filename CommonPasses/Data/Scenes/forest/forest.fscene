@@ -383,6 +383,48 @@
             ],
             "opening_angle": 180.0,
             "penumbra_angle": 0.0
+        },
+        {
+            "name": "17_house_left_top",
+            "type": "point_light",
+            "intensity": [
+                0.05,
+                0.05,
+                0.01
+            ],
+            "pos": [
+                -0.1,
+                2.1,
+                -1.25
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
+        },
+        {
+            "name": "17_house_left_bottom",
+            "type": "point_light",
+            "intensity": [
+                0.02,
+                0.008,
+                0.003
+            ],
+            "pos": [
+                -0.1,
+                1.5,
+                -0.8
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
         }
     ],
     "cameras": [
