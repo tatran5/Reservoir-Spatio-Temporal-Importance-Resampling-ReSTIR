@@ -427,7 +427,28 @@
             "penumbra_angle": 0.0
         },
         {
-            "name": "19_house_front_left",
+            "name": "19_house_front_right",
+            "type": "point_light",
+            "intensity": [
+                0.05,
+                0.002,
+                0.04
+            ],
+            "pos": [
+                0.1,
+                1.2,
+                -0.8
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
+        },
+        {
+            "name": "20_house_front_left",
             "type": "point_light",
             "intensity": [
                 0.05,
