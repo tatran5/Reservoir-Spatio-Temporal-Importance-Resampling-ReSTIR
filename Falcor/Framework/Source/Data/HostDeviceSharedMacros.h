@@ -149,7 +149,7 @@
 #define LightAreaSphere             4    ///< Spherical area light source
 #define LightAreaDisc               5    ///< Disc shaped area light source
 
-#define MAX_LIGHT_SOURCES 32
+#define MAX_LIGHT_SOURCES 80
 
 // To bind area lights, use this macro to declare the constant buffer in your shader
 #define AREA_LIGHTS(n) shared cbuffer InternalAreaLightCB \
