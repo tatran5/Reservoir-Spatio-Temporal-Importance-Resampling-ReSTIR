@@ -458,7 +458,28 @@
             "pos": [
                 -0.4,
                 1.2,
-                -0.8
+                -0.7
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
+        },
+        {
+            "name": "21_house_front_left",
+            "type": "point_light",
+            "intensity": [
+                0.005,
+                0.02,
+                0.04
+            ],
+            "pos": [
+                -0.4,
+                0.8,
+                -0.75
             ],
             "direction": [
                 0.0,
