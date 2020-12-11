@@ -488,6 +488,27 @@
             ],
             "opening_angle": 180.0,
             "penumbra_angle": 0.0
+        },
+         {
+            "name": "22_house_left_top",
+            "type": "point_light",
+            "intensity": [
+                0.3,
+                0.01,
+                0.6
+            ],
+            "pos": [
+                0.1,
+                2.0,
+                -1.6
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
         }
     ],
     "cameras": [
