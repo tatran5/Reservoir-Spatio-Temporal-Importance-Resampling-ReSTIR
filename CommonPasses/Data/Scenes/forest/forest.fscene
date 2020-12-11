@@ -489,8 +489,8 @@
             "opening_angle": 180.0,
             "penumbra_angle": 0.0
         },
-         {
-            "name": "22_house_left_top",
+        {
+            "name": "22_house_back_top",
             "type": "point_light",
             "intensity": [
                 0.3,
@@ -501,6 +501,27 @@
                 0.1,
                 2.0,
                 -1.6
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "opening_angle": 180.0,
+            "penumbra_angle": 0.0
+        },
+        {
+            "name": "23_house_front_left",
+            "type": "point_light",
+            "intensity": [
+                0.02,
+                0.005,
+                0.04
+            ],
+            "pos": [
+                -0.55,
+                1.5,
+                -0.8
             ],
             "direction": [
                 0.0,
