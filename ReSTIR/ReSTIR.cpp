@@ -17,12 +17,13 @@
 **********************************************************************************************************************/
 
 #include "Falcor.h"
-#include "../CommonPasses/LightProbeGBufferPass.h"
-#include "../CommonPasses/SimpleAccumulationPass.h"
-#include "../SharedUtils/RenderingPipeline.h"
+#include <iostream>
 #include "Passes/InitLightPlusTemporalPass.h"
 #include "Passes/SpatialReusePass.h"
 #include "Passes/UpdateReservoirPlusShadePass.h"
+#include "../CommonPasses/LightProbeGBufferPass.h"
+#include "../CommonPasses/SimpleAccumulationPass.h"
+#include "../SharedUtils/RenderingPipeline.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
