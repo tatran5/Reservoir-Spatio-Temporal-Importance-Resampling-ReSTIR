@@ -238,60 +238,66 @@ void LambertShadowsRayGen()
 		// ----------------------------------- Temporal reuse END ---------------------------------------
 		// ----------------------------------------------------------------------------------------------
 
-		//----------------------------------- Global Illumination ---------------------------------------
-		
-		// Direct Illumination - Can be commented out since we are doing direct lighting in restir
-		// This gives a smoother op so ~!
-		// Pick a random light from our scene to sample for direct lighting
-		int GI_lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
+		// ----------------------------------------------------------------------------------------------
+		//----------------------------------- Global Illumination BEGIN----------------------------------
+		// ----------------------------------------------------------------------------------------------
 
-		// We need to query our scene to find info about the current light
-		float GI_distToLight;
-		float3 GI_lightIntensity;
-		float3 GI_toLight;
-		getLightData(GI_lightToSample, worldPos.xyz, GI_toLight, GI_lightIntensity, GI_distToLight);
+		//// Direct Illumination - Can be commented out since we are doing direct lighting in restir
+		//// This gives a smoother op so ~!
+		//// Pick a random light from our scene to sample for direct lighting
+		//int GI_lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
 
-		// Compute our lambertion term (L dot N)
-		float GI_LdotN = saturate(dot(worldNorm.xyz, toLight));
+		//// We need to query our scene to find info about the current light
+		//float GI_distToLight;
+		//float3 GI_lightIntensity;
+		//float3 GI_toLight;
+		//getLightData(GI_lightToSample, worldPos.xyz, GI_toLight, GI_lightIntensity, GI_distToLight);
 
-		// Shoot our ray for our direct lighting
-		float GI_shadowMult = float(gLightsCount);
-		if (gDirectShadow)
-			GI_shadowMult *= shadowRayVisibility(worldPos.xyz, GI_toLight, gMinT, GI_distToLight);
+		//// Compute our lambertion term (L dot N)
+		//float GI_LdotN = saturate(dot(worldNorm.xyz, toLight));
 
-		// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
-		shadeColor += GI_shadowMult * GI_LdotN * GI_lightIntensity * difMatlColor.rgb / M_PI;
+		//// Shoot our ray for our direct lighting
+		//float GI_shadowMult = float(gLightsCount);
+		//if (gDirectShadow)
+		//	GI_shadowMult *= shadowRayVisibility(worldPos.xyz, GI_toLight, gMinT, GI_distToLight);
 
-		//For Indirect Illumination 
-		float3 bounceColor;
-		float ID_NdotL;
-		float sampleProb;
+		//// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
+		//shadeColor += GI_shadowMult * GI_LdotN * GI_lightIntensity * difMatlColor.rgb / M_PI;
 
-		// Indirect illumination
-		if (gDoIndirectGI)
-		{
-			// Select a random direction for our diffuse interreflection ray.
-			float3 bounceDir;
-			if (gCosSampling)
-				bounceDir = getCosHemisphereSample(randSeed, worldNorm.xyz);      // Use cosine sampling
-			else
-				bounceDir = getUniformHemisphereSample(randSeed, worldNorm.xyz);  // Use uniform random samples
+		////For Indirect Illumination 
+		//float3 bounceColor;
+		//float ID_NdotL;
+		//float sampleProb;
 
-			// Get NdotL for our selected ray direction
-			ID_NdotL = saturate(dot(worldNorm.xyz, bounceDir));
+		//// Indirect illumination
+		//if (gDoIndirectGI)
+		//{
+		//	// Select a random direction for our diffuse interreflection ray.
+		//	float3 bounceDir;
+		//	if (gCosSampling)
+		//		bounceDir = getCosHemisphereSample(randSeed, worldNorm.xyz);      // Use cosine sampling
+		//	else
+		//		bounceDir = getUniformHemisphereSample(randSeed, worldNorm.xyz);  // Use uniform random samples
 
-			// Shoot our indirect global illumination ray
-			bounceColor = shootIndirectRay(worldPos.xyz, bounceDir, gMinT, randSeed);
+		//	// Get NdotL for our selected ray direction
+		//	ID_NdotL = saturate(dot(worldNorm.xyz, bounceDir));
 
-			//bounceColor = (NdotL > 0.50f) ? float3(0, 0, 0) : bounceColor;
+		//	// Shoot our indirect global illumination ray
+		//	bounceColor = shootIndirectRay(worldPos.xyz, bounceDir, gMinT, randSeed);
 
-			// Probability of selecting this ray ( cos/pi for cosine sampling, 1/2pi for uniform sampling )
-			sampleProb = gCosSampling ? (ID_NdotL / M_PI) : (1.0f / (2.0f * M_PI));
-		}
+		//	//bounceColor = (NdotL > 0.50f) ? float3(0, 0, 0) : bounceColor;
+
+		//	// Probability of selecting this ray ( cos/pi for cosine sampling, 1/2pi for uniform sampling )
+		//	sampleProb = gCosSampling ? (ID_NdotL / M_PI) : (1.0f / (2.0f * M_PI));
+		//}
+
+		// ----------------------------------------------------------------------------------------------
+		// ---------------------------------- Global Illumination END------------------------------------
+		// ----------------------------------------------------------------------------------------------
 
 		// Save the computed reserrvoir back into the buffer
 		gReservoir[launchIndex] = reservoir;
-		gIndirectOutput[launchIndex] = float4((ID_NdotL * bounceColor* difMatlColor.rgb / M_PI / sampleProb), 1.0);
+		//gIndirectOutput[launchIndex] = float4((ID_NdotL * bounceColor* difMatlColor.rgb / M_PI / sampleProb), 1.0);
 	}
 
 	// Save out our final shaded

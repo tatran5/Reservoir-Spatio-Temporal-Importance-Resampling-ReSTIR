@@ -38,7 +38,7 @@ bool LambertianPlusShadowPass::initialize(RenderContext* pRenderContext, Resourc
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 
 	// Set the default scene to load
-	mpResManager->setDefaultSceneName("Data/Scenes/forest/forest.fscene");
+	mpResManager->setDefaultSceneName("Data/Scenes/forest/forest10.fscene");
 
 	// Create our wrapper around a ray tracing pass.  Tell it where our shaders are, then compile/link the program
 	mpRays = RayLaunch::create(kFileRayTrace, kEntryPointRayGen);

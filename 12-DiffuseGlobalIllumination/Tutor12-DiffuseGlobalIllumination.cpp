@@ -17,44 +17,24 @@
 **********************************************************************************************************************/
 
 #include "Falcor.h"
-#include <iostream>
-#include "Passes/InitLightPlusTemporalPass.h"
-#include "Passes/SpatialReusePass.h"
-#include "Passes/UpdateReservoirPlusShadePass.h"
-#include "../CommonPasses/LightProbeGBufferPass.h"
-#include "../CommonPasses/SimpleAccumulationPass.h"
 #include "../SharedUtils/RenderingPipeline.h"
+#include "../CommonPasses/LightProbeGBufferPass.h"
+#include "Passes/SimpleDiffuseGIPass.h"
+#include "../CommonPasses/SimpleAccumulationPass.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
-	// Toggle
-	bool temporalReuse = true;
-	bool spatialReuse = true;
-	bool globalIllum = true;
-
 	// Create our rendering pipeline
 	RenderingPipeline *pipeline = new RenderingPipeline();
 
 	// Add passes into our pipeline
 	pipeline->setPass(0, LightProbeGBufferPass::create());
-
-	// Only need scene to load once in first pass among those below (check pass::initialize())
-	auto initLightPlusTemporalPass = InitLightPlusTemporalPass::create();
-	initLightPlusTemporalPass->mTemporalReuse = temporalReuse;
-	initLightPlusTemporalPass->mDoIndirectGI = globalIllum;
-	pipeline->setPass(1, initLightPlusTemporalPass);
-
-	auto spatialReusePass = SpatialReusePass::create();
-	spatialReusePass->mSpatialReuse = spatialReuse;
-	pipeline->setPass(2, spatialReusePass);
-
-	pipeline->setPass(3, UpdateReservoirPlusShadePass::create());
-
-	pipeline->setPass(4, SimpleAccumulationPass::create(ResourceManager::kOutputChannel));  
+	pipeline->setPass(1, SimpleDiffuseGIPass::create());
+	pipeline->setPass(2, SimpleAccumulationPass::create(ResourceManager::kOutputChannel));  
 
 	// Define a set of config / window parameters for our program
     SampleConfig config;
-	config.windowDesc.title = "ReSTIR";
+	config.windowDesc.title = "Tutorial 12:  Add indirect rays for diffuse global illumination.";
 	config.windowDesc.resizableWindow = true;
 
 	// Start our program!
