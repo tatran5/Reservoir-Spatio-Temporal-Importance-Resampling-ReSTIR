@@ -89,12 +89,6 @@ Converged Images:
 ![Global Illum (Pink Room Scene GI )](Images/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pink_room_no_gi_converged.png)
 ![Global Illum (Purple Room Scene GI )](Images/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purple_room_no_gi_converged.png)
 
-As a result, we expect global illumination make the renders noiser than without it. However, we want to compare the effect of ReSTIR with global illumination and sampling one random light without global illumination.
-
-|ReSTIR with Global Illumination | One random light with Global Illumination |
-|---|---|
-|INSERT IMAGE HERE| INSERT IMAGE HERE|
-
 ## Runtime analysis
 The below are results from our forest scene.
 
