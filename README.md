@@ -5,6 +5,9 @@
 * Thy Tran: [LinkedIn](https://www.linkedin.com/in/thy-tran-97a30b148/), [portfolio](https://tatran5.github.io/demo-reel.html), [email](tatran@seas.upenn.edu)
 
 * Tested on Windows 10, i7-8750H @ 2.20GHz 22GB, GTX 1070
+
+![](Images/forest/forest_restir_GI.png)
+
 ## Outlines
 * [Introduction](#introduction)
 * [ReSTIR explained](#restir-explained)
@@ -16,8 +19,9 @@
         * [Spatial results](#spatial-results)
         * [Global illumination](#global-illumination)
 * [Runtime analysis](#runtime-analysis)
+* [Potential improvements](#potential-improvements)
 * [Build and run](#build-and-run)
-* [Credit and resources](#credits-and-resources)
+* [Credits and resources](#credits-and-resources)
 
 ## Introduction
 
@@ -56,12 +60,16 @@ Each light candidate has a weight corresponding to their chance of being chosen 
 #### Temporal reuse
 
 When doing temporal reuse, the paper advises to clamp the number of candidates M contribution to the pixel (otherwise, this can go unbounded.) We clamp the previous frame's M to at most 20x of the current frame's reservoir's M. Without this, objects in the scene might become black, a problem we encountered.
-    
-## Final results
 
 ## Results
 
 ### Final results
+
+![](Images/forest/forest_restir_GI.png)
+
+INSERT MORE SCREEN SHOTS OF FOREST SCENES
+
+INSERT MORE SCREEN SHOTS OF BEDROOM SCENES
 
 ### Intermediate results
 
@@ -89,6 +97,12 @@ Converged Images:
 ![Global Illum (Pink Room Scene GI )](Images/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pink_room_no_gi_converged.png)
 ![Global Illum (Purple Room Scene GI )](Images/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purple_room_no_gi_converged.png)
 
+Global illumination helps with lighting up some scenes and creating color bleeding effect, as seen with the red carpet reflecting light at the bottom of the white sofa in one of the scens above. However, as expected, the effect of global illumination is more apparent for scenes where objects are close to each other as above and less apparent for scenes where objects are further apart. In the scene below, the brightening and color-bleeding effects are barely or not noticeable at all.
+
+|With Global Illumination | Without Global Illumination |
+|---|---|
+![Global Illum (Forest GI )](Images/forest/forest_restir_GI.png)| ![Global Illum (Forest NO GI )](Images/forest/forest_restir_noGI.png)
+
 ## Runtime analysis
 The below are results from our forest scene.
 
@@ -100,9 +114,22 @@ As expected ReSTIR has a lower FPS compared with the method of only sampling one
 
 Due to the inefficiencies mentioned above, the time for ReSTIR to converge are also high. However, there might be a drastic difference when there are a lot more lights in the scene (thousands or millions), which are not displayed here, that show ReSTIR with a better convergence time. 
 
-## Future work
+## Potential improvements
+
+### Complex light handling
+Currently, we are only handling static point lights. Having dynamic lights and area or mesh lights might show off more benefits of ReSTIR.
+
+### Candidate generation
+The paper and presentations also suggests ways to better sample light candidates for the first step - candidates generation per reservoir - by storing emissive triangles based on their power. We have yet to incorporated this into our implementation (since we are not dealing with complex lights here_
+
+### Temporal reuse
+Currently, we are only reusing one reservoir from one past frame, but temporal reuse could have a larger effect on time convergence if incorporating multiple past frames instead. This would however result in a much lower FPS due to additional buffers for past frames as well as calculation.
+
+### Pass reduction
+We may be able to reduce at least one pass by refactoring and moving our implementation of global illumination to the last pass, and by using the buffers in a better way as well.
 
 ## Build and run
+
 * **Windows 10 RS5 or later**
     * If you run "winver.exe" you should have Version 1809 (OS Build 17763.)
     * This project does not run on Windows 10 RS4 or earlier.
