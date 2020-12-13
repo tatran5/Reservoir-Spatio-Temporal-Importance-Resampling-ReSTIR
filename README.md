@@ -75,6 +75,12 @@ INSERT MORE SCREEN SHOTS OF BEDROOM SCENES
 
 #### Candidates generation results
 
+|Ground truth | Candidates generation (first frame) | One-random-light (first frame)
+|---|---|---|
+|![](Images/pinkRoom/base_multiple_frames_sofa_pillow_shadow.png)|![](Images/pinkRoom/restir_generate_candidates_sofa_pillow_shadow.png)|![](Images/pinkRoom/base_first_frame_sofa_pillow_shadow.png)|
+|![](Images/pinkRoom/base_multiple_frames_side_table_shadow.png)|![](Images/pinkRoom/restir_generate_candidates_side_table_shadow.png)|![](Images/pinkRoom/base_first_frame_side_table_shadow.png)|
+
+With only ReSTIR candidates generation, we eliminate a lot of shadows that are not visible in the converged image, as seen above.
 
 #### Temporal results
 
