@@ -38,6 +38,7 @@ protected:
 	RayLaunch::SharedPtr                    mpRays;                 ///< Our wrapper around a DX Raytracing pass
 	RtScene::SharedPtr                      mpScene;                ///< Our scene file (passed in from app)  
 	mat4                          mpLastCameraMatrix;
+	mat4                          mpCurrCameraMatrix;
 
 	// Various internal parameters
 	uint32_t                                mFrameCount = 0x1337u;  ///< A frame counter to vary random numbers over time

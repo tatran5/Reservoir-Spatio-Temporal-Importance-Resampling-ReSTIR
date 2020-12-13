@@ -19,7 +19,7 @@ cbuffer RayGenCB
 {
 	float gMinT;        // Min distance to start a ray to avoid self-occlusion
 	uint  gFrameCount;  // Frame counter, used to perturb random seed each frame
-	bool	gSpatialReuse;
+	bool  gSpatialReuse;
 }
 
 // Input and out textures that need to be set by the C++ code
@@ -27,8 +27,8 @@ Texture2D<float4>   gPos;           // G-buffer world-space position
 Texture2D<float4>   gNorm;          // G-buffer world-space normal
 Texture2D<float4>   gDiffuseMatl;   // G-buffer diffuse material (RGB) and opacity (A)
 
-RWTexture2D<float4> gReservoir;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
-RWTexture2D<float4> gReservoir2;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
+RWTexture2D<float4> gReservoirCurr;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
+RWTexture2D<float4> gReservoirSpatial;		// For ReSTIR - need to be read-write because it is also updated in the shader as well
 
 // How do we shade our g-buffer and generate shadow rays?
 [shader("raygeneration")]
@@ -49,7 +49,7 @@ void LambertShadowsRayGen()
 	// Initialize our random number generator
 	uint randSeed = initRand(launchIndex.x + launchIndex.y * launchDim.x, gFrameCount, 16);
 
-	float4 reservoir = gReservoir[launchIndex];
+	float4 reservoir = gReservoirCurr[launchIndex];
 
 	// Our camera sees the background if worldPos.w is 0, only do diffuse shading elsewhere
 	if (worldPos.w != 0.0f && gSpatialReuse)
@@ -92,7 +92,7 @@ void LambertShadowsRayGen()
 			neighborIndex.x = max(0, min(launchDim.x - 1, launchIndex.x - neighborOffset.x));
 			neighborIndex.y = max(0, min(launchDim.y - 1, launchIndex.y + neighborOffset.y));
 
-			neighborReservoir = gReservoir[neighborIndex];
+			neighborReservoir = gReservoirCurr[neighborIndex];
 
 			getLightData(neighborReservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
 			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
@@ -114,5 +114,5 @@ void LambertShadowsRayGen()
 		reservoir.w = (1.f / max(p_hat, 0.0001f)) * (reservoir.x / max(reservoir.z, 0.0001f));
 	}
 
-	gReservoir2[launchIndex] = reservoir;
+	gReservoirSpatial[launchIndex] = reservoir;
 }

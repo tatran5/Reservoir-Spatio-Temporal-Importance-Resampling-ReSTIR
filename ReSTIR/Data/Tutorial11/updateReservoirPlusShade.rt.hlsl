@@ -43,8 +43,8 @@ Texture2D<float4>   gPos;           // G-buffer world-space position
 Texture2D<float4>   gNorm;          // G-buffer world-space normal
 Texture2D<float4>   gDiffuseMatl;   // G-buffer diffuse material (RGB) and opacity (A)
 
-RWTexture2D<float4> gReservoir;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
-Texture2D<float4>	gReservoir2;	
+RWTexture2D<float4> gReservoirPrev;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
+Texture2D<float4>	gReservoirSpatial;	
 
 RWTexture2D<float4> gIndirectOutput; //For output from indirect illumination 
 
@@ -66,9 +66,8 @@ void LambertShadowsRayGen()
 	// If we don't hit any geometry, our difuse material contains our background color.
 	float3 shadeColor = difMatlColor.rgb;
 
-	float4 reservoir = gReservoir2[launchIndex];
-	// Update reservoir value to be used for next pass
-	gReservoir[launchIndex] = reservoir;
+	float4 reservoir = gReservoirSpatial[launchIndex];
+	gReservoirPrev[launchIndex] = reservoir; // Update reservoir value to be used for next pass
 
 	// Our camera sees the background if worldPos.w is 0, only do diffuse shading elsewhere
 	if (worldPos.w != 0.0f)

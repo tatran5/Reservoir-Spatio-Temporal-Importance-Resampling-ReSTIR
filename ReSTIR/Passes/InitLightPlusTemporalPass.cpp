@@ -20,12 +20,13 @@ bool InitLightPlusTemporalPass::initialize(RenderContext* pRenderContext, Resour
 {
 	// Stash a copy of our resource manager so we can get rendering resources
 	mpResManager = pResManager;
-	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "IndirectOutput" });
+	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "ReservoirPrev",
+											"ReservoirCurr", "IndirectOutput" });	
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 	mpResManager->requestTextureResource(ResourceManager::kEnvironmentMap);
 
 	mpResManager->updateEnvironmentMap("Data/BackgroundImages/noise.png");
-	mpResManager->setDefaultSceneName("Data/Scenes/forest/forest80.fscene");
+	mpResManager->setDefaultSceneName("Data/Scenes/forest/forest.fscene");
 
 
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
@@ -50,7 +51,7 @@ bool InitLightPlusTemporalPass::hasCameraMoved()
 	// Has our camera moved?
 	return mpScene &&                      // No scene?  Then the answer is no
 		mpScene->getActiveCamera() &&   // No camera in our scene?  Then the answer is no
-		(mpLastCameraMatrix != mpScene->getActiveCamera()->getViewMatrix());   // Compare the current matrix with the last one
+		(mpLastCameraMatrix != mpScene->getActiveCamera()->getViewProjMatrix());   // Compare the current matrix with the last one
 }
 
 void InitLightPlusTemporalPass::initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene)
@@ -59,8 +60,10 @@ void InitLightPlusTemporalPass::initScene(RenderContext* pRenderContext, Scene::
     mpScene = std::dynamic_pointer_cast<RtScene>(pScene);
 
 	// Grab a copy of the current scene's camera matrix (if it exists)
-	if (mpScene && mpScene->getActiveCamera())
-		mpLastCameraMatrix = mpScene->getActiveCamera()->getViewMatrix();
+	if (mpScene && mpScene->getActiveCamera()) {
+		mpLastCameraMatrix = mpScene->getActiveCamera()->getViewProjMatrix();
+		mpCurrCameraMatrix = mpScene->getActiveCamera()->getViewProjMatrix();
+	}
 
 	if (mpRays) mpRays->setScene(mpScene);
 }
@@ -76,8 +79,8 @@ void InitLightPlusTemporalPass::execute(RenderContext* pRenderContext)
 	// If the camera in our current scene has moved, we want to reset mInitLightPerPixel
 	if (hasCameraMoved())
 	{
-		mInitLightPerPixel = true;
-		mpLastCameraMatrix = mpScene->getActiveCamera()->getViewMatrix();
+		mpLastCameraMatrix = mpCurrCameraMatrix;
+		mpCurrCameraMatrix = mpScene->getActiveCamera()->getViewProjMatrix();
 	}
 
 	// Set our ray tracing shader variables 
@@ -90,13 +93,16 @@ void InitLightPlusTemporalPass::execute(RenderContext* pRenderContext)
 	rayGenVars["RayGenCB"]["gDoIndirectGI"] = mDoIndirectGI;
 	rayGenVars["RayGenCB"]["gCosSampling"] = mDoCosSampling;
 	rayGenVars["RayGenCB"]["gDirectShadow"] = mDoDirectShadows;
+	rayGenVars["RayGenCB"]["gLastCameraMatrix"] = mpLastCameraMatrix;
 
 	// Pass our G-buffer textures down to the HLSL so we can shade
 	rayGenVars["gPos"]         = mpResManager->getTexture("WorldPosition");
 	rayGenVars["gNorm"]        = mpResManager->getTexture("WorldNormal");
 	rayGenVars["gDiffuseMatl"] = mpResManager->getTexture("MaterialDiffuse");
+
 	// For ReSTIR - update the buffer storing reservoir (weight sum, chosen light index, number of candidates seen) 
-	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
+	rayGenVars["gReservoirPrev"] = mpResManager->getTexture("ReservoirPrev");
+	rayGenVars["gReservoirCurr"] = mpResManager->getTexture("ReservoirCurr");
 	rayGenVars["gOutput"]      = pDstTex;
 	rayGenVars["gIndirectOutput"] = mpResManager->getTexture("IndirectOutput");
 

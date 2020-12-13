@@ -16,7 +16,8 @@ bool UpdateReservoirPlusShadePass::initialize(RenderContext* pRenderContext, Res
 {
 	// Stash a copy of our resource manager so we can get rendering resources
 	mpResManager = pResManager;
-	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "Reservoir2", "IndirectOutput" });
+	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse",
+											"ReservoirPrev", "ReservoirSpatial", "IndirectOutput" });	
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
@@ -53,8 +54,8 @@ void UpdateReservoirPlusShadePass::execute(RenderContext* pRenderContext)
 	rayGenVars["gDiffuseMatl"] = mpResManager->getTexture("MaterialDiffuse");
 
 	// For ReSTIR - update the buffer storing reservoir (weight sum, chosen light index, number of candidates seen) 
-	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
-	rayGenVars["gReservoir2"]  = mpResManager->getTexture("Reservoir2");
+	rayGenVars["gReservoirPrev"] = mpResManager->getTexture("ReservoirPrev");
+	rayGenVars["gReservoirSpatial"] = mpResManager->getTexture("ReservoirSpatial");
 	rayGenVars["gIndirectOutput"] = mpResManager->getTexture("IndirectOutput");
 
 	rayGenVars["gOutput"]      = pDstTex;

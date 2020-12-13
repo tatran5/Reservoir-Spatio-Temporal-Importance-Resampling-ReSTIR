@@ -16,7 +16,7 @@ bool SpatialReusePass::initialize(RenderContext* pRenderContext, ResourceManager
 {
 	// Stash a copy of our resource manager so we can get rendering resources
 	mpResManager = pResManager;
-	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "Reservoir", "Reservoir2"});
+	mpResManager->requestTextureResources({ "WorldPosition", "WorldNormal", "MaterialDiffuse", "ReservoirCurr", "ReservoirSpatial"});
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
@@ -55,8 +55,8 @@ void SpatialReusePass::execute(RenderContext* pRenderContext)
 	rayGenVars["gDiffuseMatl"] = mpResManager->getTexture("MaterialDiffuse");
 	
 	// For ReSTIR - update the buffer storing reservoir (weight sum, chosen light index, number of candidates seen) 
-	rayGenVars["gReservoir"]   = mpResManager->getTexture("Reservoir"); 
-	rayGenVars["gReservoir2"]	 = mpResManager->getTexture("Reservoir2");
+	rayGenVars["gReservoirCurr"] = mpResManager->getTexture("ReservoirCurr");
+	rayGenVars["gReservoirSpatial"] = mpResManager->getTexture("ReservoirSpatial");
 
 	// Shoot our rays and shade our primary hit points
 	mpRays->execute( pRenderContext, mpResManager->getScreenSize() );

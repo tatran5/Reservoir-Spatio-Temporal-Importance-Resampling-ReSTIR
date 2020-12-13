@@ -39,10 +39,13 @@ cbuffer RayGenCB
 	uint  gFrameCount;  // Frame counter, used to perturb random seed each frame
 	bool  gInitLight;		// For ReSTIR - to choose an arbitrary light for this pixel after choosing 32 random light candidates
 	bool  gTemporalReuse;
+
 	//For GI
 	bool  gDoIndirectGI;   // A boolean determining if we should shoot indirect GI rays
 	bool  gCosSampling;    // Use cosine sampling (true) or uniform sampling (false)
 	bool  gDirectShadow;   // Should we shoot shadow rays from our first hit point?
+
+	matrix <float, 4, 4> gLastCameraMatrix;
 }
 
 
@@ -58,8 +61,8 @@ struct IndirectRayPayload
 Texture2D<float4>   gPos;           // G-buffer world-space position
 Texture2D<float4>   gNorm;          // G-buffer world-space normal
 Texture2D<float4>   gDiffuseMatl;   // G-buffer diffuse material (RGB) and opacity (A)
-RWTexture2D<float4> gReservoir;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
-RWTexture2D<float4> gOutput;        // Output to store shaded result
+RWTexture2D<float4> gReservoirPrev;		// For ReSTIR - need to be read-write because it is also updated in the shader as well
+RWTexture2D<float4> gReservoirCurr;		// For ReSTIR - need to be read-write because it is also updated in the shader as wellRWTexture2D<float4> gOutput;        // Output to store shaded result
 RWTexture2D<float4> gIndirectOutput; //For output from indirect illumination 
 
 // Our environment map, used for the miss shader for indirect rays
@@ -171,7 +174,21 @@ void LambertShadowsRayGen()
 		float3 toLight;         // What direction is it from our current pixel?
 		float LdotN;			// Lambert term
 
-		float4 prev_reservoir = gReservoir[launchIndex];
+		float4 prev_reservoir = float4(0.f); // initialize previous reservoir
+
+		// if not first time fill with previous frame reservoir
+		if (!gInitLight) {
+			float4 screen_space = mul(worldPos, gLastCameraMatrix);
+			screen_space /= screen_space.w;
+			uint2 prevIndex = launchIndex;
+			prevIndex.x = ((screen_space.x + 1.f) / 2.f) * (float)launchDim.x;
+			prevIndex.y = ((1.f - screen_space.y) / 2.f) * (float)launchDim.y;
+
+			if (prevIndex.x >= 0 && prevIndex.x < launchDim.x && prevIndex.y >= 0 && prevIndex.y < launchDim.y) {
+				prev_reservoir = gReservoirPrev[prevIndex];
+			}
+		}
+
 		float4 reservoir = float4(0.f);
 		float p_hat;
 
@@ -218,7 +235,12 @@ void LambertShadowsRayGen()
 			getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
 			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
 			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
-			prev_reservoir.z = min(prev_reservoir.z, 20.f * reservoir.z); // clamp r.M value if it is too large
+
+			// clamp r.M and r.W value if reservoir weight is too large
+			if (prev_reservoir.z > 20.f * reservoir.z) {
+				prev_reservoir.w *= 20.f * reservoir.z / prev_reservoir.z; //clamp r.W
+				prev_reservoir.z = 20.f * reservoir.z; //clamp r.M
+			}
 			temporal_reservoir = updateReservoir(temporal_reservoir, prev_reservoir.y, p_hat * prev_reservoir.w * prev_reservoir.z, randSeed);
 
 			// set M value
@@ -241,28 +263,6 @@ void LambertShadowsRayGen()
 		// ----------------------------------------------------------------------------------------------
 		//----------------------------------- Global Illumination BEGIN----------------------------------
 		// ----------------------------------------------------------------------------------------------
-
-		//// Direct Illumination - Can be commented out since we are doing direct lighting in restir
-		//// This gives a smoother op so ~!
-		//// Pick a random light from our scene to sample for direct lighting
-		//int GI_lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
-
-		//// We need to query our scene to find info about the current light
-		//float GI_distToLight;
-		//float3 GI_lightIntensity;
-		//float3 GI_toLight;
-		//getLightData(GI_lightToSample, worldPos.xyz, GI_toLight, GI_lightIntensity, GI_distToLight);
-
-		//// Compute our lambertion term (L dot N)
-		//float GI_LdotN = saturate(dot(worldNorm.xyz, toLight));
-
-		//// Shoot our ray for our direct lighting
-		//float GI_shadowMult = float(gLightsCount);
-		//if (gDirectShadow)
-		//	GI_shadowMult *= shadowRayVisibility(worldPos.xyz, GI_toLight, gMinT, GI_distToLight);
-
-		//// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
-		//shadeColor += GI_shadowMult * GI_LdotN * GI_lightIntensity * difMatlColor.rgb / M_PI;
 
 		//For Indirect Illumination 
 		float3 bounceColor;
@@ -296,7 +296,7 @@ void LambertShadowsRayGen()
 		// ----------------------------------------------------------------------------------------------
 
 		// Save the computed reserrvoir back into the buffer
-		gReservoir[launchIndex] = reservoir;
+		gReservoirCurr[launchIndex] = reservoir;
 		gIndirectOutput[launchIndex] = float4(0.f); //Intialize to 0 
 		if (gDoIndirectGI)
 		{
