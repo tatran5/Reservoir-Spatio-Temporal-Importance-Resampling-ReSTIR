@@ -17,7 +17,7 @@
         * [Global illumination](#global-illumination)
 * [Runtime analysis](#runtime-analysis)
 * [Build and run](#build-and-run)
-* [Credit and resources](#credit-and-resources)
+* [Credit and resources](#credits-and-resources)
 
 ## Introduction
 
