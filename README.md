@@ -16,6 +16,8 @@
         * [Spatial results](#spatial-results)
         * [Global illumination](#global-illumination)
 * [Runtime analysis](#runtime-analysis)
+* [Build and run](#build-and-run)
+* [Credit and resources](#credit-and-resources)
 
 ## Introduction
 
@@ -85,4 +87,28 @@ Due to the inefficiencies mentioned above, the time for ReSTIR to converge are a
 
 ## Future work
 
-## Resources
+## Build and run
+* **Windows 10 RS5 or later**
+    * If you run "winver.exe" you should have Version 1809 (OS Build 17763.)
+    * This project does not run on Windows 10 RS4 or earlier.
+* **Graphics card**
+    * Must support [DirectX Raytracing (DXR)](https://www.nvidia.com/en-us/geforce/news/geforce-gtx-dxr-ray-tracing-available-now/) (**not** fallback layer) due to Falcor library (which does not support fallback layer.)
+* **A driver that natively supports DirectX Raytracing**
+     * For NVIDIA, use 416.xx or later drivers (in theory any NVIDIA driver for RS5 should work)
+* **Visual Studio**
+    * Visual Studio 2019. If you have multiple Visual Studio versions, right click on the solution and choose to open the project in Visual Studio 2019.
+    * Windows 10 SDK 10.0.17763.0
+    * If Visual Studio prompts to upgrade the SDK and version when first opening the solution, hit "cancel".
+    * If Visual Studio complains about Falcor library, run ./Falcor/update_dependencies.bat, then go back to Visual Studio to build the solution.
+    * If Visual Studio complains about some inaccessible pybind11, try installing [pybind11 library](https://pybind11.readthedocs.io/en/stable/installing.html)
+* **Others**
+    * Developer Mode must be enabled
+    * Permission to run PowerShell files that are not digitally signed
+
+## Credits and resources
+* [Jilin Liu](https://www.linkedin.com/in/jilin-liu97/), [Li Zheng](https://www.linkedin.com/in/li-zheng-1955ba169/) and [Keyi Yu](https://www.linkedin.com/in/keyi-linda-yu-8b1178137/) who were also implementing ReSTIR in DirectX as a team. They helped us with clarifying parts of the paper and providing feedback on our project.
+* A Gentle Introduction To DirectX Raytracing - [tutorials and base code](http://cwyman.org/code/dxrTutors/dxr_tutors.md.html)
+* NVIDIA Falcor [library](https://developer.nvidia.com/falcor)
+* ReSTIR [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf)
+* NVDIA GTC 2020 [presentation](https://www.nvidia.com/en-us/gtc/session-catalog/?search.language=1594320459782001LCjF&tab.catalogtabfields=1600209910618002Tlxt&search=restir#/session/1596757976864001iz1p) provides a clear high level concept and results of ReSTIR
+* Wojciech Jarosz, one of the authors, also has some [presentation](https://cs.dartmouth.edu/wjarosz/publications/bitterli20spatiotemporal.html) in SIGGRAPH 2020 that helps with understanding ReSTIR in a deeper level
