@@ -126,7 +126,7 @@ Due to the inefficiencies mentioned above, the time for ReSTIR to converge are a
 Currently, we are only handling static point lights. Having dynamic lights and area or mesh lights might show off more benefits of ReSTIR.
 
 ### Candidate generation
-The paper and presentations also suggests ways to better sample light candidates for the first step - candidates generation per reservoir - by storing emissive triangles based on their power. We have yet to incorporated this into our implementation (since we are not dealing with complex lights here_
+The paper and presentations also suggests ways to better sample light candidates for the first step - candidates generation per reservoir - by storing emissive triangles based on their power. We have yet to incorporated this into our implementation (since we are not dealing with complex lights here)
 
 ### Temporal reuse
 Currently, we are only reusing one reservoir from one past frame, but temporal reuse could have a larger effect on time convergence if incorporating multiple past frames instead. This would however result in a much lower FPS due to additional buffers for past frames as well as calculation.
