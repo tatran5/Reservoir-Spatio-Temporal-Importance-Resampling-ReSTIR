@@ -6,7 +6,7 @@
 
 * Tested on Windows 10, i7-8750H @ 2.20GHz 22GB, GTX 1070
 
-INSER GIF HERE
+![](Images/forest/restir.gif)
 
 ## Outlines
 * [Introduction](#introduction)
@@ -65,9 +65,13 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 ### Final results
 
-![](Images/forest/forest_restir_GI.png)
+![](Images/forest/forest_restir2.png)
 
-INSERT MORE SCREEN SHOTS OF FOREST SCENES
+|||
+|---|---|
+|![](Images/forest/forest_restir_GI.png)|![](Images/forest/forest_restir3.png)|
+
+![](Images/forest/forest_restir.png)
 
 INSERT MORE SCREEN SHOTS OF BEDROOM SCENES
 
@@ -120,6 +124,12 @@ Global illumination helps with lighting up some scenes and creating color bleedi
 |With Global Illumination | Without Global Illumination |
 |---|---|
 ![Global Illum (Forest GI )](Images/forest/forest_restir_GI.png)| ![Global Illum (Forest NO GI )](Images/forest/forest_restir_noGI.png)
+
+The only apparent difference is a leaf of one pine tree in the scene is brighter
+|With Global Illumination | Without Global Illumination |
+|---|---|
+![Global Illum (Forest GI )](Images/forest/forest_pine_withGI.png)| ![Global Illum (Forest NO GI )](Images/forest/forest_pine_noGI.png)
+
 
 ## Runtime analysis
 The below are results from our forest scene.
