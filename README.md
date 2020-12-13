@@ -76,4 +76,4 @@ The below are results from our forest scene.
 
 ![](Images/Graphs/fps.png)
 
-![](Images/Time/timeToConverge.png)
+![](Images/Graphs/timeToConverge.png)
