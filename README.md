@@ -15,7 +15,13 @@
     * [Global illumination](#global-illumination)
 * [Runtime analysis](#runtime-analysis)
 
+## Introduction
+
+This is a team project implementing ReSTIR based on the [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf) with the same title, published by NVIDIA in 2020. Briefly, the purpose of ReSTIR is to help rendering scenes with a lot of lights but make it much less noisy than the basic path tracing algorithm. This is a result of continuously finding and updating the most ideal light for a pixel based on its surrounding neighbor pixels and its light in previous frames.
+
 ## Final results
+
+
 
 ## Results
 
