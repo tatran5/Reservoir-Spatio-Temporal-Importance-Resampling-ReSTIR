@@ -92,10 +92,11 @@ Temporal results also help to brighten our renders more quickly than the base me
 Even though the scene is brighted up as k increases, especially at the top of the sofa or at edge of sofa seats, there is also more noise in the renders. 
 
 #### Spatial results
-As expected, having more candidates help the image converge more quickly.
+As expected, having more candidates help renders converge more quickly. At the 61th frame, we have these renders of our forest scene.
 
-At the 61th frame, we have these renders of our forest scene.
-|||
+|1 sampled neighbors (radius 30)|30 sampled neighbors (radius 30)|
+|---|---|
+|![](Images/forest/forest_spatial_n1r30.png)|![](Images/forest/forest_spatial_n30r30.png)|
 
 #### Global illumination
 
@@ -111,7 +112,7 @@ Converged Images:
 
 |With Global Illumination | Without Global Illumination |
 |---|---|
-![Global Illum (Pink Room Scene GI )](Images/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pink_room_no_gi_converged.png)
+![Global Illum (Pink Room Scene GI )](Images/pinkRoom/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pinkRoom/pink_room_no_gi_converged.png)
 ![Global Illum (Purple Room Scene GI )](Images/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purple_room_no_gi_converged.png)
 
 Global illumination helps with lighting up some scenes and creating color bleeding effect, as seen with the red carpet reflecting light at the bottom of the white sofa in one of the scens above. However, as expected, the effect of global illumination is more apparent for scenes where objects are close to each other as above and less apparent for scenes where objects are further apart. In the scene below, the brightening and color-bleeding effects are barely or not noticeable at all.
