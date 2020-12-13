@@ -66,6 +66,8 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 ### Final results
 
+![](Images/forest/forest_restir_GI.png)
+
 ### Intermediate results
 
 #### Candidates generation results
@@ -91,6 +93,12 @@ Converged Images:
 |---|---|
 ![Global Illum (Pink Room Scene GI )](Images/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pink_room_no_gi_converged.png)
 ![Global Illum (Purple Room Scene GI )](Images/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purple_room_no_gi_converged.png)
+
+As expected, the effect of global illumination is more apparent for scenes where objects are close to each other as above and less apparent for scenes where objects are further apart as below.
+
+|With Global Illumination | Without Global Illumination |
+|---|---|
+![Global Illum (Forest GI )](Images/forest/forest_restir_GI.png)| ![Global Illum (Forest NO GI )](Images/forest/forest_restir_noGI.png)
 
 ## Runtime analysis
 The below are results from our forest scene.
