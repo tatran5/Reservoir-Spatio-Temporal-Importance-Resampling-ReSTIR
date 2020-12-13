@@ -75,14 +75,20 @@ INSERT MORE SCREEN SHOTS OF BEDROOM SCENES
 
 #### Candidates generation results
 
+With only ReSTIR candidates generation, we eliminate a lot of shadows that are not visible in the converged images. The method helps to brighten up the scene more quickly.
+
 |Ground truth | Candidates generation (first frame) | One-random-light (first frame)
 |---|---|---|
 |![](Images/pinkRoom/base_multiple_frames_sofa_pillow_shadow.png)|![](Images/pinkRoom/restir_generate_candidates_sofa_pillow_shadow.png)|![](Images/pinkRoom/base_first_frame_sofa_pillow_shadow.png)|
 |![](Images/pinkRoom/base_multiple_frames_side_table_shadow.png)|![](Images/pinkRoom/restir_generate_candidates_side_table_shadow.png)|![](Images/pinkRoom/base_first_frame_side_table_shadow.png)|
 
-With only ReSTIR candidates generation, we eliminate a lot of shadows that are not visible in the converged image, as seen above.
-
 #### Temporal results
+Temporal results also help to brighten our renders more quickly than the base method of randomly sample one light. As mentioned, the paper advises having a clamped number of candidates seen for previous reservoir to max of k * currentReservoirWeight. Here are the effects of changing parameter k.
+
+|Ground truth|k = 5|k = 20 (recommended)|k = 50|
+|---|---|---|
+||||
+
 
 #### Spatial results
 
