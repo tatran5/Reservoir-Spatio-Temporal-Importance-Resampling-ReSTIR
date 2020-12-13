@@ -77,7 +77,7 @@ INSERT MORE SCREEN SHOTS OF BEDROOM SCENES
 
 With only ReSTIR candidates generation, we eliminate a lot of shadows that are not visible in the converged images. The method helps to brighten up the scene more quickly.
 
-|Ground truth | Candidates generation (first frame) | One-random-light (first frame)
+|Ground truth | Candidates generation (first frame) | One random light (first frame)
 |---|---|---|
 |![](Images/pinkRoom/base_multiple_frames_sofa_pillow_shadow.png)|![](Images/pinkRoom/restir_generate_candidates_sofa_pillow_shadow.png)|![](Images/pinkRoom/base_first_frame_sofa_pillow_shadow.png)|
 |![](Images/pinkRoom/base_multiple_frames_side_table_shadow.png)|![](Images/pinkRoom/restir_generate_candidates_side_table_shadow.png)|![](Images/pinkRoom/base_first_frame_side_table_shadow.png)|
@@ -85,10 +85,11 @@ With only ReSTIR candidates generation, we eliminate a lot of shadows that are n
 #### Temporal results
 Temporal results also help to brighten our renders more quickly than the base method of randomly sample one light. As mentioned, the paper advises having a clamped number of candidates seen for previous reservoir to max of k * currentReservoirWeight. Here are the effects of changing parameter k.
 
-|Ground truth|k = 5|k = 20 (recommended)|k = 50|
+|k = 5|k = 20 (recommended)|k = 50|
 |---|---|---|
-||||
+|![](Images/pinkRoom/pinkRoom_5xCurWeight_topSofa.png)|![](Images/pinkRoom/pinkRoom_20xCurWeight_topSofa.png)|![](Images/pinkRoom/pinkRoom_50xCurWeight_topSofa.png)|
 
+Even though the scene is brighted up as k increases, especially at the top of the sofa or at edge of sofa seats, there is also more noise in the renders. 
 
 #### Spatial results
 
