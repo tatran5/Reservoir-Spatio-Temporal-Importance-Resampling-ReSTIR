@@ -81,7 +81,7 @@ As expected ReSTIR has a lower FPS compared with the method of only sampling one
 
 ![](Images/Graphs/timeToConverge.png)
 
-Due to the inefficiencies mentioned above, the time for ReSTIR to converge are also high. 
+Due to the inefficiencies mentioned above, the time for ReSTIR to converge are also high. However, there might be a drastic difference when there are a lot more lights in the scene (thousands or millions), which are not displayed here, that show ReSTIR with a better convergence time. 
 
 ## Future work
 
