@@ -74,6 +74,25 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 #### Global illumination
 
+We have incorporated global illumination into Restir algorithm. Our approach basically adds indirect lighting to the current spatiotemporal output. We shoot 2 types of rays: Shadow ray and Indirect bounce ray. When we shoot our indirect ray and it hits a surface, we perform a simple lambertian shading at that point. To save cost, we are currently only shooting one shadow ray from each hit. 
+. 
+In `initLightPlusTemporal.rt.hlsl`, We have a flag gDoIndirectGI which allows us to toggle Indirect illumination. We first sample a random direction for our diffuse interreflected ray by using either cosine hemisphere sampling or uniform hemishphere sampling. We calculate the lambertian term for this randomly selected direction and then shoot out indirect ray to calculate the bounce color. We finally do a monte carlo intergration of the rendering equation for just the indirect component by multiplying the bounce color and lambertian term to the albedo and dividing this by the pdf based on the sampling technique used. We have added a new buffer to hold the output of indirect illumination called "gIndirectOutput" to store the output from indirect illumination and pass it on to the `updateReservoirPlusShade` pass. 
+
+Output: 
+
+![Global Illum (Pink Room Scene gif )](Images/Recordings/pink_room_gi.gif)
+
+Converged Images:
+
+|With Global Illumination | Without Global Illumination |
+|---|---|
+![Global Illum (Pink Room Scene GI )](Images/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pink_room_no_gi_converged.png)
+![Global Illum (Purple Room Scene GI )](Images/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purple_room_no_gi_converged.png)
+
+As a result, we expect global illumination make the renders noiser than without it. However, we want to compare the effect of ReSTIR with global illumination and sampling one random light without global illumination.
+
+<INSERT IMAGES HERE>
+
 ## Runtime analysis
 The below are results from our forest scene.
 
