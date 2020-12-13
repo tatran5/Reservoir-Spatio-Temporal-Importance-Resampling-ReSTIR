@@ -92,6 +92,10 @@ Temporal results also help to brighten our renders more quickly than the base me
 Even though the scene is brighted up as k increases, especially at the top of the sofa or at edge of sofa seats, there is also more noise in the renders. 
 
 #### Spatial results
+As expected, having more candidates help the image converge more quickly.
+
+At the 61th frame, we have these renders of our forest scene.
+|||
 
 #### Global illumination
 
