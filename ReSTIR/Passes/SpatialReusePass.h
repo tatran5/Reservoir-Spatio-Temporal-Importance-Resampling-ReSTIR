@@ -20,6 +20,7 @@ protected:
 	bool initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager) override;
 	void initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene) override;
 	void execute(RenderContext* pRenderContext) override;
+	void renderGui(Gui* pGui);
 
 	// Override some functions that provide information to the RenderPipeline class
 	bool requiresScene() override { return true; }

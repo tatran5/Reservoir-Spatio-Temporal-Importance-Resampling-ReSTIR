@@ -45,6 +45,18 @@ bool InitLightPlusTemporalPass::initialize(RenderContext* pRenderContext, Resour
 	return true;
 }
 
+void InitLightPlusTemporalPass::renderGui(Gui* pGui)
+{
+	// Add a toggle to turn on/off shooting of indirect GI rays
+	int dirty = 0;
+	dirty |= (int)pGui->addCheckBox(mDoDirectShadows ? "Shooting direct shadow rays" : "No direct shadow rays", mDoDirectShadows);
+	dirty |= (int)pGui->addCheckBox(mDoIndirectGI ? "Shooting global illumination rays" : "Skipping global illumination",
+		mDoIndirectGI);
+	dirty |= (int)pGui->addCheckBox(mDoCosSampling ? "Use cosine sampling" : "Use uniform sampling", mDoCosSampling);
+	dirty |= (int)pGui->addCheckBox(mTemporalReuse ? "Temporal Reuse ON" : "Temporal Reuse OFF", mTemporalReuse);
+	if (dirty) setRefreshFlag();
+}
+
 bool InitLightPlusTemporalPass::hasCameraMoved()
 {
 	// Has our camera moved?

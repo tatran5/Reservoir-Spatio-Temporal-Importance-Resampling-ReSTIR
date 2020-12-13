@@ -28,6 +28,15 @@ bool SpatialReusePass::initialize(RenderContext* pRenderContext, ResourceManager
     return true;
 }
 
+void SpatialReusePass::renderGui(Gui* pGui)
+{
+	// Add a toggle to turn on/off shooting of indirect GI rays
+	int dirty = 0;
+	dirty |= (int)pGui->addCheckBox(mSpatialReuse ? "Spatial Reuse ON" : "Spatial Reuse OFF", mSpatialReuse);
+
+	if (dirty) setRefreshFlag();
+}
+
 void SpatialReusePass::initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene)
 {
 	// Stash a copy of the scene and pass it to our ray tracer (if initialized)

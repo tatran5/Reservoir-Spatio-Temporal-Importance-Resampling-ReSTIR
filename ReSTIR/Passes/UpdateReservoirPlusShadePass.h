@@ -12,7 +12,7 @@ public:
 	virtual ~UpdateReservoirPlusShadePass() = default;
 
 protected:
-	UpdateReservoirPlusShadePass() : ::RenderPass("Spatial Reuse", "Spatial Reuse Options") {}
+	UpdateReservoirPlusShadePass() : ::RenderPass("Update Reservoir and Shade Pass", "Update Reservoir Options") {}
 
 	// Implementation of RenderPass interface
 	bool initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager) override;
