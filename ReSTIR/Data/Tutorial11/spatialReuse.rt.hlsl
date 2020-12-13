@@ -49,7 +49,7 @@ void LambertShadowsRayGen()
 	// Initialize our random number generator
 	uint randSeed = initRand(launchIndex.x + launchIndex.y * launchDim.x, gFrameCount, 16);
 
-	float4 reservoir = gReservoirCurr[launchIndex];
+	float4 reservoirNew = float4(0.f);
 
 	// Our camera sees the background if worldPos.w is 0, only do diffuse shading elsewhere
 	if (worldPos.w != 0.0f && gSpatialReuse)
@@ -66,15 +66,22 @@ void LambertShadowsRayGen()
 		// ----------------------------------------------------------------------------------------------
 		// ----------------------------------- Algorithm 5 - Spatial reuse BEGIN ------------------------
 		// ----------------------------------------------------------------------------------------------
-		float lightSamplesCount = reservoir.z;
-
 		uint2 neighborOffset;
 		uint2	neighborIndex;
 		float4 neighborReservoir;
 
-		int neighborsCount = 10;
+		int neighborsCount = 15;
 		int neighborsRange = 5; // Want to sample neighbors within [-neighborsRange, neighborsRange] offset
 
+		// Combine with reservoir at current pixel -------------------------------------------------------
+		float4 reservoir = gReservoirCurr[launchIndex];
+		getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+		p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
+
+		reservoirNew = updateReservoir(reservoirNew, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
+
+		float lightSamplesCount = reservoir.z;
 		// Combined logic of picking random neighbor and combine reservoirs
 		for (int i = 0; i < neighborsCount; i++) {
 			// Reservoir reminder:
@@ -98,21 +105,21 @@ void LambertShadowsRayGen()
 			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
 			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 
-			reservoir = updateReservoir(reservoir, neighborReservoir.y, p_hat * neighborReservoir.w * neighborReservoir.z, randSeed);
+			reservoirNew = updateReservoir(reservoirNew, neighborReservoir.y, p_hat * neighborReservoir.w * neighborReservoir.z, randSeed);
 
 			lightSamplesCount += neighborReservoir.z;
 		}
 
 		// Update the correct number of candidates considered for this pixel
-		reservoir.z = lightSamplesCount;
+		reservoirNew.z = lightSamplesCount;
 
 		// Update the adjusted final weight of the current reservoir ------------------------------------
-		getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+		getLightData(reservoirNew.y, worldPos.xyz, toLight, lightIntensity, distToLight);
 		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
 		p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 
-		reservoir.w = (1.f / max(p_hat, 0.0001f)) * (reservoir.x / max(reservoir.z, 0.0001f));
+		reservoirNew.w = (1.f / max(p_hat, 0.0001f)) * (reservoirNew.x / max(reservoirNew.z, 0.0001f));
 	}
 
-	gReservoirSpatial[launchIndex] = reservoir;
+	gReservoirSpatial[launchIndex] = reservoirNew;
 }
