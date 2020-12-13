@@ -65,6 +65,7 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 #### Candidates generation results
 
+
 #### Temporal results
 
 #### Spatial results
@@ -76,4 +77,12 @@ The below are results from our forest scene.
 
 ![](Images/Graphs/fps.png)
 
+As expected ReSTIR has a lower FPS compared with the method of only sampling one random light. This might be due to many buffers used for ReSTIR, so the time accumulated by passing in the buffer data as well as reading from and writing into buffers increase drastically. There are also a lot of branching in various shaders for ReSTIR, which can significantly slow down the method and result in low FPS. Another factor is that we are using more passes than the other method, which also lead to the lower FPS in methods involved with ReSTIR in the graph above. 
+
 ![](Images/Graphs/timeToConverge.png)
+
+Due to the inefficiencies mentioned above, the time for ReSTIR to converge are also high. 
+
+## Future work
+
+## Resources
