@@ -6,7 +6,7 @@
 
 * Tested on Windows 10, i7-8750H @ 2.20GHz 22GB, GTX 1070
 
-![](Images/forest/forest_restir_GI.png)
+INSER GIF HERE
 
 ## Outlines
 * [Introduction](#introduction)
