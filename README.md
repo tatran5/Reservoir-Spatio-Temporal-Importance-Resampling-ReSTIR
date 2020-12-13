@@ -64,6 +64,9 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 ## Results
 
 ### Final results
+*Here are renders of some scenes we assembled in Maya with models found online.*
+
+#### Forest scene (80 lights)
 
 ![](Images/forest/forest_restir2.png)
 
@@ -73,7 +76,27 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 ![](Images/forest/forest_restir.png)
 
-INSERT MORE SCREEN SHOTS OF BEDROOM SCENES
+#### Purple bedroom scene (15 lights)
+
+|ReSTIR (44th frame)|
+|---|
+|![](Images/purpleBedroom/purple_bedroom_frame44_restir.png)|
+
+|One random light (44th frame)|
+|---|
+|![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44.png)|
+
+Overall, we find that the ReSTIR image is slightly more converged than using the basic method of randomly selecting one light in the scene. Examples of areas that are much more converged can be seen below
+
+|ReSTIR (44th frame)|One random light (44th frame)|
+|---|---|
+|![](Images/purpleBedroom/purple_bedroom_frame44_restir_blanket.png)|![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44_blanket.png)|
+|![](Images/purpleBedroom/purple_bedroom_frame44_restir_chair.png)|![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44_chair.png)|
+
+However, ReSTIR spatial reuse also makes some part of the scene looks somewhat fuzzier than the basic method.
+|ReSTIR (44th frame)|One random light (44th frame)|
+|---|---|
+|![](Images/purpleBedroom/purple_bedroom_frame44_restir_leftWall.png)|![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44_leftWall.png)|
 
 ### Intermediate results
 
@@ -117,7 +140,7 @@ Converged Images:
 |With Global Illumination | Without Global Illumination |
 |---|---|
 ![Global Illum (Pink Room Scene GI )](Images/pinkRoom/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pinkRoom/pink_room_no_gi_converged.png)
-![Global Illum (Purple Room Scene GI )](Images/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purple_room_no_gi_converged.png)
+![Global Illum (Purple Room Scene GI )](Images/purpleBedroom/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purpleBedroom/purple_room_no_gi_converged.png)
 
 Global illumination helps with lighting up some scenes and creating color bleeding effect, as seen with the red carpet reflecting light at the bottom of the white sofa in one of the scens above. However, as expected, the effect of global illumination is more apparent for scenes where objects are close to each other as above and less apparent for scenes where objects are further apart. In the scene below, the brightening and color-bleeding effects are barely or not noticeable at all.
 
