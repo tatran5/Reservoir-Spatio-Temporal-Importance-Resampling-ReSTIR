@@ -20,12 +20,13 @@ public:
 	virtual ~InitLightPlusTemporalPass() = default;
 
 protected:
-	InitLightPlusTemporalPass() : ::RenderPass("Diffuse + 1 Rand Shadow Ray", "Diffuse + 1 Random Shadow  Options") {}
+	InitLightPlusTemporalPass() : ::RenderPass("Intialize & Temporal Reuse", "Intialize Lights and Temporal Reuse Options") {}
 
 	// Implementation of RenderPass interface
 	bool initialize(RenderContext* pRenderContext, ResourceManager::SharedPtr pResManager) override;
 	void initScene(RenderContext* pRenderContext, Scene::SharedPtr pScene) override;
 	void execute(RenderContext* pRenderContext) override;
+	void renderGui(Gui* pGui) override;
 
 	// Override some functions that provide information to the RenderPipeline class
 	bool requiresScene() override { return true; }
