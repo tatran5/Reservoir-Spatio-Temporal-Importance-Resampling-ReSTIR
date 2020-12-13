@@ -86,7 +86,7 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 |---|
 |![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44.png)|
 
-Overall, we find that the ReSTIR image is slightly more converged than using the basic method of randomly selecting one light in the scene. Examples of areas that are much more converged can be seen below
+Overall, we find that the ReSTIR image is slightly more converged than using the basic method of randomly selecting one light in the scene. Examples of areas that are much more converged can be seen below, including pillow, blanket, chair and table.
 
 |ReSTIR (44th frame)|One random light (44th frame)|
 |---|---|
