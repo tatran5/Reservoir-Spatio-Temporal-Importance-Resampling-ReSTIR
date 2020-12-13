@@ -4,6 +4,7 @@
 * Sireesha Putcha: [LinkedIn](https://www.linkedin.com/in/sireesha-putcha/), [portfolio](https://sites.google.com/view/sireeshaputcha/home), [email](psireesha98@gmail.com)
 * Thy Tran: [LinkedIn](https://www.linkedin.com/in/thy-tran-97a30b148/), [portfolio](https://tatran5.github.io/demo-reel.html), [email](tatran@seas.upenn.edu)
 
+* Tested on Windows 10, i7-8750H @ 2.20GHz 22GB, GTX 1070
 ## Outlines
 * [Introduction](#introduction)
 * [ReSTIR explained](#restir-explained)
