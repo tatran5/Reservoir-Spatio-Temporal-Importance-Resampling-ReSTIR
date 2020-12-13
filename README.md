@@ -19,8 +19,9 @@
         * [Spatial results](#spatial-results)
         * [Global illumination](#global-illumination)
 * [Runtime analysis](#runtime-analysis)
+* [Potential improvements](#potential-improvements)
 * [Build and run](#build-and-run)
-* [Credit and resources](#credits-and-resources)
+* [Credits and resources](#credits-and-resources)
 
 ## Introduction
 
@@ -59,8 +60,6 @@ Each light candidate has a weight corresponding to their chance of being chosen 
 #### Temporal reuse
 
 When doing temporal reuse, the paper advises to clamp the number of candidates M contribution to the pixel (otherwise, this can go unbounded.) We clamp the previous frame's M to at most 20x of the current frame's reservoir's M. Without this, objects in the scene might become black, a problem we encountered.
-    
-## Final results
 
 ## Results
 
@@ -115,7 +114,7 @@ As expected ReSTIR has a lower FPS compared with the method of only sampling one
 
 Due to the inefficiencies mentioned above, the time for ReSTIR to converge are also high. However, there might be a drastic difference when there are a lot more lights in the scene (thousands or millions), which are not displayed here, that show ReSTIR with a better convergence time. 
 
-## Future work
+## Potential improvements
 
 ### Complex light handling
 Currently, we are only handling static point lights. Having dynamic lights and area or mesh lights might show off more benefits of ReSTIR.
