@@ -67,6 +67,7 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 ![](Images/forest/forest_restir2.png)
 ![](Images/forest/forest_restir3.png)
+
 |---|---|
 |![](Images/forest/forest_restir_GI.png)|![](Images/forest/forest_restir.png)|
 
