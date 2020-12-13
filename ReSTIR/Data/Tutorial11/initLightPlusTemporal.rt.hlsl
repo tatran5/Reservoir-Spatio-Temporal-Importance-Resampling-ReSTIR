@@ -231,15 +231,19 @@ void LambertShadowsRayGen()
 		if (gTemporalReuse) {
 			float4 temporal_reservoir = reservoir;
 
+			// combine current reservoir
+			temporal_reservoir = updateReservoir(temporal_reservoir, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
+
 			// combine previous reservoir
 			getLightData(prev_reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
-			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+			LdotN = saturate(dot(worldNorm.xyz, toLight));
 			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 
 			// clamp r.M and r.W value if reservoir weight is too large
 			if (prev_reservoir.z > 20.f * reservoir.z) {
-				prev_reservoir.w *= 20.f * reservoir.z / prev_reservoir.z; //clamp r.W
-				prev_reservoir.z = 20.f * reservoir.z; //clamp r.M
+				prev_reservoir.x = 20.f * reservoir.z / prev_reservoir.z;
+				prev_reservoir.z = 20.f * reservoir.z;
+				prev_reservoir.w = (1.f / max(p_hat, 0.0001f)) * (reservoir.x / max(reservoir.z, 0.0001f));
 			}
 			temporal_reservoir = updateReservoir(temporal_reservoir, prev_reservoir.y, p_hat * prev_reservoir.w * prev_reservoir.z, randSeed);
 
@@ -285,7 +289,7 @@ void LambertShadowsRayGen()
 			// Shoot our indirect global illumination ray
 			bounceColor = shootIndirectRay(worldPos.xyz, bounceDir, gMinT, randSeed);
 
-			//bounceColor = (NdotL > 0.50f) ? float3(0, 0, 0) : bounceColor;
+			//bounceColor = (ID_NdotL > 0.50f) ? float3(0, 0, 0) : bounceColor;
 
 			// Probability of selecting this ray ( cos/pi for cosine sampling, 1/2pi for uniform sampling )
 			sampleProb = gCosSampling ? (ID_NdotL / M_PI) : (1.0f / (2.0f * M_PI));

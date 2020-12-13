@@ -28,7 +28,6 @@ bool InitLightPlusTemporalPass::initialize(RenderContext* pRenderContext, Resour
 	mpResManager->updateEnvironmentMap("Data/BackgroundImages/noise.png");
 	mpResManager->setDefaultSceneName("Data/Scenes/forest/forest.fscene");
 
-
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
 	mpRays = RayLaunch::create(kFileRayTrace, kEntryPointRayGen);
 
