@@ -264,32 +264,32 @@ void LambertShadowsRayGen()
 		//// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
 		//shadeColor += GI_shadowMult * GI_LdotN * GI_lightIntensity * difMatlColor.rgb / M_PI;
 
-		////For Indirect Illumination 
-		//float3 bounceColor;
-		//float ID_NdotL;
-		//float sampleProb;
+		//For Indirect Illumination 
+		float3 bounceColor;
+		float ID_NdotL;
+		float sampleProb;
 
-		//// Indirect illumination
-		//if (gDoIndirectGI)
-		//{
-		//	// Select a random direction for our diffuse interreflection ray.
-		//	float3 bounceDir;
-		//	if (gCosSampling)
-		//		bounceDir = getCosHemisphereSample(randSeed, worldNorm.xyz);      // Use cosine sampling
-		//	else
-		//		bounceDir = getUniformHemisphereSample(randSeed, worldNorm.xyz);  // Use uniform random samples
+		// Indirect illumination
+		if (gDoIndirectGI)
+		{
+			// Select a random direction for our diffuse interreflection ray.
+			float3 bounceDir;
+			if (gCosSampling)
+				bounceDir = getCosHemisphereSample(randSeed, worldNorm.xyz);      // Use cosine sampling
+			else
+				bounceDir = getUniformHemisphereSample(randSeed, worldNorm.xyz);  // Use uniform random samples
 
-		//	// Get NdotL for our selected ray direction
-		//	ID_NdotL = saturate(dot(worldNorm.xyz, bounceDir));
+			// Get NdotL for our selected ray direction
+			ID_NdotL = saturate(dot(worldNorm.xyz, bounceDir));
 
-		//	// Shoot our indirect global illumination ray
-		//	bounceColor = shootIndirectRay(worldPos.xyz, bounceDir, gMinT, randSeed);
+			// Shoot our indirect global illumination ray
+			bounceColor = shootIndirectRay(worldPos.xyz, bounceDir, gMinT, randSeed);
 
-		//	//bounceColor = (NdotL > 0.50f) ? float3(0, 0, 0) : bounceColor;
+			//bounceColor = (NdotL > 0.50f) ? float3(0, 0, 0) : bounceColor;
 
-		//	// Probability of selecting this ray ( cos/pi for cosine sampling, 1/2pi for uniform sampling )
-		//	sampleProb = gCosSampling ? (ID_NdotL / M_PI) : (1.0f / (2.0f * M_PI));
-		//}
+			// Probability of selecting this ray ( cos/pi for cosine sampling, 1/2pi for uniform sampling )
+			sampleProb = gCosSampling ? (ID_NdotL / M_PI) : (1.0f / (2.0f * M_PI));
+		}
 
 		// ----------------------------------------------------------------------------------------------
 		// ---------------------------------- Global Illumination END------------------------------------
@@ -297,7 +297,12 @@ void LambertShadowsRayGen()
 
 		// Save the computed reserrvoir back into the buffer
 		gReservoir[launchIndex] = reservoir;
-		//gIndirectOutput[launchIndex] = float4((ID_NdotL * bounceColor* difMatlColor.rgb / M_PI / sampleProb), 1.0);
+		gIndirectOutput[launchIndex] = float4(0.f); //Intialize to 0 
+		if (gDoIndirectGI)
+		{
+			gIndirectOutput[launchIndex] = float4((ID_NdotL * bounceColor* difMatlColor.rgb / M_PI / sampleProb), 1.0);
+		}
+		
 	}
 
 	// Save out our final shaded
