@@ -10,10 +10,11 @@
 * [ReSTIR explained](#restir-explained)
 * [Results](#results)
     * [Final results](#final-results)
-    * [Candidates generation results](#candidates-generation-results)
-    * [Temporal results](#temporal-results)
-    * [Spatial results](#spatial-results)
-    * [Global illumination](#global-illumination)
+    * [Intermediate results](#intermediate-results)
+        * [Candidates generation results](#candidates-generation-results)
+        * [Temporal results](#temporal-results)
+        * [Spatial results](#spatial-results)
+        * [Global illumination](#global-illumination)
 * [Runtime analysis](#runtime-analysis)
 
 ## Introduction
@@ -60,12 +61,19 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 ### Final results
 
-### Candidates generation results
+### Intermediate results
 
-### Temporal results
+#### Candidates generation results
 
-### Spatial results
+#### Temporal results
 
-### Global illumination
+#### Spatial results
+
+#### Global illumination
 
 ## Runtime analysis
+The below are results from our forest scene.
+
+![](Images/Graphs/fps.png)
+
+![](Images/Time/timeToConverge.png)
