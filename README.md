@@ -91,7 +91,9 @@ Converged Images:
 
 As a result, we expect global illumination make the renders noiser than without it. However, we want to compare the effect of ReSTIR with global illumination and sampling one random light without global illumination.
 
-<INSERT IMAGES HERE>
+|ReSTIR with Global Illumination | One random light with Global Illumination |
+|---|---|
+|INSERT IMAGE HERE| INSERT IMAGE HERE|
 
 ## Runtime analysis
 The below are results from our forest scene.
