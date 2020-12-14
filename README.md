@@ -220,6 +220,7 @@ We may be able to reduce at least one pass by refactoring and moving our impleme
 
 ## Credits and resources
 * [Jilin Liu](https://www.linkedin.com/in/jilin-liu97/), [Li Zheng](https://www.linkedin.com/in/li-zheng-1955ba169/) and [Keyi Yu](https://www.linkedin.com/in/keyi-linda-yu-8b1178137/) who were also implementing ReSTIR in DirectX as a team. They helped us with clarifying parts of the paper and providing feedback on our project.
+* [Eric Haines](https://www.linkedin.com/in/erichaines3d/) for pointing out some missing pieces in our explantation.
 * A Gentle Introduction To DirectX Raytracing - [tutorials and base code](http://cwyman.org/code/dxrTutors/dxr_tutors.md.html)
 * NVIDIA Falcor [library](https://developer.nvidia.com/falcor)
 * ReSTIR [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf)
