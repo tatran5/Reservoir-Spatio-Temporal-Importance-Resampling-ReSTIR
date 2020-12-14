@@ -171,20 +171,17 @@ However, as expected, the effect of global illumination is more apparent for sce
 |---|---|
 ![Global Illum (Forest GI )](Images/forest/forest_restir_GI.png)| ![Global Illum (Forest NO GI )](Images/forest/forest_restir_noGI.png)
 
+The only apparent difference is a leaf of one pine tree in the scene is brighter
+|With Global Illumination | Without Global Illumination |
+|---|---|
+![Global Illum (Forest GI )](Images/forest/forest_pine_withGI.png)| ![Global Illum (Forest NO GI )](Images/forest/forest_pine_noGI.png)
+
 The Bistro scene lights up very well upon adding global illumination since we are also casting indirect rays in order to accumulate color. Using Direct Lighting alone leaves the scene 
 pretty dark since it is a very huge environment and not all areas receive direct lighting. 
 
 |With Global Illumination | Without Global Illumination |
 |---|---|
 ![Global Illum (Bistro Scene GI )](Images/bistro/bistro_with_gi.png)| ![Global Illum (Bistro Scene no GI )](Images/bistro/bistro_without_gi.png)
-
-
-The only apparent difference is a leaf of one pine tree in the scene is brighter
-|With Global Illumination | Without Global Illumination |
-|---|---|
-![Global Illum (Forest GI )](Images/forest/forest_pine_withGI.png)| ![Global Illum (Forest NO GI )](Images/forest/forest_pine_noGI.png)
-
-
 
 
 ## Runtime analysis
