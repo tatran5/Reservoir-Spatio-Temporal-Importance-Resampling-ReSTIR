@@ -81,8 +81,8 @@ ReSTIR outputs a more converged render at the same iteration as the base method 
 
 |ReSTIR (after 14 iterations)|One random light (after 14 iterations)|
 |---|---|
-|![](Images/forest/forest_restirFrame14_upperLeft.png)|![](Images/forest/forest_baseFrame14_upperLeft.png)|
-|![](Images/forest/forest_restirFrame14_lowerRight.png)|![](Images/forest/forest_baseFrame14_upperLeft.png)|
+|![](Images/forest/forest_restirFrame14_upperRight.png)|![](Images/forest/forest_baseFrame14_upperRight.png)|
+|![](Images/forest/forest_restirFrame14_lowerLeft.png)|![](Images/forest/forest_baseFrame14_lowerLeft.png)|
 
 #### Bistro scene 
 
