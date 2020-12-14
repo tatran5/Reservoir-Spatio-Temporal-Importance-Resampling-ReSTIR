@@ -96,7 +96,7 @@ void LambertShadowsRayGen()
 			neighborOffset.x = int(nextRand(randSeed) * neighborsRange * 2.f) - neighborsRange;
 			neighborOffset.y = int(nextRand(randSeed) * neighborsRange * 2.f) - neighborsRange;
 
-			neighborIndex.x = max(0, min(launchDim.x - 1, launchIndex.x - neighborOffset.x));
+			neighborIndex.x = max(0, min(launchDim.x - 1, launchIndex.x + neighborOffset.x));
 			neighborIndex.y = max(0, min(launchDim.y - 1, launchIndex.y + neighborOffset.y));
 
 			neighborReservoir = gReservoirCurr[neighborIndex];

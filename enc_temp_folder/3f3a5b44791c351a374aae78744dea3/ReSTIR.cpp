@@ -30,7 +30,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	// Toggle
 	bool temporalReuse = true;
 	bool spatialReuse = true;
-	bool globalIllum = true;
+	bool globalIllum = false;
 
 	// Create our rendering pipeline
 	RenderingPipeline *pipeline = new RenderingPipeline();

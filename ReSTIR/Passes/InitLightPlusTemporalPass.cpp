@@ -25,7 +25,7 @@ bool InitLightPlusTemporalPass::initialize(RenderContext* pRenderContext, Resour
 	mpResManager->requestTextureResource(ResourceManager::kOutputChannel);
 	mpResManager->requestTextureResource(ResourceManager::kEnvironmentMap);
 
-	mpResManager->updateEnvironmentMap("Data/BackgroundImages/noise.png");
+	// mpResManager->updateEnvironmentMap("Data/BackgroundImages/MonValley_G_DirtRoad_3k.hdr");
 	mpResManager->setDefaultSceneName("Data/Scenes/pink_room/pink_room.fscene");
 
 	// Create our wrapper around a ray tracing pass.  Tell it where our ray generation shader and ray-specific shaders are
