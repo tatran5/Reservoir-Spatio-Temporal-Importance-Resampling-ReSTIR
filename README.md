@@ -49,7 +49,7 @@ We uses a data structure called reservoir for each pixel that holds the current 
 #### Weight calculation per light candidate
 Each light candidate has a weight corresponding to their chance of being chosen as the current sampled light per pixel.
 
-* <img src="https://latex.codecogs.com/svg.latex?weight=w(x)==\frac{\rho(x)*L_e(x)*G(x)}{p(x)}" title="w(x)" />
+* <img src="https://latex.codecogs.com/svg.latex?weight=w(x)=\frac{}{p(x)}=\frac{\rho(x)*L_e(x)*G(x)}{p(x)}" title="w(x)" />
     
     * <img src="https://latex.codecogs.com/svg.latex?\rho(x)" title="rho(x)" /> : the BSDF of the current point, which is the material color given the incident and outgoing light ray.
     
