@@ -64,7 +64,6 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 ## Results
 
 ### Final results
-*Here are renders of some scenes we assembled in Maya with models found online.*
 
 #### Forest scene (80 lights)
 
