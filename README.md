@@ -78,7 +78,7 @@ ReSTIR outputs a more converged render at the same iteration as the base method 
 
 #### Purple bedroom scene (15 lights)
 
-![](Images/purpleBedrom/purple_final_2.png)
+![](Images/purpleBedroom/purple_final_2.png)
 
 |ReSTIR (after 44 iterations)| One random light (after 44 iterations)|
 |---|---|
