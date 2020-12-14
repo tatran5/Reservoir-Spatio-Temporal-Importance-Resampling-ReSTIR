@@ -6,7 +6,7 @@
 
 * Tested on Windows 10, i7-8750H @ 2.20GHz 22GB, GTX 1070
 
-![](Images/forest/restir.gif)
+![](Images/final/forest_final.gif)
 
 ## Outlines
 * [Introduction](#introduction)
@@ -67,19 +67,23 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 #### Forest scene (80 lights)
 
-![](Images/final/forest_final.gif)
 ![](Images/forest/forest_restir2.png)
 
-|||
-|---|---|
-|![](Images/forest/forest_restir_GI.png)|![](Images/forest/forest_restir3.png)|
+|ReSTIR (after 14 iterations)|
+|---|
+|![](Images/forest/forest_restirFrame14.png|
 
-![](Images/forest/forest_restir.png)
+|One random light (after 14 iterations)|
+|---|
+|![](Images/forest/forest_baseFrame14.png|
+
+ReSTIR outputs a more converged render at the same iteration as the base method of randomly sample one light.
 
 #### Bistro scene 
 
 ![](Images/final/bistro_final.gif)
 
+|||
 |---|---|
 |![](Images/final/bistro_final_1.png)|![](Images/final/bistro_final_2.png)|
 |![](Images/final/bistro_final_3.png)|![](Images/final/bistro_final_4.png)|
@@ -87,11 +91,11 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 #### Purple bedroom scene (15 lights)
 
-|ReSTIR (44th frame)|
+|ReSTIR (after 44 iterations)|
 |---|
 |![](Images/purpleBedroom/purple_bedroom_frame44_restir.png)|
 
-|One random light (44th frame)|
+|One random light (after 44 iterations)|
 |---|
 |![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44.png)|
 
