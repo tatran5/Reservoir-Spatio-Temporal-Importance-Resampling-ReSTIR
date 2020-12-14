@@ -71,28 +71,18 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 |ReSTIR (after 14 iterations)|
 |---|
-|![](Images/forest/forest_restirFrame14.png)|
+|![](Images/forest/forest_restir_frame14.png)|
 
 |One random light (after 14 iterations)|
 |---|
-|![](Images/forest/forest_baseFrame14.png)|
+|![](Images/forest/forest_base_frame14.png)|
 
 ReSTIR outputs a more converged render at the same iteration as the base method of randomly sample one light. This is clearly seen when zooming into many parts of the renders above.
 
 |ReSTIR (after 14 iterations)|One random light (after 14 iterations)|
 |---|---|
-|![](Images/forest/forest_restirFrame14_upperRight.png)|![](Images/forest/forest_baseFrame14_upperRight.png)|
-|![](Images/forest/forest_restirFrame14_lowerLeft.png)|![](Images/forest/forest_baseFrame14_lowerLeft.png)|
-
-#### Bistro scene 
-
-![](Images/final/bistro_final.gif)
-
-|||
-|---|---|
-|![](Images/final/bistro_final_1.png)|![](Images/final/bistro_final_2.png)|
-|![](Images/final/bistro_final_3.png)|![](Images/final/bistro_final_4.png)|
-
+|![](Images/forest/forest_restir_frame14_upperRight.png)|![](Images/forest/forest_base_frame14_upperRight.png)|
+|![](Images/forest/forest_restir_frame14_lowerLeft.png)|![](Images/forest/forest_base_frame14_lowerLeft.png)|
 
 #### Purple bedroom scene (15 lights)
 
@@ -115,6 +105,15 @@ However, ReSTIR spatial reuse also makes some part of the scene looks somewhat f
 |ReSTIR (44th frame)|One random light (44th frame)|
 |---|---|
 |![](Images/purpleBedroom/purple_bedroom_frame44_restir_leftWall.png)|![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44_leftWall.png)|
+
+#### Bistro scene 
+
+![](Images/final/bistro_final.gif)
+
+|||
+|---|---|
+|![](Images/final/bistro_final_1.png)|![](Images/final/bistro_final_2.png)|
+|![](Images/final/bistro_final_3.png)|![](Images/final/bistro_final_4.png)|
 
 ### Intermediate results
 
@@ -160,7 +159,13 @@ Converged Images:
 ![Global Illum (Pink Room Scene GI )](Images/pinkRoom/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pinkRoom/pink_room_no_gi_converged.png)
 ![Global Illum (Purple Room Scene GI )](Images/purpleBedroom/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purpleBedroom/purple_room_no_gi_converged.png)
 
-Global illumination helps with lighting up some scenes and creating color bleeding effect, as seen with the red carpet reflecting light at the bottom of the white sofa in one of the scens above. However, as expected, the effect of global illumination is more apparent for scenes where objects are close to each other as above and less apparent for scenes where objects are further apart. In the scene below, the brightening and color-bleeding effects are barely or not noticeable at all.
+Global illumination helps with lighting up some scenes and creating color bleeding effect, as seen with the red carpet reflecting light at the bottom of the white sofa in one of the scens above. It can help certain scenes look significantly better as the one below.
+
+|With Global Illumination | Without Global Illumination |
+|---|---|
+|![](Images/bistro/bistro_with_gi.png)|![](Images/bistro/bistro_without_gi.png)|
+
+However, as expected, the effect of global illumination is more apparent for scenes where objects are close to each other as above and less apparent for scenes where objects are further apart. In the scene below, the brightening and color-bleeding effects are barely or not noticeable at all. 
 
 |With Global Illumination | Without Global Illumination |
 |---|---|
@@ -225,6 +230,7 @@ We may be able to reduce at least one pass by refactoring and moving our impleme
 
 ## Credits and resources
 * [Jilin Liu](https://www.linkedin.com/in/jilin-liu97/), [Li Zheng](https://www.linkedin.com/in/li-zheng-1955ba169/) and [Keyi Yu](https://www.linkedin.com/in/keyi-linda-yu-8b1178137/) who were also implementing ReSTIR in DirectX as a team. They helped us with clarifying parts of the paper and providing feedback on our project.
+* [Eric Haines](https://www.linkedin.com/in/erichaines3d/) for pointing out some missing pieces in our explantation.
 * A Gentle Introduction To DirectX Raytracing - [tutorials and base code](http://cwyman.org/code/dxrTutors/dxr_tutors.md.html)
 * NVIDIA Falcor [library](https://developer.nvidia.com/falcor)
 * ReSTIR [research paper](https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf)
