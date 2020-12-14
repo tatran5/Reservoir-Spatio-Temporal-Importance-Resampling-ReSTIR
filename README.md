@@ -71,11 +71,11 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 |ReSTIR (after 14 iterations)|
 |---|
-|![](Images/forest/forest_restirFrame14.png|
+|![](Images/forest/forest_restirFrame14.png)|
 
 |One random light (after 14 iterations)|
 |---|
-|![](Images/forest/forest_baseFrame14.png|
+|![](Images/forest/forest_baseFrame14.png)|
 
 ReSTIR outputs a more converged render at the same iteration as the base method of randomly sample one light.
 
