@@ -53,7 +53,7 @@ namespace Falcor
             gpDevice->getResourceAllocator()->release(mDynamicData);
         }
         else
-        {
+        { 
             gpDevice->releaseResource(mApiHandle);
         }
     }

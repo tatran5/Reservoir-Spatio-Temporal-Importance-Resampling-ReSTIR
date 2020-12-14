@@ -20,7 +20,9 @@
     <ClCompile Include="..\SharedUtils\ResourceManager.cpp" />
     <ClCompile Include="..\SharedUtils\SceneLoaderWrapper.cpp" />
     <ClCompile Include="..\SharedUtils\SimpleVars.cpp" />
-    <ClCompile Include="Passes\DiffuseOneShadowRayPass.cpp" />
+    <ClCompile Include="Passes\InitLightPlusTemporalPass.cpp" />
+    <ClCompile Include="Passes\SpatialReusePass.cpp" />
+    <ClCompile Include="Passes\UpdateReservoirPlusShadePass.cpp" />
     <ClCompile Include="ReSTIR.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -33,14 +35,16 @@
     <ClInclude Include="..\SharedUtils\ResourceManager.h" />
     <ClInclude Include="..\SharedUtils\SceneLoaderWrapper.h" />
     <ClInclude Include="..\SharedUtils\SimpleVars.h" />
-    <ClInclude Include="Passes\DiffuseOneShadowRayPass.h" />
+    <ClInclude Include="Passes\InitLightPlusTemporalPass.h" />
+    <ClInclude Include="Passes\SpatialReusePass.h" />
+    <ClInclude Include="Passes\UpdateReservoirPlusShadePass.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Tutorial11\diffusePlus1ShadowUtils.hlsli" />
+    <None Include="Data\Tutorial11\restirUtils.hlsli" />
     <None Include="Data\Tutorial11\standardShadowRay.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Tutorial11\diffusePlus1Shadow.rt.hlsl">
+    <None Include="Data\Tutorial11\initLightPlusTemporal.rt.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
@@ -51,6 +55,16 @@
     <ProjectReference Include="..\Falcor\Framework\Source\Falcor.vcxproj">
       <Project>{3b602f0e-3834-4f73-b97d-7dfc91597a98}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Tutorial11\updateReservoirPlusShade.rt.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Tutorial11\spatialReuse.rt.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{90b71832-31aa-4b87-8b60-53d7ef4cc7f8}</ProjectGuid>

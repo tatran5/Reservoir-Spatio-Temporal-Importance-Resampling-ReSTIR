@@ -1,21 +1,3 @@
-/**********************************************************************************************************************
-# Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
-# following conditions are met:
-#  * Redistributions of code must retain the copyright notice, this list of conditions and the following disclaimer.
-#  * Neither the name of NVIDIA CORPORATION nor the names of its contributors may be used to endorse or promote products
-#    derived from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT
-# SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
-# OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**********************************************************************************************************************/
-
 // Some shared Falcor stuff for talking between CPU and GPU code
 #include "HostDeviceSharedMacros.h"
 #include "HostDeviceData.h"           
@@ -27,7 +9,7 @@ import Shading;                      // Shading functions, etc
 import Lights;                       // Light structures for our current scene
 
 // A separate file with some simple utility functions: getPerpendicularVector(), initRand(), nextRand()
-#include "diffusePlus1ShadowUtils.hlsli"
+#include "restirUtils.hlsli"
 
 // Include shader entries, data structures, and utility function to spawn shadow rays
 #include "standardShadowRay.hlsli"
@@ -37,15 +19,16 @@ cbuffer RayGenCB
 {
 	float gMinT;        // Min distance to start a ray to avoid self-occlusion
 	uint  gFrameCount;  // Frame counter, used to perturb random seed each frame
-	bool  gInitLight;		// For ReSTIR - to choose an arbitrary light for this pixel after choosing 32 random light candidates
+	bool  gSpatialReuse;
 }
 
 // Input and out textures that need to be set by the C++ code
 Texture2D<float4>   gPos;           // G-buffer world-space position
 Texture2D<float4>   gNorm;          // G-buffer world-space normal
 Texture2D<float4>   gDiffuseMatl;   // G-buffer diffuse material (RGB) and opacity (A)
-RWTexture2D<float4> gReservoir;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
-RWTexture2D<float4> gOutput;        // Output to store shaded result
+
+RWTexture2D<float4> gReservoirCurr;			// For ReSTIR - need to be read-write because it is also updated in the shader as well
+RWTexture2D<float4> gReservoirSpatial;		// For ReSTIR - need to be read-write because it is also updated in the shader as well
 
 // How do we shade our g-buffer and generate shadow rays?
 [shader("raygeneration")]
@@ -66,64 +49,77 @@ void LambertShadowsRayGen()
 	// Initialize our random number generator
 	uint randSeed = initRand(launchIndex.x + launchIndex.y * launchDim.x, gFrameCount, 16);
 
-	// Our camera sees the background if worldPos.w is 0, only do diffuse shading elsewhere
-	if (worldPos.w != 0.0f)
-	{
-		// Pick a random light from our scene to sample
-		int lightToSample;
+	float4 reservoirNew = float4(0.f);
 
+	// Our camera sees the background if worldPos.w is 0, only do diffuse shading elsewhere
+	if (worldPos.w != 0.0f && gSpatialReuse)
+	{
 		// We need to query our scene to find info about the current light
 		float distToLight;      // How far away is it?
 		float3 lightIntensity;  // What color is it?
 		float3 toLight;         // What direction is it from our current pixel?
 		float LdotN;						// Lambert term
 
-		float4 reservoir = gReservoir[launchIndex];
-		float weight;
+		// Additional variables for ReSTIR
+		float p_hat;
 
+		// ----------------------------------------------------------------------------------------------
+		// ----------------------------------- Algorithm 5 - Spatial reuse BEGIN ------------------------
+		// ----------------------------------------------------------------------------------------------
+		uint2 neighborOffset;
+		uint2	neighborIndex;
+		float4 neighborReservoir;
 
-		if (gInitLight) { // For ReSTIR - check if this is the first frame to sample random candidate light per pixel
-			int candidateLightsCount = 32;
-			if (gLightsCount < 32) candidateLightsCount = gLightsCount;
+		int neighborsCount = 15;
+		int neighborsRange = 5; // Want to sample neighbors within [-neighborsRange, neighborsRange] offset
 
-			for (int i = 0; i < candidateLightsCount; i++) {
-				lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
-				getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
-				LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+		// Combine with reservoir at current pixel -------------------------------------------------------
+		float4 reservoir = gReservoirCurr[launchIndex];
+		getLightData(reservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+		p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 
-				// weight of the light is f * Le * G / pdf
-				weight = length(difMatlColor.xyz * lightIntensity * LdotN / (distToLight * distToLight)); // technically weight is divided by pdf, but point light pdf is 1
+		reservoirNew = updateReservoir(reservoirNew, reservoir.y, p_hat * reservoir.w * reservoir.z, randSeed);
 
-				// Algorithm 2 of ReSTIR paper
-				reservoir.x = reservoir.x + weight;
-				reservoir.z = reservoir.z + 1.0f;
-				if (nextRand(randSeed) < weight / reservoir.x) {
-					reservoir.y = lightToSample;
-				}
-			}
+		float lightSamplesCount = reservoir.z;
+		// Combined logic of picking random neighbor and combine reservoirs
+		for (int i = 0; i < neighborsCount; i++) {
+			// Reservoir reminder:
+			// .x: weight sum
+			// .y: chosen light for the pixel
+			// .z: the number of samples seen for this current light
+			// .w: the final adjusted weight for the current pixel following the formula in algorithm 3 (r.W)
 
-			gReservoir[launchIndex] = reservoir;
-			lightToSample = reservoir.y;
+			// Generate a random number from range [0, 2 * neighborsRange] then offset in negative direction 
+			// by spatialNeighborCount to get range [-neighborsRange, neighborsRange]. 
+			// Need to take care of out of bound case hence the max and min
+			neighborOffset.x = int(nextRand(randSeed) * neighborsRange * 2.f) - neighborsRange;
+			neighborOffset.y = int(nextRand(randSeed) * neighborsRange * 2.f) - neighborsRange;
+
+			neighborIndex.x = max(0, min(launchDim.x - 1, launchIndex.x - neighborOffset.x));
+			neighborIndex.y = max(0, min(launchDim.y - 1, launchIndex.y + neighborOffset.y));
+
+			neighborReservoir = gReservoirCurr[neighborIndex];
+
+			getLightData(neighborReservoir.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+			LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+			p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
+
+			reservoirNew = updateReservoir(reservoirNew, neighborReservoir.y, p_hat * neighborReservoir.w * neighborReservoir.z, randSeed);
+
+			lightSamplesCount += neighborReservoir.z;
 		}
-		else {
-			// Original base code based on tutorial 12
-			lightToSample = min(int(nextRand(randSeed) * gLightsCount), gLightsCount - 1);
-		}
 
-		// A helper (from the included .hlsli) to query the Falcor scene to get this data
-		getLightData(lightToSample, worldPos.xyz, toLight, lightIntensity, distToLight);
+		// Update the correct number of candidates considered for this pixel
+		reservoirNew.z = lightSamplesCount;
 
-		// Compute our lambertion term (L dot N)
-		LdotN = saturate(dot(worldNorm.xyz, toLight));
+		// Update the adjusted final weight of the current reservoir ------------------------------------
+		getLightData(reservoirNew.y, worldPos.xyz, toLight, lightIntensity, distToLight);
+		LdotN = saturate(dot(worldNorm.xyz, toLight)); // lambertian term
+		p_hat = length(difMatlColor.xyz / M_PI * lightIntensity * LdotN / (distToLight * distToLight));
 
-		// Shoot our ray.  Since we're randomly sampling lights, divide by the probability of sampling
-		//    (we're uniformly sampling, so this probability is: 1 / #lights) 
-		float shadowMult = float(gLightsCount) * shadowRayVisibility(worldPos.xyz, toLight, gMinT, distToLight);
-
-		// Compute our Lambertian shading color using the physically based Lambertian term (albedo / pi)
-		shadeColor = shadowMult * LdotN * lightIntensity * difMatlColor.rgb / 3.141592f;
+		reservoirNew.w = (1.f / max(p_hat, 0.0001f)) * (reservoirNew.x / max(reservoirNew.z, 0.0001f));
 	}
-	
-	// Save out our final shaded
-	gOutput[launchIndex] = float4(shadeColor, 1.0f);
+
+	gReservoirSpatial[launchIndex] = reservoirNew;
 }

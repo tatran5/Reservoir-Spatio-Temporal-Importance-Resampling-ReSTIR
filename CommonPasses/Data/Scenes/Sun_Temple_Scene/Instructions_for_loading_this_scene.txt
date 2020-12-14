@@ -1,0 +1,6 @@
+SunTemple.fbx is too heavy to be commited to github along with all the other project files. So, it is better to download the scene locally and include it to this folder ~ it is not a difficult process!
+Find the scene at : https://developer.nvidia.com/ue4-sun-temple
+Unzip SunTemple_v3 inside the SunTemple folder 
+You will see a SunTemple folder. Paste the SunTemple.fscene file into this folder. (*Make sure SunTemple.fscene is in the same root folder as SunTemple.fbx!) 
+You should then be able to load the scene in the ReStir Raytracer :) 
+

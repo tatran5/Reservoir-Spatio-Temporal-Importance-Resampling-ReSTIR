@@ -21,7 +21,7 @@
 
 namespace {
 	// Where is our environment map located?
-	const char* kEnvironmentMap = "MonValley_G_DirtRoad_3k.hdr";
+	const char* kEnvironmentMap = "Data/BackgroundImages/noise.png";
 
 	// Where is our shader located?
 	const char* kFileRayTrace = "CommonPasses\\lightProbeGBuffer.rt.hlsl";
