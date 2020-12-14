@@ -159,12 +159,13 @@ Converged Images:
 ![Global Illum (Pink Room Scene GI )](Images/pinkRoom/pink_room_gi_converged.png)| ![Global Illum (Pink Room Scene NO GI )](Images/pinkRoom/pink_room_no_gi_converged.png)
 ![Global Illum (Purple Room Scene GI )](Images/purpleBedroom/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purpleBedroom/purple_room_no_gi_converged.png)
 
-Global illumination helps with lighting up some scenes and creating color bleeding effect, as seen with the red carpet reflecting light at the bottom of the white sofa in one of the scens above. However, as expected, the effect of global illumination is more apparent for scenes where objects are close to each other as above and less apparent for scenes where objects are further apart. In the scene below, the brightening and color-bleeding effects are barely or not noticeable at all. It can help certain scenes look significantly better as below.
+Global illumination helps with lighting up some scenes and creating color bleeding effect, as seen with the red carpet reflecting light at the bottom of the white sofa in one of the scens above. It can help certain scenes look significantly better as the one below.
 
 |With Global Illumination | Without Global Illumination |
 |---|---|
 |![](Images/bistro/bistro_with_gi.png)|![](Images/bistro/bistro_without_gi.png)|
 
+However, as expected, the effect of global illumination is more apparent for scenes where objects are close to each other as above and less apparent for scenes where objects are further apart. In the scene below, the brightening and color-bleeding effects are barely or not noticeable at all. 
 
 |With Global Illumination | Without Global Illumination |
 |---|---|
