@@ -150,6 +150,8 @@ Converged Images:
 ![Global Illum (Purple Room Scene GI )](Images/purpleBedroom/purple_room_gi_converged.png)| ![Global Illum (Purple Room Scene NO GI )](Images/purpleBedroom/purple_room_no_gi_converged.png)
 
 Global illumination helps with lighting up some scenes and creating color bleeding effect, as seen with the red carpet reflecting light at the bottom of the white sofa in one of the scens above. It can help certain scenes look significantly better as the one below.
+The Bistro scene lights up very well upon adding global illumination since we are also casting indirect rays in order to accumulate color. Using Direct Lighting alone leaves the scene 
+pretty dark since it is a very huge environment and not all areas receive direct lighting. 
 
 |With Global Illumination | Without Global Illumination |
 |---|---|
@@ -166,12 +168,6 @@ The only apparent difference is a leaf of one pine tree in the scene is brighter
 |---|---|
 ![Global Illum (Forest GI )](Images/forest/forest_pine_withGI.png)| ![Global Illum (Forest NO GI )](Images/forest/forest_pine_noGI.png)
 
-The Bistro scene lights up very well upon adding global illumination since we are also casting indirect rays in order to accumulate color. Using Direct Lighting alone leaves the scene 
-pretty dark since it is a very huge environment and not all areas receive direct lighting. 
-
-|With Global Illumination | Without Global Illumination |
-|---|---|
-![Global Illum (Bistro Scene GI )](Images/bistro/bistro_with_gi.png)| ![Global Illum (Bistro Scene no GI )](Images/bistro/bistro_without_gi.png)
 
 
 ## Runtime analysis
