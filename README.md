@@ -68,6 +68,7 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 #### Forest scene (80 lights)
 
+![](Images/final/forest_final.gif)
 ![](Images/forest/forest_restir2.png)
 
 |||
@@ -75,6 +76,15 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 |![](Images/forest/forest_restir_GI.png)|![](Images/forest/forest_restir3.png)|
 
 ![](Images/forest/forest_restir.png)
+
+#### Bistro scene 
+
+![](Images/final/bistro_final.gif)
+
+|---|---|
+|![](Images/final/bistro_final_1.png)|![](Images/final/bistro_final_2.png)|
+|![](Images/final/bistro_final_3.png)|![](Images/final/bistro_final_4.png)|
+
 
 #### Purple bedroom scene (15 lights)
 
