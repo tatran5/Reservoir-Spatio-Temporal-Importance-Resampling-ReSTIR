@@ -84,16 +84,6 @@ ReSTIR outputs a more converged render at the same iteration as the base method 
 |![](Images/forest/forest_restir_frame14_upperRight.png)|![](Images/forest/forest_base_frame14_upperRight.png)|
 |![](Images/forest/forest_restir_frame14_lowerLeft.png)|![](Images/forest/forest_base_frame14_lowerLeft.png)|
 
-#### Bistro scene 
-
-![](Images/final/bistro_final.gif)
-
-|||
-|---|---|
-|![](Images/final/bistro_final_1.png)|![](Images/final/bistro_final_2.png)|
-|![](Images/final/bistro_final_3.png)|![](Images/final/bistro_final_4.png)|
-
-
 #### Purple bedroom scene (15 lights)
 
 |ReSTIR (after 44 iterations)|
@@ -115,6 +105,15 @@ However, ReSTIR spatial reuse also makes some part of the scene looks somewhat f
 |ReSTIR (44th frame)|One random light (44th frame)|
 |---|---|
 |![](Images/purpleBedroom/purple_bedroom_frame44_restir_leftWall.png)|![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44_leftWall.png)|
+
+#### Bistro scene 
+
+![](Images/final/bistro_final.gif)
+
+|||
+|---|---|
+|![](Images/final/bistro_final_1.png)|![](Images/final/bistro_final_2.png)|
+|![](Images/final/bistro_final_3.png)|![](Images/final/bistro_final_4.png)|
 
 ### Intermediate results
 
