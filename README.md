@@ -69,14 +69,6 @@ When doing temporal reuse, the paper advises to clamp the number of candidates M
 
 ![](Images/forest/forest_restir2.png)
 
-|ReSTIR (after 14 iterations)|
-|---|
-|![](Images/forest/forest_restir_frame14.png)|
-
-|One random light (after 14 iterations)|
-|---|
-|![](Images/forest/forest_base_frame14.png)|
-
 ReSTIR outputs a more converged render at the same iteration as the base method of randomly sample one light. This is clearly seen when zooming into many parts of the renders above.
 
 |ReSTIR (after 14 iterations)|One random light (after 14 iterations)|
@@ -86,13 +78,11 @@ ReSTIR outputs a more converged render at the same iteration as the base method 
 
 #### Purple bedroom scene (15 lights)
 
-|ReSTIR (after 44 iterations)|
-|---|
-|![](Images/purpleBedroom/purple_bedroom_frame44_restir.png)|
+![](Images/purpleBedrom/purple_final_2.png)
 
-|One random light (after 44 iterations)|
-|---|
-|![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44.png)|
+|ReSTIR (after 44 iterations)| One random light (after 44 iterations)|
+|---|---|
+|![](Images/purpleBedroom/purple_bedroom_frame44_restir.png)| ![](Images/purpleBedroom/purple_bedroom_oneRandomLight_frame44.png)|
 
 Overall, we find that the ReSTIR image is slightly more converged than using the basic method of randomly selecting one light in the scene. Examples of areas that are much more converged can be seen below, including pillow, blanket, chair and table. We expect that the diffference of convergence between these two rendering methods would be larger if there are many more lights in the scene.
 
